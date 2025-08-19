@@ -17,10 +17,9 @@ import {
 } from "@mui/material";
 
 import PersonIcon from "@mui/icons-material/Person";
-import UploadReports from "../uploadReports/UploadReports";
+import UploadReports from "../uploadReports/uploadReports";
 
 const UserReportUplaod = ({ userData, getOrders, onClose }) => {
-  console.log(userData?.assigned_members)
   return (
     <Box mt={1} ml={1} sx={{ width: "97%" }}>
         <TableContainer component={Paper} sx={{ mt: 1 }}>

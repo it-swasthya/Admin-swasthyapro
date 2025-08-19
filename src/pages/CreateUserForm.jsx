@@ -28,6 +28,8 @@ const RegistrationForm = () => {
     password: "",
     gstNO: "",
     age: "",
+      gender: "", 
+
   });
 
   const [errors, setErrors] = useState({
@@ -71,6 +73,9 @@ const RegistrationForm = () => {
     if (!emailRegex.test(formData.email)) {
       formErrors.email = "Please enter a valid email address";
     }
+      if (!formData.gender) {
+    formErrors.gender = "Please select a gender";
+  }
     return formErrors;
   };
 
@@ -103,6 +108,9 @@ const RegistrationForm = () => {
           email: formData.email || "",
           password: formData.password || "",
           gstNO: formData || "",
+          age:Number(formData.age) || null ,
+              gender: formData.gender || null 
+
         }
       );
       if (resp.data.message === "User registered") {
@@ -123,6 +131,8 @@ const RegistrationForm = () => {
           email: "",
           password: "",
           gstNO: "",
+          age:'',
+          gender:''
         });
         setTimeout(() => {
           navigate("/all-users");
@@ -177,6 +187,23 @@ const RegistrationForm = () => {
               onChange={handleChange}
               type="number"
             />
+            <div>
+  <label className="block text-sm font-medium">
+    Gender <span className="text-red-700">*</span>
+  </label>
+  <select
+    name="gender"
+    value={formData.gender}
+    onChange={handleChange}
+    required
+    className="mt-1 w-full p-2 text-sm border border-black bg-white text-black rounded-md focus:ring-1 focus:ring-black"
+  >
+    <option value="">Select Gender</option>
+    <option value="M">Male</option>
+    <option value="F">Female</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
             <InputField
               label="Contact Number"
               name="contact"

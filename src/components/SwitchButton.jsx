@@ -139,7 +139,6 @@ const SwitchTabs = ({ userData }) => {
       });
       return;
     }
-
     try {
       const sendCOD_email = await axios.post(
         "https://api.swasthyapro.com/api/mail/send-cod-mail",
