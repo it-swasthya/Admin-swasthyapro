@@ -35,6 +35,7 @@ const SwitchTabs = ({ userData }) => {
   const [loading, setLoading] = useState(false);
   const cart = useSelector(cartValue);
   const [customPrice, setCustomPrice] = useState("");
+  const [dmlCharge, setDMLcharge] = useState("");
 
   useEffect(() => {
     fetch("https://api.swasthyapro.com/api/coupons/all-coupon")
@@ -47,33 +48,18 @@ const SwitchTabs = ({ userData }) => {
     return tab === "tests" ? <TestsCard /> : <PackagesCard />;
   };
 
-  const orderCodPlaced = async () => {
-    if (!selectedDate || !selectedTimeSlot) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please select a date and time slot before booking.",
-      });
-      return;
-    }
 
+    const orderCodPlaced = async () => {
     let idsArr = [];
     let nameArr = [];
     let priceArr = [];
     const cartDetails = [...packages, ...tests];
-
     cartDetails.forEach((item) => {
       idsArr.push(item.id);
       nameArr.push(item.name);
       priceArr.push(Number(item.price));
     });
 
-    Swal.fire({
-      title: "Processing your order...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
     let cartId;
     try {
       const bookTest = await axios.post(
@@ -86,7 +72,6 @@ const SwitchTabs = ({ userData }) => {
         }
       );
       if (!bookTest.data.cart) {
-        Swal.close();
         Swal.fire({
           icon: "error",
           title: "Failed to add tests to the cart.",
@@ -97,7 +82,6 @@ const SwitchTabs = ({ userData }) => {
       cartId = bookTest.data.cart.id;
     } catch (err) {
       console.error("Add to cart error:", err);
-      Swal.close();
       Swal.fire({
         icon: "error",
         title: "Cart Error",
@@ -113,22 +97,97 @@ const SwitchTabs = ({ userData }) => {
         {
           user_id: userData.id,
           cart_id: cartId,
-          amount: cartData.total - (customPrice || 0),
+          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
           scheduled_date: selectedDate,
           timeslot: selectedTimeSlot,
+          dmlCharges: Number(dmlCharge || 0),
         }
       );
 
       if (bookTestCOD.status !== 201) {
-        Swal.close();
         Swal.fire({
           icon: "error",
           title: "Failed to book the test via COD.",
         });
         return;
+      } else {
+        Swal.fire({
+          icon: "success",
+          title: "Booking done",
+        });
       }
 
       bookingId = bookTestCOD.data.booking.booking_id;
+      return bookingId;
+    } catch (err) {
+      console.error("COD booking error:", err);
+      Swal.fire({
+        icon: "error",
+        title: "COD Booking Error",
+        text: "Unable to complete your COD booking.",
+      });
+      return;
+    }
+}
+
+  const handleYes = async () => {
+    if (!selectedDate || !selectedTimeSlot) {
+      Swal.fire({
+        icon: "warning",
+        title: "Please select a date and time slot before booking.",
+      });
+      return;
+    }
+    try {
+      Swal.fire({
+        title: "Processing your order...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const bookingId = await orderCodPlaced();
+      Swal.close();
+      if (!bookingId) {
+        Swal.fire({
+          icon: "error",
+          title: "Failed to book the test via COD.",
+        });
+        return null;
+      }
+      try {
+        await axios.post(
+          "https://api.swasthyapro.com/api/mail/send-cod-recieved-mail",
+          {
+            userName: userData.fullName,
+            userEmail: userData.email,
+            orderId: bookingId,
+            amount:
+              cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+            paymentMethod: "UPI",
+          }
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Booking done",
+          text: `Booking ID: ${bookingId}. Confirmation email sent.`,
+        });
+         setIsModalOpen(false);
+        setTimeout(() => {
+          navigate("/user-orders");
+        }, 2000);
+      } catch (mailErr) {
+        Swal.fire({
+          icon: "success",
+          title: "Booking done",
+          text: `Booking ID: ${bookingId}. (Email could not be sent)`,
+        });
+         setIsModalOpen(false);
+        setTimeout(() => {
+          navigate("/user-orders");
+        }, 2000);
+      }
+      return bookingId;
     } catch (err) {
       console.error("COD booking error:", err);
       Swal.close();
@@ -137,50 +196,99 @@ const SwitchTabs = ({ userData }) => {
         title: "COD Booking Error",
         text: "Unable to complete your COD booking.",
       });
-      return;
-    }
-    try {
-      const sendCOD_email = await axios.post(
-        "https://api.swasthyapro.com/api/mail/send-cod-mail",
-        {
-          userName: userData.fullName,
-          userEmail: userData.email,
-          orderId: bookingId,
-          amount: cartData.total - (customPrice || 0),
-        }
-      );
-
-      Swal.close();
-
-      if (sendCOD_email.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "COD test booked!",
-          text: "Please assign the DML.",
-        });
-        setIsModalOpen(false);
-        setTimeout(() => {
-          navigate("/user-orders");
-        }, 2000);
-      } else {
-        Swal.fire({
-          icon: "warning",
-          title: "Booking succeeded, but failed to send email.",
-        });
-      }
-    } catch (err) {
-      console.error("Email error:", err);
-      Swal.close();
-      Swal.fire({
-        icon: "error",
-        title: "Booking done, but email failed!",
-      });
+      return null;
     }
   };
 
+
+  const handleNo = async () => {
+    if (!selectedDate || !selectedTimeSlot) {
+      Swal.fire({
+        icon: "warning",
+        title: "Please select a date and time slot before booking.",
+      });
+      return;
+    }
+    try {
+      Swal.fire({
+        title: "Processing your order...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const bookingId = await orderCodPlaced();
+      Swal.close();
+      if (!bookingId) {
+        Swal.fire({
+          icon: "error",
+          title: "Failed to book the test via COD.",
+        });
+        return null;
+      }
+      try {
+        await axios.post(
+           "https://api.swasthyapro.com/api/mail/send-cod-mail",
+          {
+          userName: userData.fullName,
+          userEmail: userData.email,
+          orderId: bookingId,
+          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+        }
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Booking done",
+          text: `Booking ID: ${bookingId}. Confirmation email sent.`,
+        });
+         setIsModalOpen(false);
+        setTimeout(() => {
+          navigate("/user-orders");
+        }, 2000);
+      } catch (mailErr) {
+        console.error("Send COD email error:", mailErr);
+        Swal.fire({
+          icon: "success",
+          title: "Booking done",
+          text: `Booking ID: ${bookingId}. (Email could not be sent)`,
+        });
+         setIsModalOpen(false);
+        setTimeout(() => {
+          navigate("/user-orders");
+        }, 2000);
+      }
+      return bookingId;
+    } catch (err) {
+      console.error("COD booking error:", err);
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "COD Booking Error",
+        text: "Unable to complete your COD booking.",
+      });
+      return null;
+    }
+  };
+
+  function askPaymentConfirmation(onYes, onNo) {
+    Swal.fire({
+      title: "Have you received the payment?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (typeof onYes === "function") onYes();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        if (typeof onNo === "function") onNo();
+      }
+    });
+  }
   const handleClick = (label) => {
     if (label === "COD") {
-      orderCodPlaced();
+      askPaymentConfirmation(handleYes, handleNo);
     } else {
       OrderPlaced(label);
     }
@@ -445,10 +553,22 @@ const SwitchTabs = ({ userData }) => {
                   type="number"
                   id="customPrice"
                   value={customPrice}
-                  onChange={(e) => setCustomPrice(Number(e.target.value))}
+                  onChange={(e) => setCustomPrice(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   placeholder="Enter your price"
-                  min={0}
+                />
+              </div>
+              <div className="text-left text-black">
+                <label htmlFor="customPrice" className="block mb-1 font-medium">
+                  DML Charge :
+                </label>
+                <input
+                  type="number"
+                  id="customPrice"
+                  value={dmlCharge}
+                  onChange={(e) => setDMLcharge(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="Enter DML Charge"
                 />
               </div>
 
@@ -524,7 +644,8 @@ const SwitchTabs = ({ userData }) => {
               <div className="flex justify-between items-center pt-4">
                 <span className="font-semibold text-lg">Total Price:</span>
                 <span className="font-bold text-xl text-green-600">
-                  ₹{cartData.total - (customPrice || 0)}
+                  ₹
+                  {cartData.total - (customPrice || 0) + Number(dmlCharge || 0)}
                 </span>
               </div>
               {selectedCoupon && (
