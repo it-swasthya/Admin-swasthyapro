@@ -48,8 +48,7 @@ const SwitchTabs = ({ userData }) => {
     return tab === "tests" ? <TestsCard /> : <PackagesCard />;
   };
 
-
-    const orderCodPlaced = async () => {
+  const orderCodPlaced = async () => {
     let idsArr = [];
     let nameArr = [];
     let priceArr = [];
@@ -128,7 +127,7 @@ const SwitchTabs = ({ userData }) => {
       });
       return;
     }
-}
+  };
 
   const handleYes = async () => {
     if (!selectedDate || !selectedTimeSlot) {
@@ -147,7 +146,7 @@ const SwitchTabs = ({ userData }) => {
         },
       });
       const bookingId = await orderCodPlaced();
-      Swal.close();
+     
       if (!bookingId) {
         Swal.fire({
           icon: "error",
@@ -167,22 +166,19 @@ const SwitchTabs = ({ userData }) => {
             paymentMethod: "UPI",
           }
         );
+         Swal.close();
         Swal.fire({
           icon: "success",
           title: "Booking done",
           text: `Booking ID: ${bookingId}. Confirmation email sent.`,
         });
-         setIsModalOpen(false);
+        setIsModalOpen(false);
         setTimeout(() => {
           navigate("/user-orders");
         }, 2000);
       } catch (mailErr) {
-        Swal.fire({
-          icon: "success",
-          title: "Booking done",
-          text: `Booking ID: ${bookingId}. (Email could not be sent)`,
-        });
-         setIsModalOpen(false);
+        console.log(mailErr);
+        setIsModalOpen(false);
         setTimeout(() => {
           navigate("/user-orders");
         }, 2000);
@@ -199,7 +195,6 @@ const SwitchTabs = ({ userData }) => {
       return null;
     }
   };
-
 
   const handleNo = async () => {
     if (!selectedDate || !selectedTimeSlot) {
@@ -218,7 +213,6 @@ const SwitchTabs = ({ userData }) => {
         },
       });
       const bookingId = await orderCodPlaced();
-      Swal.close();
       if (!bookingId) {
         Swal.fire({
           icon: "error",
@@ -227,21 +221,19 @@ const SwitchTabs = ({ userData }) => {
         return null;
       }
       try {
-        await axios.post(
-           "https://api.swasthyapro.com/api/mail/send-cod-mail",
-          {
+        await axios.post("https://api.swasthyapro.com/api/mail/send-cod-mail", {
           userName: userData.fullName,
           userEmail: userData.email,
           orderId: bookingId,
           amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
-        }
-        );
+        });
+         Swal.close();
         Swal.fire({
           icon: "success",
           title: "Booking done",
           text: `Booking ID: ${bookingId}. Confirmation email sent.`,
         });
-         setIsModalOpen(false);
+        setIsModalOpen(false);
         setTimeout(() => {
           navigate("/user-orders");
         }, 2000);
@@ -252,7 +244,7 @@ const SwitchTabs = ({ userData }) => {
           title: "Booking done",
           text: `Booking ID: ${bookingId}. (Email could not be sent)`,
         });
-         setIsModalOpen(false);
+        setIsModalOpen(false);
         setTimeout(() => {
           navigate("/user-orders");
         }, 2000);

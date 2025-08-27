@@ -113,7 +113,7 @@ export const getOrderTableColumns = ({
       return (
         <>
           {method}
-          {method?.toLowerCase() === "cash" && pending && (
+          { pending && (
             <Tooltip title="Edit method">
               <IconButton
                 size="small"

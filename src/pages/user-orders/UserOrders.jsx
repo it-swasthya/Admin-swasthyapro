@@ -220,7 +220,6 @@
 //       //     .toFixed(2);
 //       // const total_discount = subtotal - cartResponse.data.total_price;
 
-      
 //       //   const createInvoiceResponse = await axios.post(
 //       //     "https://api.swasthyapro.com/api/invoice/create-invoice",
 //       //     {
@@ -231,7 +230,7 @@
 //       //   );
 //       //  await axios.post("https://api.swasthyapro.com/api/invoice/gen-invoice", {
 //       //   invoice_no: createInvoiceResponse.data.invoice.id,
-//       //   date: new Date().toISOString(), 
+//       //   date: new Date().toISOString(),
 //       //   customer_name: selectedOrder.User.first_name,
 //       //   customer_id: selectedOrder.User.User_id,
 //       //   customer_gstn: "NA",
@@ -397,7 +396,6 @@
 
 // export default OrderExportTable;
 
-
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -432,7 +430,7 @@ const OrderExportTable = () => {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [familyModalOpen, setFamilyModalOpen] = useState(false);
   const [uploadReportModalOpen, setUploadReportModalOpen] = useState(false);
-  const [isAdmin,  setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
   const theme = useTheme();
@@ -482,14 +480,14 @@ const OrderExportTable = () => {
           reschedule:
             order.rescheduled_date !== null
               ? new Date(order.rescheduled_date).toLocaleString("en-US", {
-                timeZone: "UTC",
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })
+                  timeZone: "UTC",
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })
               : "Not Rescheduled",
         };
       });
@@ -552,11 +550,11 @@ const OrderExportTable = () => {
       const testList =
         Array.isArray(tests) && tests.length
           ? tests
-            .map(
-              (test, index) =>
-                `<li><strong>${index + 1}</strong> - ${test}</li>`
-            )
-            .join("")
+              .map(
+                (test, index) =>
+                  `<li><strong>${index + 1}</strong> - ${test}</li>`
+              )
+              .join("")
           : "<li>No test data available.</li>";
 
       Swal.fire({
@@ -610,14 +608,15 @@ const OrderExportTable = () => {
           ...cartResponse.data.corporate_test,
         ];
 
-
         // Prepare test data
         const testData = mergeCartItems.map((data) => ({
           price: Number(data.market_price_range || data.market_price),
           test_name: data.test_name || data.package_name,
           quantity: 1,
           discount: Number(data.discount_percentage),
-          net_price: Number(data.after_discount_price || data.swasthyapro_price), // already discounted price
+          net_price: Number(
+            data.after_discount_price || data.swasthyapro_price
+          ), // already discounted price
         }));
 
         // Calculate subtotal (before discount)
@@ -633,7 +632,7 @@ const OrderExportTable = () => {
         const total_discount = (subtotal - totalNetPrice).toFixed(2);
 
         // Grand total should be sum of net prices
-        const grand_total = totalNetPrice;    
+        const grand_total = totalNetPrice;
 
         // Create invoice
         const createInvoiceResponse = await axios.post(
@@ -642,29 +641,33 @@ const OrderExportTable = () => {
             payment_id: selectedOrder.Payment.payment_id,
             user_id: selectedOrder.User.User_id,
             booking_id: selectedOrder.booking_id,
+            dmlCharges: selectedOrder.dml_charges || 0,
           }
         );
 
-        await axios.post("https://api.swasthyapro.com/api/invoice/gen-invoice", {
-          invoice_no: createInvoiceResponse.data.invoice.id,
-          date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-          customer_name: selectedOrder.User.first_name,
-          customer_id: selectedOrder.User.User_id,
-          customer_gstn: "NA",
-          billing_details: testData,
-          subtotal,
-          total_discount,
-          gst_percentage: "NA",
-          gst: "NA",
-          grand_total, //sum of net_price
-          payment_made: grand_total,
-          payment_status: "Paid",
-          account_no: "NA",
-          ifsc: "NA",
-          bank_name: "NA",
-          visit_type: "NA",
-        });
-
+        await axios.post(
+          "https://api.swasthyapro.com/api/invoice/gen-invoice",
+          {
+            invoice_no: createInvoiceResponse.data.invoice.id,
+            date: new Date().toISOString().split("T")[0],
+            customer_name: selectedOrder.User.first_name,
+            customer_id: selectedOrder.User.User_id,
+            customer_gstn: "NA",
+            billing_details: testData,
+            subtotal,
+            total_discount,
+            gst_percentage: "NA",
+            gst: "NA",
+            grand_total: Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            payment_made: Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            payment_status: "Paid",
+            account_no: "NA",
+            ifsc: "NA",
+            bank_name: "NA",
+            visit_type: "NA",
+            dmlCharges: selectedOrder.dml_charges || 0,
+          }
+        );
 
         const sendInvoice = await axios.post(
           "https://api.swasthyapro.com/api/invoice/send-invoice",
