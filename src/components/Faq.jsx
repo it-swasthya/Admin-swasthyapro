@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { changeNavValue } from "../Redux/reducer";
 import Select from "react-select";
-
+import { decryptEncryptedData } from "../utils/DecodeFormatData";
 function Faq() {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -32,9 +32,7 @@ function Faq() {
           "https://api.swasthyapro.com/api/database/get-facility"
         );
         const data = await res.json();
-        setFacilities(data);
-        
-        
+        setFacilities(data); 
       } catch (error) {
         console.error("Error fetching facilities:", error);
       }
@@ -88,7 +86,8 @@ function Faq() {
         `https://api.swasthyapro.com/api/database/page/1/limit/1000?q=${selectedFacility.name || ""}`
       );
       const result = await response.json();
-      setTestList(result.data || []);
+      const formattedData = await decryptEncryptedData(result)
+      setTestList(formattedData.data || []);
     } catch (err) {
       console.error("Error fetching test list:", err);
       setTestList([]);

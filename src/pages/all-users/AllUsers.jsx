@@ -49,7 +49,6 @@ const AllUsers = () => {
         "https://api.swasthyapro.com/api/user/get-user"
       );
       const users = response.data.users || [];
-
       const formatted = users.map((user) => ({
         id: user?.User_id,
         fullName: `${user?.first_name} ${user?.last_name}`,
@@ -80,13 +79,39 @@ const AllUsers = () => {
     dispatch(changeNavValue("All Users"));
     localStorage.removeItem("tests");
     localStorage.removeItem("packages");
+    localStorage.removeItem('radiology')
+
     getUsers();
   }, [dispatch]);
 
-  const handleBookTest = (user) => {
+  // const handleBookTest = (user) => {
+  //   const { fullName, email, id, address } = user;
+  //   navigate("/book-test", {
+  //     state: { user: { fullName, email, id, address } },
+  //   });
+  // };
+
+    const handleBookTest = (user) => {
     const { fullName, email, id, address } = user;
-    navigate("/book-test", {
-      state: { user: { fullName, email, id, address } },
+
+    Swal.fire({
+      title: 'Choose an Option',
+      text: 'Where do you want to go?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Book Test',
+      cancelButtonText: 'Book Radiology',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate('/book-test', {
+          state: { user: { fullName, email, id, address } },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        navigate('/book-radiology', {
+          state: { user: { fullName, email, id, address } },
+        });
+      }
     });
   };
 
@@ -113,15 +138,17 @@ const AllUsers = () => {
   });
   if (error) {
     return (
-      // <div className="flex justify-center items-center p-4">
-      //   <span className="text-lg text-red-500">{error}</span>
-      // </div>
-       <button
+      <>
+        <div className="flex justify-center items-center p-4">
+          <span className="text-lg text-red-500">{error}</span>
+        </div>
+        <button
           onClick={() => navigate("/create-user")}
           className=" h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
         >
           + Create User
         </button>
+      </>
     );
   }
   return (

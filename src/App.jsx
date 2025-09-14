@@ -18,7 +18,6 @@ import NotFound from './pages/NotFound';
 import ViewPrescription from './pages/user-prescription/UserPrescription';
 // import { UserDetails } from './pages/UsersDetails';
 import CreateUserForm from './pages/CreateUserForm';
-import BookTestForUser from './components/BookTestForUsers';
 // import { Query } from './pages/Query';
 // import InvoiceTable from './pages/InvoiceTable';
 import UserEmailPaymentDetails from './pages/email-payment-details/EmailPayment';
@@ -31,7 +30,9 @@ import OrderExportTable from './pages/user-orders/UserOrders';
 import AllUsers from './pages/all-users/AllUsers';
 import { Query } from './pages/users-query/UsersQuery';
 import InvoiceTable from './pages/user-invoices/UserInvoices';
-
+import RadiologyFacilities from './pages/radiologyBooking/radiology-facilities';
+import BookTestForUser from './components/BookTestForUsers';
+import RadiologyAppointments from './pages/radiologyAppointments/RadiologyAppointments';
 const isAuthenticated = () => {
   return localStorage.getItem('isLoggedIn') === 'true';
 };
@@ -378,6 +379,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+           <Route
+          path="/book-radiology"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <RadiologyFacilities />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
          <Route
           path="/user-Query"
           element={
@@ -408,6 +425,23 @@ function App() {
               >
                 {/* <InvoiceTable/> */}
                 <InvoiceTable/>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/radiology-appointments"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <RadiologyAppointments/>
+                
               </Layout>
             </ProtectedRoute>
           }

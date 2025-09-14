@@ -210,18 +210,18 @@ export const getOrderTableColumns = ({
       </Checkbox>
     ),
   },
-  {
-    accessorKey: "dmlName",
-    header: "DML-Name",
-  },
-  {
-    accessorKey: "dmlEmail",
-    header: "DML-Email(s)",
-  },
-  {
-    accessorKey: "emailBody",
-    header: "Email Body",
-  },
+  // {
+  //   accessorKey: "dmlName",
+  //   header: "DML-Name",
+  // },
+  // {
+  //   accessorKey: "dmlEmail",
+  //   header: "DML-Email(s)",
+  // },
+  // {
+  //   accessorKey: "emailBody",
+  //   header: "Email Body",
+  // },
   {
     accessorKey: "reschedule",
     header: "Reschedule Date",

@@ -6,6 +6,7 @@ import {
   FileQuestion,
   FileScan,
   Ticket,
+  Stethoscope,
 } from 'lucide-react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import DraftsIcon from '@mui/icons-material/Drafts';
@@ -63,15 +64,15 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
         { name: 'list-packages', label: 'Packages List', icon: <Package size={16} /> },
       ]
     },
-    {
-      name: 'Faq',
-      label: 'FAQ',
-      icon: <HelpOutlineIcon />,
-      submenus: [
-        { name: 'add-FAQ', label: 'Add FAQ', icon: <Plus size={16} /> },
-        { name: 'list-FAQ', label: 'FAQ List', icon: <HelpOutlineIcon style={{ fontSize: 16 }} /> },
-      ]
-    },
+    // {
+    //   name: 'Faq',
+    //   label: 'FAQ',
+    //   icon: <HelpOutlineIcon />,
+    //   submenus: [
+    //     { name: 'add-FAQ', label: 'Add FAQ', icon: <Plus size={16} /> },
+    //     { name: 'list-FAQ', label: 'FAQ List', icon: <HelpOutlineIcon style={{ fontSize: 16 }} /> },
+    //   ]
+    // },
         {
       name: 'Coupon',
       label: 'Coupon',
@@ -82,11 +83,22 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
       ]
     },
    { name: 'view-prescriptions', label: 'Prescriptions', icon: <ListCheck size={20} /> },
-  { name: 'user-orders', label: 'Orders', icon: <Package size={20} /> },
+  // { name: 'user-orders', label: 'Orders', icon: <Package size={20} /> },
+   {
+      name: 'Orders',
+      label: 'Orders',
+      icon: <Package/>,
+      submenus: [
+  { name: 'user-orders', label: 'Pathology', icon: <Package size={20} /> },
+        // { name: 'coupon-list', label: 'Coupon List', icon: <Ticket style={{ fontSize: 16 }} /> },
+      ]
+    },
   { name: 'all-users', label: 'Users', icon: <Users size={20} /> },
   { name: 'user-Query', label: 'Query', icon: <FileQuestion size={20} /> },
   { name: 'user-invoices', label: 'Invoices', icon: <FileScan size={20} /> },
-  { name: 'email-payments', label: 'Email Pay', icon: <DraftsIcon style={{ fontSize: 20 }} /> },
+    { name: 'radiology-appointments', label: 'Radiology-Appoint', icon: <Stethoscope size={20} /> },
+
+  // { name: 'email-payments', label: 'Email Pay', icon: <DraftsIcon style={{ fontSize: 20 }} /> },
   ];
 
   const lastFiveMenus = sidebarMenus.slice(-6);

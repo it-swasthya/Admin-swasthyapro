@@ -4,12 +4,13 @@ const getInitialCart = () => {
   try {
     const tests = JSON.parse(localStorage.getItem("tests")) || [];
     const packages = JSON.parse(localStorage.getItem("packages")) || [];
+    const radiology = JSON.parse(localStorage.getItem("radiology")) || [];
 
-    if (!Array.isArray(tests) || !Array.isArray(packages)) {
+    if (!Array.isArray(tests) || !Array.isArray(packages) || !Array.isArray(radiology)) {
       return [];
     }
 
-    return [...tests, ...packages];
+    return [...tests, ...packages, ...radiology];
   } catch (error) {
     console.error("Error parsing localStorage data", error);
     return [];
@@ -71,10 +72,41 @@ const navBarSlice = createSlice({
 
       state.cart = getInitialCart();
     },
+    addRadiologyItemToCart: (state, action) => {
+      const currentStored = JSON.parse(localStorage.getItem("radiology")) || [];
+      const radiologyItem = currentStored.findIndex(pkg => pkg.id === action.payload.id);
+      let updateRadiologyItem = [...currentStored];
+        if (radiologyItem !== -1) {
+          updateRadiologyItem = currentStored.filter((pkg) => pkg.id !== action.payload.id);
+        }else {
+          updateRadiologyItem.push({
+            id:action.payload.id,
+            name: action.payload.type_of_study,
+            price: Number(action.payload.swasthyapro_rate),
+          });
+      }
+      
+
+      localStorage.setItem("radiology", JSON.stringify(updateRadiologyItem));
+
+      state.cart = getInitialCart();
+      // console.log(action.payload)
+    },
+    removeRadiologyItemFromCart: (state, action) => {
+  const currentStored = JSON.parse(localStorage.getItem("radiology")) || [];
+
+  const updatedRadiologyItems = currentStored.filter(
+    (pkg) => pkg.id !== action.payload.id
+  );
+
+  localStorage.setItem("radiology", JSON.stringify(updatedRadiologyItems));
+
+  state.cart = getInitialCart();
+},
   },
 });
 
-export const { changeNavValue, addToCart, addPackageToCart } = navBarSlice.actions;
+export const { changeNavValue, addToCart, addPackageToCart, addRadiologyItemToCart,removeRadiologyItemFromCart } = navBarSlice.actions;
 export const navVal = (state) => state.navReducer.navBarValue;
 export const cartValue = (state) => state.navReducer.cart;
 
