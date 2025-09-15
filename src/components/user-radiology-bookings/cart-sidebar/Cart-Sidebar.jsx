@@ -92,14 +92,20 @@ const RadiologyCartSidebar = ({
     const total_amount = cartData.reduce((acc, item) => {
       return acc + Number(item.mrp || 0);
     }, 0);
-
-    const test_name = cartData.map((item) => ({
+   const total_swasthyaproPrice = cartData.reduce((acc, item) => {
+      return acc + Number(item.swasthyapro_max_rate || 0);
+    }, 0);
+    const test_name = cartData.map((item) => ( 
+      {
+      
       name: item.type_of_study,
-      price:
+      netprice:
         Number(item.swasthyapro_max_rate) -
-        (discountPrices[item.id]?.discount_price || 0),
-    }));
-
+        Number(discountPrices[item.id]|| 0),
+        price:item.swasthyapro_max_rate,
+        discount:Number(discountPrices[item.id]|| 0)
+    }
+  ));
     try {
       // 🔵 Show loading alert
       Swal.fire({
@@ -139,7 +145,7 @@ const RadiologyCartSidebar = ({
           labId: cartData[0]?.lab || "",
           slot_time: selectedTimeSlot,
           test_name,
-          total_amount: total_amount,
+          total_amount: total_swasthyaproPrice,
           additional_discount: totalDiscount,
           net_amount: totalPrice - Number(totalDiscount),
           payment_status: atCenter ? "pending" : "paid",
