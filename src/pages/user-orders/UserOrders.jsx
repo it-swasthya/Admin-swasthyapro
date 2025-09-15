@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -33,7 +32,6 @@ const OrderExportTable = () => {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [familyModalOpen, setFamilyModalOpen] = useState(false);
   const [uploadReportModalOpen, setUploadReportModalOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
   const theme = useTheme();
@@ -180,25 +178,25 @@ const OrderExportTable = () => {
     onEditPaymentClick: handleEditPayment,
     onReportShareClick: handleMarkReportShared,
     getOrders: fetchOrders,
-    showTests: showTestsPopup, 
+    showTests: showTestsPopup,
     onFamilyClick: handleFamilyInfoClick,
     handleUserReportUpload,
   });
 
   const updatePaymentMethod = async () => {
-              setMethodStatus(false);
+    setMethodStatus(false);
 
     const mergeIdsArray = [
       ...selectedOrder.Cart.testIds,
       ...selectedOrder.Cart.packageIds,
     ];
-     Swal.fire({
-            title: "Updating...",
-            allowOutsideClick: false,
-            didOpen: () => {
-              Swal.showLoading();
-            },
-          });
+    Swal.fire({
+      title: "Updating...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     try {
       const updatePaymentResponse = await axios.post(
         "https://api.swasthyapro.com/api/book/payment/update-cod",
@@ -270,8 +268,10 @@ const OrderExportTable = () => {
             total_discount,
             gst_percentage: "NA",
             gst: "NA",
-            grand_total: Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
-            payment_made: Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            grand_total:
+              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            payment_made:
+              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
             payment_status: "Paid",
             account_no: "NA",
             ifsc: "NA",
@@ -304,8 +304,8 @@ const OrderExportTable = () => {
         icon: "error",
         timer: 1000,
       });
-    }finally {
-          Swal.close();
+    } finally {
+      Swal.close();
     }
   };
 

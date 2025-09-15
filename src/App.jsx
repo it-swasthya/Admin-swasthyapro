@@ -32,6 +32,7 @@ import { Query } from './pages/users-query/UsersQuery';
 import InvoiceTable from './pages/user-invoices/UserInvoices';
 import RadiologyFacilities from './pages/radiologyBooking/radiology-facilities';
 import BookTestForUser from './components/BookTestForUsers';
+import RadiologyBooking from './pages/radiologyBookingTable/RadiologyBooking';
 import RadiologyAppointments from './pages/radiologyAppointments/RadiologyAppointments';
 const isAuthenticated = () => {
   return localStorage.getItem('isLoggedIn') === 'true';
@@ -425,6 +426,23 @@ function App() {
               >
                 {/* <InvoiceTable/> */}
                 <InvoiceTable/>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/radiology-orders"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <RadiologyBooking/>
+                
               </Layout>
             </ProtectedRoute>
           }

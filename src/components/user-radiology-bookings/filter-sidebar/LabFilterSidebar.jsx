@@ -27,7 +27,6 @@ const FilterSidebar = ({
   const { facilityName } = useParams();
 
   useEffect(() => {
-    console.log(testType)
     onFilterChange(testType || facilityName || "All");
     setSelectedFilter(testType || facilityName || "All");
   }, [testType]);

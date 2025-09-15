@@ -2,7 +2,7 @@ import { Button, IconButton, Dialog, DialogTitle, DialogContent, List, ListItem,
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 
-export const getRadiologyAppointmentTableColumns = ({ onCenterAllot }) => {
+export const getRadiologyBookingColumn = () => {
   // Local component for Test Info Dialog
   const TestInfoCell = ({ row }) => {
     const [open, setOpen] = useState(false);
@@ -37,6 +37,11 @@ export const getRadiologyAppointmentTableColumns = ({ onCenterAllot }) => {
     {
       accessorKey: 'id',
       header: 'Booking ID',
+      size: 160,
+    },
+       {
+      accessorKey: 'user_id',
+      header: 'User ID',
       size: 160,
     },
     {
@@ -80,6 +85,11 @@ export const getRadiologyAppointmentTableColumns = ({ onCenterAllot }) => {
       header: 'Net Amount',
       size: 140,
     },
+     {
+      accessorKey: 'additional_discount',
+      header: 'Additional Discount',
+      size: 140,
+    },
     {
       accessorKey: 'paymentStatus',
       header: 'Payment Status',
@@ -96,19 +106,19 @@ export const getRadiologyAppointmentTableColumns = ({ onCenterAllot }) => {
       Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
       size: 160,
     },
-    {
-      header: 'Center Allot',
-      id: 'Center-Allot',
-      Cell: ({ row }) => (
-        <Button
-          onClick={() => onCenterAllot(row.original)}
-          variant="contained"
-          color="primary"
-          size="small"
-        >
-          Allot Center
-        </Button>
-      ),
-    },
+    // {
+    //   header: 'Center Allot',
+    //   id: 'Center-Allot',
+    //   Cell: ({ row }) => (
+    //     <Button
+    //       onClick={() => onCenterAllot(row.original)}
+    //       variant="contained"
+    //       color="primary"
+    //       size="small"
+    //     >
+    //       Allot Center
+    //     </Button>
+    //   ),
+    // },
   ];
 };

@@ -126,6 +126,8 @@ const RadiologyFacilities = () => {
     const stored = JSON.parse(localStorage.getItem("radiology")) || [];
     if (stored?.length > 0) {
       fetRadiologyCart(stored);
+    }else{
+      setIsModalOpen(false)
     }
   }, [isModalOpen]);
 

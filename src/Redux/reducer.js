@@ -103,10 +103,13 @@ const navBarSlice = createSlice({
 
   state.cart = getInitialCart();
 },
+clearCart:(state,action)=>{
+       state.cart = []
+}
   },
 });
 
-export const { changeNavValue, addToCart, addPackageToCart, addRadiologyItemToCart,removeRadiologyItemFromCart } = navBarSlice.actions;
+export const { clearCart ,changeNavValue, addToCart, addPackageToCart, addRadiologyItemToCart,removeRadiologyItemFromCart } = navBarSlice.actions;
 export const navVal = (state) => state.navReducer.navBarValue;
 export const cartValue = (state) => state.navReducer.cart;
 

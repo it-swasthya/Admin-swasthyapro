@@ -92,7 +92,8 @@ const AllUsers = () => {
   // };
 
     const handleBookTest = (user) => {
-    const { fullName, email, id, address } = user;
+      console.log(user)
+    const { fullName, email, id, address,contact } = user;
 
     Swal.fire({
       title: 'Choose an Option',
@@ -105,11 +106,11 @@ const AllUsers = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         navigate('/book-test', {
-          state: { user: { fullName, email, id, address } },
+          state: { user: { fullName, email, id, address,contact } },
         });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         navigate('/book-radiology', {
-          state: { user: { fullName, email, id, address } },
+          state: { user: { fullName, email, id, address ,contact} },
         });
       }
     });

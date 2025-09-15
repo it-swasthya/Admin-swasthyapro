@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { removeRadiologyItemFromCart } from "../../../Redux/reducer";
+import { clearCart, removeRadiologyItemFromCart } from "../../../Redux/reducer";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RadiologyCartSidebar = ({
   user,
@@ -25,10 +26,9 @@ const RadiologyCartSidebar = ({
   selectedTimeSlot = "",
   setSelectedTimeSlot = () => {},
   timeSlots = [],
-  dmlCharge = 0,
 }) => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   // Discount prices state per item
   const [discountPrices, setDiscountPrices] = useState(
     cartData.reduce((acc, item) => {
@@ -50,17 +50,22 @@ const RadiologyCartSidebar = ({
   // Remove item from cart
   const handleRemoveItem = (removedItem) => {
     const updatedCart = cartData.filter((item) => item.id !== removedItem.id);
-    setCartData(updatedCart);
-    dispatch(removeRadiologyItemFromCart(removedItem));
+    if (updatedCart.length === 0) {
+      dispatch(clearCart());
+      closeModal();
+    } else {
+      setCartData(updatedCart);
+      dispatch(removeRadiologyItemFromCart(removedItem));
 
-    const updatedDiscounts = { ...discountPrices };
-    delete updatedDiscounts[removedItem.id];
-    setDiscountPrices(updatedDiscounts);
+      const updatedDiscounts = { ...discountPrices };
+      delete updatedDiscounts[removedItem.id];
+      setDiscountPrices(updatedDiscounts);
+    }
   };
 
   const totalPrice = cartData.reduce((acc, item) => {
     const discount = discountPrices[item.id] || 0;
-    const netPrice = (item.swasthyapro_rate || 0) - discount;
+    const netPrice = (item.swasthyapro_max_rate || 0) - discount;
     return Number(acc) + Number(netPrice);
   }, 0);
 
@@ -81,17 +86,17 @@ const RadiologyCartSidebar = ({
     cartData.forEach((item) => {
       idsArr.push(item.id);
       nameArr.push(item.type_of_study);
-      priceArr.push(Number(item.swasthyapro_rate));
+      priceArr.push(Number(item.swasthyapro_max_rate));
     });
 
     const total_amount = cartData.reduce((acc, item) => {
-      return acc + Number(item.swasthyapro_rate || 0);
+      return acc + Number(item.mrp || 0);
     }, 0);
 
     const test_name = cartData.map((item) => ({
       name: item.type_of_study,
       price:
-        Number(item.swasthyapro_rate) -
+        Number(item.swasthyapro_max_rate) -
         (discountPrices[item.id]?.discount_price || 0),
     }));
 
@@ -143,16 +148,63 @@ const RadiologyCartSidebar = ({
           payment_method: "UPI",
         }
       );
-
       if (response.status === 201) {
-        // ✅ Success alert
+        await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
+          mobile: "91" + user.contact,
+          template_name: "radiology_book_confirm",
+          template_values: {
+            1: user.fullName,
+            2: response.data.data.id,
+            3: nameArr.map((item) => item).join(", "),
+            4: response.data.data.net_amount,
+            5: total_amount,
+            6:
+              Math.ceil(
+                100 - (response.data.data.net_amount / total_amount) * 100
+              ) + "%",
+            7: atCenter ? "pending" : "paid",
+            8: selectedTimeSlot,
+            9: selectedDate,
+            10: cartData[0]?.lab_details?.lab_name || "",
+            11: cartData[0]?.lab_details?.location || "",
+            12: cartData[0]?.lab_details?.phone,
+            13: cartData[0]?.lab_details?.map_location_link || "",
+          },
+        });
+        await axios.post(
+          "https://api.swasthyapro.com/api/mail/send-radiology-appointment",
+          {
+            userName: user.fullName,
+            userEmail: user.email,
+            bookingId: response.data.data.id,
+            testName: nameArr.map((item) => item).join(", "),
+            mrp: total_amount,
+            price: response.data.data.net_amount,
+            discount:
+              Math.ceil(
+                100 - (response.data.data.net_amount / total_amount) * 100
+              ) + "%",
+            paymentStatus: atCenter ? "pending" : "paid",
+            time: selectedTimeSlot,
+            date: selectedDate,
+            centerName: cartData[0]?.lab_details?.lab_name || "",
+            centerAddress: cartData[0]?.lab_details?.location || "",
+            centerPhone: cartData[0]?.lab_details?.phone,
+            map_link: cartData[0]?.lab_details?.map_location_link || "",
+          }
+        );
+        localStorage.removeItem("radiology");
+        dispatch(clearCart());
+        setSelectedDate("");
+        setSelectedTimeSlot("");
+        setTotalDiscount("");
+        navigate("/radiology-orders");
         Swal.fire({
           icon: "success",
           title: "Booking Confirmed!",
           text: "Your tests have been booked successfully.",
           confirmButtonText: "OK",
         });
-        localStorage.removeItem("radiology");
       }
     } catch (err) {
       console.error("Booking error:", err);
@@ -189,7 +241,7 @@ const RadiologyCartSidebar = ({
 
             {cartData.map((item) => {
               const discount = discountPrices[item.id] || 0;
-              const netPrice = (item.swasthyapro_rate || 0) - discount;
+              const netPrice = (item.swasthyapro_max_rate || 0) - discount;
 
               return (
                 <div
@@ -225,9 +277,9 @@ const RadiologyCartSidebar = ({
                     <div className="flex flex-col">
                       <span className="text-xs text-gray-500 flex items-center gap-1">
                         Swasthyapro Rate
-                        {item.swasthyapro_max_rate && (
+                        {item.swasthyapro_rate && (
                           <Tooltip
-                            title={`Maximum Rate: ₹${item.swasthyapro_max_rate}`}
+                            title={`Maximum Rate: ₹${item.swasthyapro_rate}`}
                             arrow
                           >
                             <InformationCircleIcon className="text-gray-400 w-4 h-4 cursor-pointer" />
@@ -235,7 +287,7 @@ const RadiologyCartSidebar = ({
                         )}
                       </span>
                       <span className="font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-md">
-                        ₹{item.swasthyapro_rate || "N/A"}
+                        ₹{item.swasthyapro_max_rate || "N/A"}
                       </span>
                     </div>
                   </div>
