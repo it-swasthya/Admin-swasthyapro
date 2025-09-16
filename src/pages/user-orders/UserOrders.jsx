@@ -280,7 +280,7 @@ const OrderExportTable = () => {
           }
         );
 
-        await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
+     await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
         "to": "91"+selectedOrder.User.contact,
     "invoice_no": createInvoiceResponse.data.invoice.id,
     "customer_name": selectedOrder.User.first_name,

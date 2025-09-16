@@ -1,8 +1,5 @@
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import {
-  Tooltip,
- 
-} from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearCart, removeRadiologyItemFromCart } from "../../../Redux/reducer";
@@ -85,20 +82,25 @@ const RadiologyCartSidebar = ({
     const total_amount = cartData.reduce((acc, item) => {
       return acc + Number(item.mrp || 0);
     }, 0);
-   const total_swasthyaproPrice = cartData.reduce((acc, item) => {
+    const total_swasthyaproPrice = cartData.reduce((acc, item) => {
       return acc + Number(item.swasthyapro_max_rate || 0);
     }, 0);
-    const test_name = cartData.map((item) => ( 
-      {
-      
+    const test_name = cartData.map((item) => ({
       name: item.type_of_study,
       netprice:
         Number(item.swasthyapro_max_rate) -
-        Number(discountPrices[item.id]|| 0),
-        price:item.swasthyapro_max_rate,
-        discount:Number(discountPrices[item.id]|| 0)
-    }
-  ));
+        Number(discountPrices[item.id] || 0),
+      price: item.swasthyapro_max_rate,
+      discount: Number(discountPrices[item.id] || 0),
+    }));
+
+    const testData = cartData.map((data) => ({
+      price: Number(data.mrp),
+      test_name: data.type_of_study,
+      quantity: 1,
+      discount: Math.ceil(100 - (data.swasthyapro_max_rate / data.mrp) * 100),
+      net_price: Number(data.swasthyapro_max_rate),
+    }));
     try {
       // 🔵 Show loading alert
       Swal.fire({
@@ -120,7 +122,7 @@ const RadiologyCartSidebar = ({
           testPrices: priceArr,
         }
       );
-
+      console.log(bookTest);
       if (!bookTest.data.cart) {
         Swal.fire({
           icon: "error",
@@ -129,7 +131,17 @@ const RadiologyCartSidebar = ({
         return;
       }
 
-      // Step 2: Book radiology test
+      const paymentResponse = await axios.post(
+        "https://api.swasthyapro.com/api/payments/create-payment-radiology",
+        {
+          user_id: user.id,
+          cart_id: bookTest.data.cart.id,
+          amount: totalPrice - Number(totalDiscount),
+          base_amount: total_swasthyaproPrice,
+        }
+      );
+
+      // Step 3: Book radiology test
       const response = await axios.post(
         "https://api.swasthyapro.com/api/labs/radiology/booking",
         {
@@ -145,9 +157,64 @@ const RadiologyCartSidebar = ({
           report_status: "pending",
           report_shared: false,
           payment_method: "UPI",
+          payment_id: paymentResponse.data.data.payment_id,
         }
       );
       if (response.status === 201) {
+        if (!atCenter) {
+          const createInvoiceResponse = await axios.post(
+            "https://api.swasthyapro.com/api/invoice/create-invoice",
+            {
+              payment_id: paymentResponse.data.data.payment_id,
+              user_id: user.id,
+              booking_id: response.data.data.id,
+              // dmlCharges: selectedOrder.dml_charges || 0,
+            }
+          );
+
+          await axios.post(
+            "https://api.swasthyapro.com/api/invoice/gen-invoice",
+            {
+              invoice_no: createInvoiceResponse.data.invoice.id,
+              date: new Date().toISOString().split("T")[0],
+              customer_name: user.fullName,
+              customer_id: user.id,
+              customer_gstn: "NA",
+              billing_details: testData,
+              subtotal: total_amount,
+              total_discount: Number(total_amount - total_swasthyaproPrice),
+              gst_percentage: "NA",
+              gst: "NA",
+              grand_total: response.data.data.net_amount,
+              payment_made: response.data.data.net_amount || 0,
+              payment_status: "Paid",
+              account_no: "NA",
+              ifsc: "NA",
+              bank_name: "NA",
+              visit_type: "NA",
+              // dmlCharges: selectedOrder.dml_charges || 0,
+            }
+          );
+          const sendInvoice = await axios.post(
+            "https://api.swasthyapro.com/api/invoice/send-invoice",
+            {
+              email: user.email,
+              invoice_no: createInvoiceResponse.data.invoice.id,
+              customer_name: user.fullName,
+            }
+          );
+
+          await axios.post(
+            "https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp",
+            {
+              to: "91" + user.contact,
+              invoice_no: createInvoiceResponse.data.invoice.id,
+              customer_name: user.fullName,
+              email: user.email,
+            }
+          );
+        }
+
         await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
           mobile: "91" + user.contact,
           template_name: "radiology_book_confirm",
@@ -170,6 +237,7 @@ const RadiologyCartSidebar = ({
             13: cartData[0]?.lab_details?.map_location_link || "",
           },
         });
+
         await axios.post(
           "https://api.swasthyapro.com/api/mail/send-radiology-appointment",
           {
@@ -382,39 +450,39 @@ const RadiologyCartSidebar = ({
             </div>
 
             {/* Pay Now Button */}
-           <button
-  onClick={() => {
-    if (!selectedDate || !selectedTimeSlot) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please select a date and time slot before booking.",
-      });
-      return;
-    }
+            <button
+              onClick={() => {
+                if (!selectedDate || !selectedTimeSlot) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Please select a date and time slot before booking.",
+                  });
+                  return;
+                }
 
-    // 🔵 Show SweetAlert with two options
-    Swal.fire({
-      title: "Choose Payment Option",
-      showCancelButton: true,
-      showDenyButton: true,
-      confirmButtonText: "Pay at Swasthyapro",
-      denyButtonText: "Pay at Center",
-      cancelButtonText: "Cancel",
-      confirmButtonColor: "#16a34a", // green
-      denyButtonColor: "#2563eb",    // blue
-      cancelButtonColor: "#6b7280",  // gray
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await orderCodPlaced(false); // Swasthyapro
-      } else if (result.isDenied) {
-        await orderCodPlaced(true); // Center
-      }
-    });
-  }}
-  className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
->
-  Pay Now
-</button>
+                // 🔵 Show SweetAlert with two options
+                Swal.fire({
+                  title: "Choose Payment Option",
+                  showCancelButton: true,
+                  showDenyButton: true,
+                  confirmButtonText: "Pay at Swasthyapro",
+                  denyButtonText: "Pay at Center",
+                  cancelButtonText: "Cancel",
+                  confirmButtonColor: "#16a34a", // green
+                  denyButtonColor: "#2563eb", // blue
+                  cancelButtonColor: "#6b7280", // gray
+                }).then(async (result) => {
+                  if (result.isConfirmed) {
+                    await orderCodPlaced(false); // Swasthyapro
+                  } else if (result.isDenied) {
+                    await orderCodPlaced(true); // Center
+                  }
+                });
+              }}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              Pay Now
+            </button>
           </div>
         </div>
       </div>
@@ -423,4 +491,3 @@ const RadiologyCartSidebar = ({
 };
 
 export default RadiologyCartSidebar;
-
