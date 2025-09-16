@@ -23,6 +23,15 @@ export const getRadiologyBookingColumn = () => {
                   <ListItemText
                     primary={t.name}
                     secondary={`Price: ₹${t.price}`}
+                    
+                  />
+                  <ListItemText
+                    primary={`Netprice: ₹${t.netprice}`}
+                    // secondary={`Netprice: ₹${t.netprice}`}
+                  />
+                  <ListItemText
+                    primary={`Discount: ₹${t.discount}`}
+                    // secondary={`Discount: ₹${t.discount}`}
                   />
                 </ListItem>
               ))}

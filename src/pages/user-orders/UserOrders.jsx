@@ -184,8 +184,7 @@ const OrderExportTable = () => {
   });
 
   const updatePaymentMethod = async () => {
-    setMethodStatus(false);
-
+     setMethodStatus(false)
     const mergeIdsArray = [
       ...selectedOrder.Cart.testIds,
       ...selectedOrder.Cart.packageIds,
@@ -281,6 +280,13 @@ const OrderExportTable = () => {
           }
         );
 
+        await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
+        "to": "91"+selectedOrder.User.contact,
+    "invoice_no": createInvoiceResponse.data.invoice.id,
+    "customer_name": selectedOrder.User.first_name,
+    "email": selectedOrder.User.email,
+        })
+
         const sendInvoice = await axios.post(
           "https://api.swasthyapro.com/api/invoice/send-invoice",
           {
@@ -298,7 +304,6 @@ const OrderExportTable = () => {
       }
     } catch (err) {
       console.log(err);
-
       Swal.fire({
         text: "Something went wrong",
         icon: "error",
