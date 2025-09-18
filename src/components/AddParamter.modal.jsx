@@ -20,7 +20,6 @@ const AddParameterModal = ({ open, onClose, onSubmit, selectedTest }) => {
   };
 
   const handleSubmit = () => {
-    console.log(fields);
     onSubmit(fields);
     onClose();
     setFields('');

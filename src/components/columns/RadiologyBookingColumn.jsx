@@ -1,8 +1,13 @@
-import { Button, IconButton, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText } from '@mui/material';
+import { Button, IconButton, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText, Tooltip, Box } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-export const getRadiologyBookingColumn = () => {
+// import { IconButton, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import UpdateBookingStatusCell from '../user-radiology-bookings/bookinStatusCell/UpdateBookingStatus';
+export const getRadiologyBookingColumn = ({handleEditPayment,getRadiologyBooking}) => {
   // Local component for Test Info Dialog
   const TestInfoCell = ({ row }) => {
     const [open, setOpen] = useState(false);
@@ -100,34 +105,67 @@ export const getRadiologyBookingColumn = () => {
       size: 140,
     },
     {
-      accessorKey: 'paymentStatus',
-      header: 'Payment Status',
+      accessorKey: 'paymentMethod',
+      header: 'Payment Method',
       size: 140,
     },
+  {
+  accessorKey: "paymentStatus",
+  header: "Payment Status",
+  Cell: ({ row }) => {
+    const status = row.original.paymentStatus?.toUpperCase() || "";
+    const pending = row.original?.paymentStatus?.toLowerCase() === "pending";
+
+    return (
+      <Box display="flex" alignItems="center" gap={1}>
+        <span>{status}</span>
+
+        {pending && (
+          <Tooltip title="Edit method">
+            <IconButton
+              size="small"
+              onClick={() =>handleEditPayment(row.original)}
+              sx={{
+                backgroundColor: "red",
+                color: "white",
+                "&:hover": { backgroundColor: "darkred" },
+              }}
+            >
+              <EditIcon fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
+    );
+  },
+},
+ {
+      accessorKey: 'booking_status',
+      header: 'Booking Status',
+      Cell: ({ row }) => {
+        return  <LocalizationProvider dateAdapter={AdapterDayjs}>
+<UpdateBookingStatusCell row={row.original} getRadiologyBooking={getRadiologyBooking}/>
+    </LocalizationProvider>
+      }
+    },
+    
     {
       accessorKey: 'reportStatus',
-      header: 'Report Status',
+      header: 'Report Share',
       size: 140,
     },
+    
     {
       accessorKey: 'createdAt',
       header: 'Booking Date',
       Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
       size: 160,
     },
-    // {
-    //   header: 'Center Allot',
-    //   id: 'Center-Allot',
-    //   Cell: ({ row }) => (
-    //     <Button
-    //       onClick={() => onCenterAllot(row.original)}
-    //       variant="contained"
-    //       color="primary"
-    //       size="small"
-    //     >
-    //       Allot Center
-    //     </Button>
-    //   ),
-    // },
+     {
+      accessorKey: 'rescheduled_date',
+      header: 'Rescheduled Date',
+      size: 140,
+    },
+   
   ];
 };

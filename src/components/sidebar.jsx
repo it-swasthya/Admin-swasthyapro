@@ -14,13 +14,12 @@ import {
   Users,
   FileQuestion,
   FileScan,
-  Ticket,
+  Ticket, 
   Stethoscope,
   NotebookPenIcon,
   HospitalIcon,
 } from "lucide-react";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import DraftsIcon from "@mui/icons-material/Drafts";
+
 import BiotechIcon from "@mui/icons-material/Biotech";
 function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
   const [expandedMenus, setExpandedMenus] = useState({
@@ -145,8 +144,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
     { name: "all-users", label: "Users", icon: <Users size={20} /> },
     { name: "user-Query", label: "Query", icon: <FileQuestion size={20} /> },
     { name: "user-invoices", label: "Invoices", icon: <FileScan size={20} /> },
+    { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> },
 
-    // { name: 'email-payments', label: 'Email Pay', icon: <DraftsIcon style={{ fontSize: 20 }} /> },
   ];
 
   const lastFiveMenus = sidebarMenus.slice(-6);
@@ -218,7 +217,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
           {sidebarOpen ? (
             <div className="flex items-center">
               <img
-                src="https://swasthyapro.com/static/media/headerLogo.f6b8431e7ff8639b5c0b.png"
+                src="https://swasthyapro.com/static/media/headerLogo.bceb6568a573f4620979.png"
                 alt="SwasthyaPro Logo"
                 className="h-12 w-auto object-contain"
               />

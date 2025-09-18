@@ -36,7 +36,6 @@ const PaymentsTable = () => {
   }, []);
 
   const showTestsPopup = (data) => {
-    console.log(data);
     const testList = Array.isArray(data.tests)
       ? data.tests
           .map(

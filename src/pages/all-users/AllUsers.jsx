@@ -92,7 +92,6 @@ const AllUsers = () => {
   // };
 
     const handleBookTest = (user) => {
-      console.log(user)
     const { fullName, email, id, address,contact } = user;
 
     Swal.fire({

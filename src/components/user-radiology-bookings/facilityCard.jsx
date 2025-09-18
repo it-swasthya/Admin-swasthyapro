@@ -22,7 +22,6 @@ const FacilityCard = ({extraLinks ,loading}) => {
   };
 
   const handleSearchChange = (e) => {
-    console.log(e.target.value)
     setSearchQuery(e.target.value); 
   };
 

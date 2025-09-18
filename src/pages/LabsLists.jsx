@@ -54,7 +54,7 @@ const LabsTable = () => {
         category,
       })
       .then(() => {
-        Swal.fire("Success", "Lab added successfully.", "success"); // ✅ Add this
+        Swal.fire("Success", "Lab added successfully.", "success"); 
         setNewLabName("");
         setOpenModal(false);
         // Refresh labs
@@ -223,6 +223,7 @@ const LabsTable = () => {
                     {[
                       "Lab ID",
                       "Lab Name",
+                      "Category",
                       "Created At",
                       "Updated At",
                       "Actions",
@@ -262,7 +263,7 @@ const LabsTable = () => {
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((lab, index) => (
-                        <TableRow key={index} hover sx={{ height: 36 }}>
+                        <TableRow key={index}  sx={{ height: 36 , backgroundColor:lab.category=="Pathalogy"?"#FEF08A" : "#BFDBFE" }}>
                           <TableCell
                             align="center"
                             sx={{ paddingY: "4px", fontSize: "0.85rem" }}
@@ -274,6 +275,12 @@ const LabsTable = () => {
                             sx={{ paddingY: "4px", fontSize: "0.85rem" }}
                           >
                             {highlightMatch(lab.lab_name, searchQuery)}
+                          </TableCell>
+                           <TableCell
+                            align="center"
+                            sx={{ paddingY: "4px", fontSize: "0.85rem" }}
+                          >
+                            {highlightMatch(lab.category, searchQuery)}
                           </TableCell>
                           <TableCell
                             align="center"

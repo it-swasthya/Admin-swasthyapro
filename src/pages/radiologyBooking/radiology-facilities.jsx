@@ -4,14 +4,8 @@ import {
   TextField,
   InputAdornment,
   Chip,
-  Stack,
   Pagination,
   IconButton,
-  Drawer,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
   Badge,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -34,7 +28,7 @@ const fetchTests = async (center, test, cb) => {
     );
     cb(null, await res.json());
   } catch (err) {
-    console.error("❌ tests:", err);
+    console.error("tests:", err);
     cb(err);
   }
 };
@@ -140,7 +134,7 @@ const RadiologyFacilities = () => {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto" }}>
-      {/* 🔍 Searchbar + Chip + Cart Icon Section (TOP) */}
+      {/*Searchbar + Chip + Cart Icon Section (TOP)*/}
       <Box
         sx={{
           mb: 3,
@@ -151,7 +145,7 @@ const RadiologyFacilities = () => {
           gap: 2,
         }}
       >
-        {/* Left Side: Search & Chip */}
+        {/*Left Side: Search & Chip */}
         <Box
           sx={{
             display: "flex",
@@ -175,19 +169,19 @@ const RadiologyFacilities = () => {
             }}
           />
 
-          {/* Center Chip */}
+          {/*Center Chip */}
           {center && (
             <Chip
               label={
                 labs.find((lab) => lab.id === center)?.name || "Selected Center"
               }
               variant="outlined"
-              onDelete={() => setCenter(undefined)}
+              onDelete={() => {setCenter('All');setCenter("All")}}
             />
           )}
         </Box>
 
-        {/* Right Side: Cart Icon */}
+        {/*Right Side: Cart Icon */}
         <IconButton
           onClick={() => setIsModalOpen(true)}
           disabled={cartData.length === 0}
@@ -198,14 +192,14 @@ const RadiologyFacilities = () => {
         </IconButton>
       </Box>
 
-      {/* Sidebar + Cards (BELOW search bar) */}
+      {/*Sidebar + Cards (BELOW search bar) */}
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
         }}
       >
-        {/* Sidebar */}
+        {/*Sidebar*/}
         <FilterSidebar
           labs={labs}
           center={center}
@@ -213,7 +207,7 @@ const RadiologyFacilities = () => {
           showAll={true}
         />
 
-        {/* Facility Cards */}
+        {/*Facility Cards*/}
         <Box sx={{ flex: 1, px: 2 }}>
           <AllFacilityCards
             testData={paginatedTests}
@@ -221,7 +215,7 @@ const RadiologyFacilities = () => {
             center={center}
           />
 
-          {/* Pagination */}
+          {/*Pagination*/}
           {totalPages > 1 && (
             <Box display="flex" justifyContent="center" mt={3}>
               <Pagination

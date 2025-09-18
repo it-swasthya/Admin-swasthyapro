@@ -12,11 +12,12 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  TextField,
-  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { changeNavValue } from "../../Redux/reducer";
-import { useTheme, useMediaQuery } from "@mui/material";
 import { getRadiologyBookingColumn } from "../../components/columns/RadiologyBookingColumn";
 import { RadiologyAppointmentFlattenRow } from "../../utils/RadiologyBookingFlattenRow";
 
@@ -26,109 +27,130 @@ const RadiologyBooking = () => {
   const [error, setError] = useState(null);
 
   // Modal states
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedCenter, setSelectedCenter] = useState("");
-  const [price, setPrice] = useState("");
+  // const [openModal, setOpenModal] = useState(false);
+  // const [selectedUser, setSelectedUser] = useState(null);
+  // const [selectedCenter, setSelectedCenter] = useState("");
+  const [opentStatusUpdate, setStatusUpdate] = useState(false);
+  const [seletedPaymentMethod, setSelectedPaymentStatus] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const navigate = useNavigate();
+  // const [price, setPrice] = useState("");
 
- const getRadiologyBooking = async () => {
-  try {
-    Swal.fire({
-      title: "Loading...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+  // const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  // const navigate = useNavigate();
 
-    const response = await axios.get(
-      "https://api.swasthyapro.com/api/labs/get-radiology/bookings"
-    );
+  const getRadiologyBooking = async () => {
+    try {
+      Swal.fire({
+        title: "Loading...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-    const formatted = response.data.result.map((appointment) =>
-      RadiologyAppointmentFlattenRow(appointment)
-    );
+      const response = await axios.get(
+        "https://api.swasthyapro.com/api/labs/get-radiology/bookings"
+      );
 
+      const formatted = response.data.result.map((appointment) =>
+        RadiologyAppointmentFlattenRow(appointment)
+      );
 
-    setAppointment(formatted);
-  } catch (err) {
-    setError("Error fetching appointments");
-    console.error("Error fetching appointments:", err);
-  } finally {
-    Swal.close();
-  }
-};
+      setAppointment(formatted);
+    } catch (err) {
+      setError("Error fetching appointments");
+      console.error("Error fetching appointments:", err);
+    } finally {
+      Swal.close();
+    }
+  };
 
   useEffect(() => {
     dispatch(changeNavValue("Radiology Orders"));
     getRadiologyBooking();
   }, [dispatch]);
 
-  // Handle submit allot center
-  // const handleSubmitAllot = async () => {
-  //   if (!selectedCenter || !price) {
-  //     Swal.fire("Error", "Please select a center and enter price", "error");
-  //     return;
-  //   }
 
-  //   try {
-  //     // Show loading
-  //     Swal.fire({
-  //       title: "Allotting center...",
-  //       allowOutsideClick: false,
-  //       didOpen: () => {
-  //         Swal.showLoading();
-  //       },
-  //     });
+  const updatePaymentStatus = async () => {
+    setStatusUpdate(false);
+    Swal.fire({
+      title: "Updating...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    try {
+      const response = await axios.patch(
+        "https://api.swasthyapro.com/api/labs/radiology/RADBOOK698019/payment",
+        {
+          payment_status: seletedPaymentMethod,
+        }
+      );
 
-  //     // API request
-  //     await axios.post("https://api.swasthyapro.com/api/labs/allot-center", {
-  //       appointmentId: selectedUser.id,
-  //       center: selectedCenter,
-  //       price,
-  //     });
+      if (response.status === 200) {
+        getRadiologyBooking();
+        Swal.fire({
+          text: "Status updated",
+          icon: "success",
+          timer: 1000,
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        text: "Something went wrong",
+        icon: "error",
+        timer: 1000,
+      });
+    } finally {
+      Swal.close();
+    }
+  };
 
-  //     Swal.close(); // close loading
-  //     Swal.fire("Success", "Center allotted successfully!", "success");
+  const handleEditPayment = (order) => {
+    setSelectedOrder(order);
+    setStatusUpdate(true);
+  };
 
-  //     // Close modal & reset states
-  //     setOpenModal(false);
-  //     setSelectedCenter("");
-  //     setPrice("");
-  //     setSelectedUser(null);
-
-  //     // Refresh appointments
-  //     getRadiologyAppointments();
-  //   } catch (err) {
-  //     console.error("Error allotting center:", err);
-  //     Swal.close(); // close loading in case of error
-  //     Swal.fire("Error", "Failed to allot center", "error");
-  //   }
-  // };
-
-  const column = getRadiologyBookingColumn(
-  //   {
-  //   onCenterAllot: (user) => {
-  //     setSelectedUser(user);
-  //     setOpenModal(true);
-  //   },
-  // }
-);
+  const column = getRadiologyBookingColumn({ handleEditPayment , getRadiologyBooking });
 
   return (
     <>
-   <TableComponent
+      <TableComponent
         columns={column}
         data={appointment}
         flattenRow={RadiologyAppointmentFlattenRow}
         filename={"Radiology Appointments file"}
       />
-
-      
+      <Dialog open={opentStatusUpdate} onClose={() => setStatusUpdate(false)}>
+        <DialogTitle>Edit Payment Status</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
+            <InputLabel id="payment-status-label">Payment Status</InputLabel>
+            <Select
+              labelId="payment-status-label"
+              value={seletedPaymentMethod}
+              onChange={(e) => setSelectedPaymentStatus(e.target.value)}
+              label="Payment Status"
+            >
+              {["paid", "pending", "paid at centre", "partial paid"].map(
+                (status) => (
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                )
+              )}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setStatusUpdate(false)}>Cancel</Button>
+          <Button onClick={updatePaymentStatus} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

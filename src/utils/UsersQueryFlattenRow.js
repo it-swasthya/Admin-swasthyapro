@@ -17,3 +17,12 @@ const flattenQueryRow = (row) => ({
 });
 
 export default flattenQueryRow;
+
+
+
+
+
+
+
+
+

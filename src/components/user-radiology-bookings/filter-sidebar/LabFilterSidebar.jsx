@@ -6,51 +6,40 @@ import {
   ListItem,
   Checkbox,
   FormControlLabel,
-  useMediaQuery,
 } from "@mui/material";
 
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
 
 const FilterSidebar = ({
   labs,
-  testType,
+  center,
   onFilterChange,
   showAll = true,
 }) => {
-  const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-//   const [mobileOpen, setMobileOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState();
   const { facilityName } = useParams();
 
   useEffect(() => {
-    onFilterChange(testType || facilityName || "All");
-    setSelectedFilter(testType || facilityName || "All");
-  }, [testType]);
+    onFilterChange(center || facilityName || "All");
+    setSelectedFilter(center || facilityName || "All");
+  }, [center]);
 
   useEffect(() => {
-    onFilterChange(facilityName || testType || "All");
-    setSelectedFilter(facilityName || testType || "All");
+    onFilterChange(facilityName || center || "All");
+    setSelectedFilter(facilityName || center || "All");
   }, [facilityName]);
-//   const toggleDrawer = () => {
-//     setMobileOpen(!mobileOpen);
-//   };
 
   const handleCheckboxChange = (label) => {
     const newValue = selectedFilter === label ? "All" : label;
     setSelectedFilter(newValue);
     onFilterChange(newValue);
-    // if (isMobile) {
-    //   setMobileOpen(false);
-    // }
+   
   };
 
   const filterContent = (
     <Box sx={{ width: 260, height: "80vh" }}>
-      {/* Header with Close Button */}
       <Box
         sx={{
           display: "flex",

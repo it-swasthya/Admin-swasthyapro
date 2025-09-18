@@ -28,7 +28,6 @@ function AddPackages() {
   useEffect(() => {
     dispatch(changeNavValue(editData || editTest ? "Edit Package" : "Add Package"));
     const storedTests = JSON.parse(localStorage.getItem("selectedTests")) || [];
-    console.log(editData?.test_data)
     setSelectedTests(storedTests);
     const storedState = JSON.parse(localStorage.getItem("addPackageForm"));
     if (storedState || editTest) {

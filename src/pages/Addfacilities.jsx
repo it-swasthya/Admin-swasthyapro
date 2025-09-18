@@ -33,7 +33,6 @@ function AddFacilities() {
       });
 
       const data = await res.json();
-     console.log(data)
       if (res.ok) {
         setMessage('Facility added successfully!');
         setName('');

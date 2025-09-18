@@ -285,7 +285,6 @@ const [testForm, setTestForm] =useState({
       }
 
   const showLabPrices = (pkg) => {
-  console.log(pkg)
     const rows = Array.isArray(pkg.TestLabPrices) && pkg.TestLabPrices.length > 0
       ? pkg.TestLabPrices.map((pacakge, index) => {
           const rowClass = index % 2 === 1 ? "bg-green-100" : "";

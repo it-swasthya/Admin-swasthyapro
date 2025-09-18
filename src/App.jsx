@@ -34,6 +34,7 @@ import RadiologyFacilities from './pages/radiologyBooking/radiology-facilities';
 import BookTestForUser from './components/BookTestForUsers';
 import RadiologyBooking from './pages/radiologyBookingTable/RadiologyBooking';
 import RadiologyAppointments from './pages/radiologyAppointments/RadiologyAppointments';
+import GenerateINV from "./pages/generate-invoice/GenerateINV"
 const isAuthenticated = () => {
   return localStorage.getItem('isLoggedIn') === 'true';
 };
@@ -481,6 +482,23 @@ function App() {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="/generate-invoices"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <GenerateINV/>
+                
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
          
           <Route path="*" element={<NotFound   />} />
       </Routes>
@@ -490,7 +508,7 @@ function App() {
 
 const Layout = ({ children, activeMenu, setActiveMenu, sidebarOpen, setSidebarOpen, toggleSidebar }) => {
   return (
-    <div className="flex flex-row h-screen w-screen overflow-hidden bg-gray-100">
+    <div className="flex flex-row h-screen w-screen overflow-hidden">
     {/* Sidebar */}
     <Sidebar
       sidebarOpen={sidebarOpen}
