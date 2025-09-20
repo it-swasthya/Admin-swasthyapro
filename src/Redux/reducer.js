@@ -6,7 +6,11 @@ const getInitialCart = () => {
     const packages = JSON.parse(localStorage.getItem("packages")) || [];
     const radiology = JSON.parse(localStorage.getItem("radiology")) || [];
 
-    if (!Array.isArray(tests) || !Array.isArray(packages) || !Array.isArray(radiology)) {
+    if (
+      !Array.isArray(tests) ||
+      !Array.isArray(packages) ||
+      !Array.isArray(radiology)
+    ) {
       return [];
     }
 
@@ -29,17 +33,21 @@ const navBarSlice = createSlice({
     },
     addToCart: (state, action) => {
       const currentStored = JSON.parse(localStorage.getItem("tests")) || [];
-      const testIndex = currentStored.findIndex(t => t.name === action.payload.test.test_name);
+      const testIndex = currentStored.findIndex(
+        (t) => t.name === action.payload.test.test_name
+      );
       let updatedTests = [...currentStored];
 
       if (action.payload.isSelected) {
         if (testIndex !== -1) {
-          updatedTests = currentStored.filter((t) => t.name !== action.payload.test.test_name);
+          updatedTests = currentStored.filter(
+            (t) => t.name !== action.payload.test.test_name
+          );
         }
       } else {
         if (testIndex === -1) {
           updatedTests.push({
-            id:action.payload.test.id,
+            id: action.payload.test.id,
             name: action.payload.test.test_name,
             price: Number(action.payload.test.after_discount_price),
           });
@@ -51,17 +59,21 @@ const navBarSlice = createSlice({
     },
     addPackageToCart: (state, action) => {
       const currentStored = JSON.parse(localStorage.getItem("packages")) || [];
-      const packageIndex = currentStored.findIndex(pkg => pkg.name === action.payload.package.Package_type);
+      const packageIndex = currentStored.findIndex(
+        (pkg) => pkg.name === action.payload.package.Package_type
+      );
       let updatedPackages = [...currentStored];
 
       if (action.payload.isSelected) {
         if (packageIndex !== -1) {
-          updatedPackages = currentStored.filter((pkg) => pkg.name !== action.payload.package.Package_type);
+          updatedPackages = currentStored.filter(
+            (pkg) => pkg.name !== action.payload.package.Package_type
+          );
         }
       } else {
         if (packageIndex === -1) {
           updatedPackages.push({
-            id:action.payload.package.id,
+            id: action.payload.package.id,
             name: action.payload.package.Package_type,
             price: Number(action.payload.package.after_discount_price),
           });
@@ -74,42 +86,52 @@ const navBarSlice = createSlice({
     },
     addRadiologyItemToCart: (state, action) => {
       const currentStored = JSON.parse(localStorage.getItem("radiology")) || [];
-      const radiologyItem = currentStored.findIndex(pkg => pkg.id === action.payload.id);
+      const radiologyItem = currentStored.findIndex(
+        (pkg) => pkg.id === action.payload.id
+      );
       let updateRadiologyItem = [...currentStored];
-        if (radiologyItem !== -1) {
-          updateRadiologyItem = currentStored.filter((pkg) => pkg.id !== action.payload.id);
-        }else {
-          updateRadiologyItem.push({
-            id:action.payload.id,
-            name: action.payload.type_of_study,
-            price: Number(action.payload.swasthyapro_rate),
-          });
+      if (radiologyItem !== -1) {
+        updateRadiologyItem = currentStored.filter(
+          (pkg) => pkg.id !== action.payload.id
+        );
+      } else {
+        updateRadiologyItem.push({
+          id: action.payload.id,
+          name: action.payload.type_of_study,
+          price: Number(action.payload.swasthyapro_rate),
+        });
       }
-      
 
       localStorage.setItem("radiology", JSON.stringify(updateRadiologyItem));
 
       state.cart = getInitialCart();
-      // console.log(action.payload)
     },
     removeRadiologyItemFromCart: (state, action) => {
-  const currentStored = JSON.parse(localStorage.getItem("radiology")) || [];
+      const currentStored = JSON.parse(localStorage.getItem("radiology")) || [];
 
-  const updatedRadiologyItems = currentStored.filter(
-    (pkg) => pkg.id !== action.payload.id
-  );
+      const updatedRadiologyItems = currentStored.filter(
+        (pkg) => pkg.id !== action.payload.id
+      );
 
-  localStorage.setItem("radiology", JSON.stringify(updatedRadiologyItems));
+      localStorage.setItem("radiology", JSON.stringify(updatedRadiologyItems));
 
-  state.cart = getInitialCart();
-},
-clearCart:(state,action)=>{
-       state.cart = []
-}
+      state.cart = getInitialCart();
+    },
+    clearCart: (state, action) => {
+      state.cart = [];
+      localStorage.removeItem("radiology");
+    },
   },
 });
 
-export const { clearCart ,changeNavValue, addToCart, addPackageToCart, addRadiologyItemToCart,removeRadiologyItemFromCart } = navBarSlice.actions;
+export const {
+  clearCart,
+  changeNavValue,
+  addToCart,
+  addPackageToCart,
+  addRadiologyItemToCart,
+  removeRadiologyItemFromCart,
+} = navBarSlice.actions;
 export const navVal = (state) => state.navReducer.navBarValue;
 export const cartValue = (state) => state.navReducer.cart;
 

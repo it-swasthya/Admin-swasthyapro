@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { changeNavValue } from "../../Redux/reducer";
 import { DeleteIcon } from "lucide-react";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 const GenerateINV = () => {
   const dispatch = useDispatch();
@@ -33,6 +32,11 @@ const GenerateINV = () => {
     clientAddress: "",
   });
 
+  const [useIGST, setUseIGST] = useState(false);
+  const [cgstRate, setCgstRate] = useState(9);
+  const [sgstRate, setSgstRate] = useState(9);
+  const [igstRate, setIgstRate] = useState(18);
+
   const handleInvoiceChange = (field, value) => {
     setInvoiceDetails((prev) => ({ ...prev, [field]: value }));
   };
@@ -57,7 +61,6 @@ const GenerateINV = () => {
       },
     ]);
   };
-
   const handleRemoveRow = (id) => {
     if (rows.length === 1) {
       setRows([
@@ -66,7 +69,7 @@ const GenerateINV = () => {
           employeeName: "",
           empCode: "",
           desc: "",
-          hsnSac: "",
+          hsnSac: "998312",
           qty: 1,
           rate: 0,
         },
@@ -76,8 +79,15 @@ const GenerateINV = () => {
     setRows((prevRows) => prevRows.filter((row) => row.id !== id));
   };
 
+  // Totals
   const totalAmount = rows.reduce((sum, row) => sum + row.qty * row.rate, 0);
 
+  const cgstAmount = useIGST ? 0 : (totalAmount * cgstRate) / 100;
+  const sgstAmount = useIGST ? 0 : (totalAmount * sgstRate) / 100;
+  const igstAmount = useIGST ? (totalAmount * igstRate) / 100 : 0;
+
+  const totalGST = cgstAmount + sgstAmount + igstAmount;
+  const grandTotal = totalAmount + totalGST;
   const inputStyle = {
     width: "100%",
     padding: "10px 12px",
@@ -135,27 +145,60 @@ const GenerateINV = () => {
     });
 
     try {
-      // Construct payload
+      // const payload = {
+      //   supplier: {
+      //     name: "SwasthyaPro",
+      //     address: "D 90 LAJPAT NAGAR1 NEW DELHI-110024",
+      //     gstin: "07CAYPR5470F1Z0",
+      //     pan: "CAYPR5470F",
+      //     email: ["account@swasthyapro.com", "info@swasthyapro.com"],
+      //     phone: "7838109906",
+      //   },
+      //   invoice: {
+      //     number: "SP/2025/010",
+      //     date: invoiceDetails.invoiceDate,
+      //     placeOfSupply: invoiceDetails.placeOfSupply,
+      //     dueDate: invoiceDetails.dueDate,
+      //   },
+      //   billTo: {
+      //     name: invoiceDetails.billTo,
+      //     address: invoiceDetails.clientAddress,
+      //     gstin: invoiceDetails.gstin,
+      //   },
+      //   items: rows.map((row) => ({
+      //     employeeName: row.employeeName,
+      //     empCode: row.empCode,
+      //     desc: row.desc,
+      //     hsnSac: row.hsnSac,
+      //     qty: row.qty,
+      //     rate: row.rate,
+      //   })),
+      //   bank: {
+      //     accountName: "SwasthyaPro",
+      //     bankName: "HDFC Bank",
+      //     accountNo: "123456789012",
+      //     ifsc: "HDFC0001234",
+      //     upi: "swasthyapro@upi",
+      //   },
+      //   declaration:
+      //     "We declare that this invoice shows the actual price of the services rendered and that all particulars are true and correct.",
+      //   contentDisposition: "inline",
+      // };
+
       const payload = {
-        supplier: {
-          name: "SwasthyaPro",
-          address: "D 90 LAJPAT NAGAR1 NEW DELHI-110024",
-          gstin: "07CAYPR5470F1Z0",
-          pan: "CAYPR5470F",
-          email: ["account@swasthyapro.com", "info@swasthyapro.com"],
-          phone: "7838109906",
-        },
         invoice: {
-          number: "SP/2025/010", // you can generate dynamically
+          number: "TAXINV1",
           date: invoiceDetails.invoiceDate,
           placeOfSupply: invoiceDetails.placeOfSupply,
           dueDate: invoiceDetails.dueDate,
         },
+
         billTo: {
           name: invoiceDetails.billTo,
           address: invoiceDetails.clientAddress,
           gstin: invoiceDetails.gstin,
         },
+
         items: rows.map((row) => ({
           employeeName: row.employeeName,
           empCode: row.empCode,
@@ -164,16 +207,13 @@ const GenerateINV = () => {
           qty: row.qty,
           rate: row.rate,
         })),
-        bank: {
-          accountName: "SwasthyaPro",
-          bankName: "HDFC Bank",
-          accountNo: "123456789012",
-          ifsc: "HDFC0001234",
-          upi: "swasthyapro@upi",
+
+        taxes: {
+          cgst:!useIGST ?cgstRate : null,
+          sgst:!useIGST ? sgstRate : null,
+          igst:useIGST ? igstRate : null,
+          totalGst: totalGST || 0,
         },
-        declaration:
-          "We declare that this invoice shows the actual price of the services rendered and that all particulars are true and correct.",
-        contentDisposition: "inline",
       };
 
       const res = await fetch(
@@ -242,26 +282,26 @@ const GenerateINV = () => {
         }
       }
 
-      setInvoiceDetails({
-        invoiceDate: "",
-        placeOfSupply: "",
-        dueDate: "",
-        billTo: "",
-        gstin: "",
-        clientAddress: "",
-      });
-      setRows([
-        {
-          id: 1,
-          employeeName: "",
-          empCode: "",
-          desc: "",
-          hsnSac: "998312",
-          qty: 1,
-          rate: 0,
-        },
-      ]);
-
+      // setInvoiceDetails({
+      //   invoiceDate: "",
+      //   placeOfSupply: "",
+      //   dueDate: "",
+      //   billTo: "",
+      //   gstin: "",
+      //   clientAddress: "",
+      // });
+      // setRows([
+      //   {
+      //     id: 1,
+      //     employeeName: "",
+      //     empCode: "",
+      //     desc: "",
+      //     hsnSac: "998312",
+      //     qty: 1,
+      //     rate: 0,
+      //   },
+      // ]);
+ 
       Swal.fire({
         icon: "success",
         title: "Invoice Submitted!",
@@ -280,8 +320,8 @@ const GenerateINV = () => {
   };
 
   return (
-    <div style={{ padding: "24px", fontFamily: "Arial, sans-serif" }}>
-      <h2 style={{ marginBottom: "20px", color: "#333" }}>Create Invoice</h2>
+    <div style={{ padding: "10px", fontFamily: "Arial, sans-serif" }}>
+      {/* <h2 style={{ marginBottom: "20px", color: "#333" }}>Create Invoice</h2> */}
 
       {/* Invoice Header Section */}
       <div
@@ -530,6 +570,88 @@ const GenerateINV = () => {
         </table>
       </div>
 
+      <div
+        style={{
+          marginTop: "20px",
+          padding: "16px",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+        }}
+      >
+        <label>
+          <input
+            type="checkbox"
+            checked={useIGST}
+            onChange={(e) => setUseIGST(e.target.checked)}
+            style={{ marginRight: "8px" }}
+          />
+          Use IGST (instead of CGST + SGST)
+        </label>
+
+        {!useIGST && (
+          <div style={{ marginTop: "12px", display: "flex", gap: "20px" }}>
+            <div>
+              <label>CGST %</label>
+              <input
+                type="number"
+                value={cgstRate}
+                onChange={(e) => setCgstRate(Number(e.target.value))}
+                style={{
+                  width: "80px",
+                  marginLeft: "8px",
+                  border: "1px solid #ccc", // darker grey
+                  padding: "4px 6px",
+                  borderRadius: "4px",
+                }}
+              />
+              <span> → ₹{cgstAmount.toFixed(2)}</span>
+            </div>
+            <div>
+              <label>SGST %</label>
+              <input
+                type="number"
+                value={sgstRate}
+                onChange={(e) => setSgstRate(Number(e.target.value))}
+                style={{
+                  width: "80px",
+                  marginLeft: "8px",
+                  border: "1px solid #ccc", // darker grey
+                  padding: "4px 6px",
+                  borderRadius: "4px",
+                }}
+              />
+              <span> → ₹{sgstAmount.toFixed(2)}</span>
+            </div>
+          </div>
+        )}
+
+        {useIGST && (
+          <div style={{ marginTop: "12px" }}>
+            <label>IGST %</label>
+            <input
+              type="number"
+              value={igstRate}
+              onChange={(e) => setIgstRate(Number(e.target.value))}
+              style={{
+                width: "80px",
+                marginLeft: "8px",
+                border: "1px solid #ccc", // darker grey
+                padding: "4px 6px",
+                borderRadius: "4px",
+              }}
+            />
+            <span> → ₹{igstAmount.toFixed(2)}</span>
+          </div>
+        )}
+
+        <div style={{ marginTop: "16px", fontWeight: "600" }}>
+          Total GST: ₹{totalGST.toFixed(2)}
+        </div>
+        <div style={{ marginTop: "6px", fontWeight: "700", fontSize: "16px" }}>
+          Grand Total: ₹{grandTotal.toFixed(2)}
+        </div>
+      </div>
+
       <div style={{ marginTop: "20px", display: "flex", gap: "12px" }}>
         <button
           onClick={handleAddRow}
@@ -545,7 +667,6 @@ const GenerateINV = () => {
         >
           + Add Row
         </button>
-
         <button
           onClick={handleSubmit}
           style={{

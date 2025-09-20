@@ -1,14 +1,12 @@
-import { Button, IconButton, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText, Tooltip, Box } from '@mui/material';
+import {  IconButton, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText, Tooltip, Box } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-// import { IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateBookingStatusCell from '../user-radiology-bookings/bookinStatusCell/UpdateBookingStatus';
 export const getRadiologyBookingColumn = ({handleEditPayment,getRadiologyBooking}) => {
-  // Local component for Test Info Dialog
   const TestInfoCell = ({ row }) => {
     const [open, setOpen] = useState(false);
     const tests = row.original.testDetails || [];

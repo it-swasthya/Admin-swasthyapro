@@ -32,37 +32,13 @@ function Faq() {
           "https://api.swasthyapro.com/api/database/get-facility"
         );
         const data = await res.json();
-        setFacilities(data); 
+        setFacilities(data);
       } catch (error) {
         console.error("Error fetching facilities:", error);
       }
     };
-
     fetchFacilities();
   }, [dispatch, editData]);
-
-  // useEffect(() => {
-  //   if (formData.facility_id) {
-  //     const fetchDefaultTests = async () => {
-  //       setLoadingTests(true);
-  //       try {
-  //         const response = await fetch(
-  //           `https://api.swasthyapro.com/api/database/page/1/limit/10?q=${formData.facility_id}`
-  //         );
-  //         const result = await response.json();
-  //         setTestList(result.data || []);
-  //       } catch (err) {
-  //         console.error("Error loading default tests:", err);
-  //         setTestList([]);
-  //       } finally {
-  //         setLoadingTests(false);
-  //       }
-  //     };
-
-  //     fetchDefaultTests();
-  //   }
-  // }, [formData.facility_id]);
-
 
   useEffect(() => {
     if (editData) {
@@ -75,18 +51,18 @@ function Faq() {
     }
   }, [editData]);
 
-  const handleFacilitySelect = async(e) => {
+  const handleFacilitySelect = async (e) => {
     const selectedFacility = facilities.find((f) => f.id === e.target.value);
     setFormData((prev) => ({
       ...prev,
       facility_id: e.target.value,
-    }));
-    try {
+    })); 
+    try { 
       const response = await fetch(
         `https://api.swasthyapro.com/api/database/page/1/limit/1000?q=${selectedFacility.name || ""}`
       );
       const result = await response.json();
-      const formattedData = await decryptEncryptedData(result)
+      const formattedData = await decryptEncryptedData(result);
       setTestList(formattedData.data || []);
     } catch (err) {
       console.error("Error fetching test list:", err);
@@ -197,43 +173,44 @@ function Faq() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Search Test
             </label>
-           <Select
-  value={
-    formData.test_id
-      ? {
-          value: formData.test_id,
-          label: formData.test_name,
-        }
-      : null
-  }
-  onInputChange={(inputValue) => setSearchInput(inputValue)}
-  onChange={(selectedOption) => {
-    setFormData((prev) => ({
-      ...prev,
-      test_id: selectedOption?.value || "",
-      test_name: selectedOption?.label || "",
-    }));
-  }}
-  options={testList
-    .filter((test) =>
-      test.test_name.toLowerCase().includes(searchInput.toLowerCase())
-    )
-    .map((test) => ({
-      value: test.id,
-      label: test.test_name,
-    }))}
-  isLoading={loadingTests}
-  isClearable
-  placeholder="Search or select test..."
-  noOptionsMessage={() =>
-    searchInput && testList.length === 0
-      ? "No results found"
-      : "No tests available"
-  }
-  className="text-black"
-  isDisabled={formData.facility_id ? false :true}
-/>
-
+            <Select
+              value={
+                formData.test_id
+                  ? {
+                      value: formData.test_id,
+                      label: formData.test_name,
+                    }
+                  : null
+              }
+              onInputChange={(inputValue) => setSearchInput(inputValue)}
+              onChange={(selectedOption) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  test_id: selectedOption?.value || "",
+                  test_name: selectedOption?.label || "",
+                }));
+              }}
+              options={testList
+                .filter((test) =>
+                  test.test_name
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())
+                )
+                .map((test) => ({
+                  value: test.id,
+                  label: test.test_name,
+                }))}
+              isLoading={loadingTests}
+              isClearable
+              placeholder="Search or select test..."
+              noOptionsMessage={() =>
+                searchInput && testList.length === 0
+                  ? "No results found"
+                  : "No tests available"
+              }
+              className="text-black"
+              isDisabled={formData.facility_id ? false : true}
+            />
           </div>
 
           {/* FAQs */}
@@ -253,8 +230,9 @@ function Faq() {
                   }
                   className="w-full px-3 py-2 border rounded text-black"
                   required
-                  
-        disabled={formData.facility_id && formData.test_id ? false :true}
+                  disabled={
+                    formData.facility_id && formData.test_id ? false : true
+                  }
                 />
                 <input
                   type="text"
@@ -265,8 +243,9 @@ function Faq() {
                   }
                   className="w-full px-3 py-2 border rounded text-black"
                   required
-                    disabled={formData.facility_id && formData.test_id ? false :true}
-
+                  disabled={
+                    formData.facility_id && formData.test_id ? false : true
+                  }
                 />
                 {faqList.length > 1 && (
                   <button
