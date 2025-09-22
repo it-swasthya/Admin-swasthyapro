@@ -339,7 +339,6 @@ const OrderStatusCell = ({ order, getOrders }) => {
       userName: `${order.User.first_name} ${order.User.last_name}`,
     });
     setReportData(payload);
-    console.log("payload", payload);
   };
 
   return (

@@ -2,86 +2,64 @@ import { Button } from '@mui/material';
 
 export const getPrescriptionTableColumns = (onUpdateClick) => [
   {
-    accessorKey: 'full_name',
+    accessorKey: 'name',
     header: 'Full Name',
-    Cell: ({ row }) => `${row.original.first_name || ''} ${row.original.last_name || ''}`.trim() || 'N/A',
+    Cell: ({ cell }) => cell.getValue()  || "Guest",
     size: 180,
   },
   {
-    accessorKey: 'contact',
-    header: 'Contact',
-    Cell: ({ cell }) => cell.getValue() || 'N/A',
-    size: 120,
-  },
+  accessorKey: 'details',
+  header: 'Contact',
+  Cell: ({ cell }) => cell.getValue() || 'N/A',
+  size: 120,
+},
+
   {
-    accessorKey: 'email',
-    header: 'Email',
-    Cell: ({ cell }) => cell.getValue() || 'N/A',
-    size: 200,
-  },
-  {
-    accessorKey: 'address',
-    header: 'Address',
-    Cell: ({ cell }) => cell.getValue() || 'N/A',
-    size: 220,
-  },
-  {
-    accessorKey: 'prescription.name',
-    header: 'Prescription Name',
-    Cell: ({ row }) => row.original.prescription?.name || 'N/A',
-    size: 180,
-  },
-  {
-    accessorKey: 'prescription.createdAt',
+    accessorKey: 'createdAt',
     header: 'Date',
-    Cell: ({ row }) => row.original.prescription?.createdAt
-      ? new Date(row.original.prescription.createdAt).toLocaleDateString()
-      : 'N/A',
+    Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString()|| 'N/A',
     size: 130,
   },
+  // {
+  //   accessorKey: 'details',
+  //   header: 'Details',
+  //   Cell: ({ cell }) => cell.getValue() || 'N/A',
+  //   size: 200,
+  // },
   {
-    accessorKey: 'prescription.details',
-    header: 'Details',
-    Cell: ({ row }) => row.original.prescription?.details || 'N/A',
-    size: 200,
+    accessorKey: 'prescription_link',
+    header: 'Prescription Link',
+    Cell: ({ cell }) =>
+      cell.getValue() !== 'N/A' ? (
+        <a
+          href={cell.getValue()}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'blue', textDecoration: 'underline' }}
+        >
+          View
+        </a>
+      ) : (
+        'N/A'
+      ),
+    size: 160,
   },
- {
-  accessorKey: 'prescription.prescription_link',
-  header: 'Prescription Link',
-  Cell: ({ row }) => (
-        row.original.prescription?.prescription_link ? (
-      <a
-        href={row.original.prescription.prescription_link}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ color: 'blue', textDecoration: 'underline' }}
-      >
-        View
-      </a>
-    ) : (
-      'N/A'
-    )
-
-  ),
-  size: 160,
-}
-,
   {
-    accessorKey: 'prescription.status',
+    accessorKey: 'status',
     header: 'Status',
-    Cell: ({ row }) => row.original.prescription?.status || 'N/A',
+    Cell: ({ cell }) => cell.getValue() || 'N/A',
     size: 120,
   },
   {
-    accessorKey: 'prescription.seen',
+    accessorKey: 'seen',
     header: 'Seen',
-    Cell: ({ row }) => row.original.prescription?.seen ? 'Seen' : 'Not Seen',
+    Cell: ({ cell }) => cell.getValue() || 'Not Seen',
     size: 100,
   },
   {
-    accessorKey: 'prescription.remarks',
+    accessorKey: 'remark',
     header: 'Remark',
-    Cell: ({ row }) => row.original.prescription?.remarks || 'N/A',
+    Cell: ({ cell }) => cell.getValue() || 'N/A',
     size: 160,
   },
   {
@@ -91,7 +69,7 @@ export const getPrescriptionTableColumns = (onUpdateClick) => [
       <Button
         variant="outlined"
         size="small"
-        onClick={() => onUpdateClick(row.original.prescription)}
+        onClick={() => onUpdateClick(row.original)}
         sx={{ fontSize: '0.7rem', py: 0, px: 1 }}
       >
         Update

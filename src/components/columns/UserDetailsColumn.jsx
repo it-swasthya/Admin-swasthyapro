@@ -71,28 +71,28 @@ export const getUserTableColumns = ({
       </Button>
     ),
   },
-  {
-    header: 'Reports',
-    id: 'reports',
-    Cell: ({ row }) => (
-      <IconButton
-        onClick={() => onReportClick(row.original,'reports')}
-        color="success"
-      >
-        <InsertDriveFileIcon />
-      </IconButton>
-    ),
-  },
-  {
-    header: 'Prescriptions',
-    id: 'prescriptions',
-    Cell: ({ row }) => (
-      <IconButton
-        onClick={() => onPrescriptionClick(row.original , )}
-        color="warning"
-      >
-        <NotebookTabsIcon />
-      </IconButton>
-    ),
-  },
+  // {
+  //   header: 'Reports',
+  //   id: 'reports',
+  //   Cell: ({ row }) => (
+  //     <IconButton
+  //       onClick={() => onReportClick(row.original,'reports')}
+  //       color="success"
+  //     >
+  //       <InsertDriveFileIcon />
+  //     </IconButton>
+  //   ),
+  // },
+  // {
+  //   header: 'Prescriptions',
+  //   id: 'prescriptions',
+  //   Cell: ({ row }) => (
+  //     <IconButton
+  //       onClick={() => onPrescriptionClick(row.original , )}
+  //       color="warning"
+  //     >
+  //       <NotebookTabsIcon />
+  //     </IconButton>
+  //   ),
+  // },
 ];

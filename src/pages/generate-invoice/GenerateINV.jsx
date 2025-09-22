@@ -36,6 +36,7 @@ const GenerateINV = () => {
   const [cgstRate, setCgstRate] = useState(9);
   const [sgstRate, setSgstRate] = useState(9);
   const [igstRate, setIgstRate] = useState(18);
+  const [showEmployeeCols, setShowEmployeeCols] = useState(true); // toggle state
 
   const handleInvoiceChange = (field, value) => {
     setInvoiceDetails((prev) => ({ ...prev, [field]: value }));
@@ -145,45 +146,6 @@ const GenerateINV = () => {
     });
 
     try {
-      // const payload = {
-      //   supplier: {
-      //     name: "SwasthyaPro",
-      //     address: "D 90 LAJPAT NAGAR1 NEW DELHI-110024",
-      //     gstin: "07CAYPR5470F1Z0",
-      //     pan: "CAYPR5470F",
-      //     email: ["account@swasthyapro.com", "info@swasthyapro.com"],
-      //     phone: "7838109906",
-      //   },
-      //   invoice: {
-      //     number: "SP/2025/010",
-      //     date: invoiceDetails.invoiceDate,
-      //     placeOfSupply: invoiceDetails.placeOfSupply,
-      //     dueDate: invoiceDetails.dueDate,
-      //   },
-      //   billTo: {
-      //     name: invoiceDetails.billTo,
-      //     address: invoiceDetails.clientAddress,
-      //     gstin: invoiceDetails.gstin,
-      //   },
-      //   items: rows.map((row) => ({
-      //     employeeName: row.employeeName,
-      //     empCode: row.empCode,
-      //     desc: row.desc,
-      //     hsnSac: row.hsnSac,
-      //     qty: row.qty,
-      //     rate: row.rate,
-      //   })),
-      //   bank: {
-      //     accountName: "SwasthyaPro",
-      //     bankName: "HDFC Bank",
-      //     accountNo: "123456789012",
-      //     ifsc: "HDFC0001234",
-      //     upi: "swasthyapro@upi",
-      //   },
-      //   declaration:
-      //     "We declare that this invoice shows the actual price of the services rendered and that all particulars are true and correct.",
-      //   contentDisposition: "inline",
-      // };
 
       const payload = {
         invoice: {
@@ -282,25 +244,25 @@ const GenerateINV = () => {
         }
       }
 
-      // setInvoiceDetails({
-      //   invoiceDate: "",
-      //   placeOfSupply: "",
-      //   dueDate: "",
-      //   billTo: "",
-      //   gstin: "",
-      //   clientAddress: "",
-      // });
-      // setRows([
-      //   {
-      //     id: 1,
-      //     employeeName: "",
-      //     empCode: "",
-      //     desc: "",
-      //     hsnSac: "998312",
-      //     qty: 1,
-      //     rate: 0,
-      //   },
-      // ]);
+      setInvoiceDetails({
+        invoiceDate: "",
+        placeOfSupply: "",
+        dueDate: "",
+        billTo: "",
+        gstin: "",
+        clientAddress: "",
+      });
+      setRows([
+        {
+          id: 1,
+          employeeName: "",
+          empCode: "",
+          desc: "",
+          hsnSac: "998312",
+          qty: 1,
+          rate: 0,
+        },
+      ]);
  
       Swal.fire({
         icon: "success",
@@ -412,163 +374,187 @@ const GenerateINV = () => {
       </div>
 
       {/* Table Section */}
-      <div
-        style={{
-          overflowX: "auto",
-          borderRadius: "8px",
-          border: "1px solid #e0e0e0",
-          background: "#fff",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-        }}
-      >
-        <table
+       <div
+      style={{
+        overflowX: "auto",
+        borderRadius: "8px",
+        border: "1px solid #e0e0e0",
+        background: "#fff",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+      }}
+    >
+      {/* Toggle Button */}
+      <div style={{ padding: "10px" }}>
+        <button
+          onClick={() => setShowEmployeeCols(!showEmployeeCols)}
           style={{
-            borderCollapse: "collapse",
-            width: "100%",
-            minWidth: "900px",
+            padding: "4px 10px",
+            background: "#455a64",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            fontSize: "13px",
+            cursor: "pointer",
           }}
         >
-          <thead>
-            <tr style={{ backgroundColor: "#f4f6f8", textAlign: "center" }}>
-              {[
-                "S. No.",
-                "Employee Name",
-                "Emp. Code",
-                "Desc",
-                "HSN/SAC",
-                "Rate (₹)",
-                "Qty",
-                "Amount (₹)",
-                "Action",
-              ].map((head) => (
-                <th
-                  key={head}
+          {showEmployeeCols ? "Hide Employee Columns" : "Show Employee Columns"}
+        </button>
+      </div>
+
+      <table
+        style={{
+          borderCollapse: "collapse",
+          width: "100%",
+          minWidth: "900px",
+        }}
+      >
+        <thead>
+          <tr style={{ backgroundColor: "#f4f6f8", textAlign: "center" }}>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>S. No.</th>
+            {showEmployeeCols && (
+              <>
+                <th style={{ padding: "12px", border: "1px solid #ddd" }}>Employee Name</th>
+                <th style={{ padding: "12px", border: "1px solid #ddd" }}>Emp. Code</th>
+              </>
+            )}
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>Desc</th>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>HSN/SAC</th>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>Price (₹)</th>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>Qty</th>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>Amount (₹)</th>
+            <th style={{ padding: "12px", border: "1px solid #ddd" }}>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr key={row.id} style={{ textAlign: "center" }}>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>{index + 1}</td>
+
+              {showEmployeeCols && (
+                <>
+                  <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                    <input
+                      type="text"
+                      value={row.employeeName}
+                      onChange={(e) => handleChange(row.id, "employeeName", e.target.value)}
+                      style={inputStyle}
+                    />
+                  </td>
+                  <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                    <input
+                      type="text"
+                      value={row.empCode}
+                      onChange={(e) => handleChange(row.id, "empCode", e.target.value)}
+                      style={inputStyle}
+                    />
+                  </td>
+                </>
+              )}
+
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <input
+                  type="text"
+                  value={row.desc}
+                  onChange={(e) => handleChange(row.id, "desc", e.target.value)}
+                  style={inputStyle}
+                />
+              </td>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <input
+                  type="text"
+                  value={row.hsnSac}
+                  onChange={(e) => handleChange(row.id, "hsnSac", e.target.value)}
+                  style={inputStyle}
+                />
+              </td>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <input
+                  type="number"
+                  value={row.rate}
+                  onChange={(e) => handleChange(row.id, "rate", Number(e.target.value))}
+                  style={{ ...inputStyle, width: "90px", textAlign: "right" }}
+                />
+              </td>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <input
+                  type="number"
+                  value={row.qty}
+                  onChange={(e) => handleChange(row.id, "qty", Number(e.target.value))}
+                  style={{ ...inputStyle, width: "70px", textAlign: "right" }}
+                />
+              </td>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <strong>{row.qty * row.rate}</strong>
+              </td>
+              <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                <button
+                  onClick={() => handleRemoveRow(row.id)}
                   style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    fontSize: "14px",
-                    color: "#333",
+                    background: "#e53935",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    cursor: "pointer",
                   }}
                 >
-                  {head}
-                </th>
-              ))}
+                  <DeleteIcon size={14} />
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => (
-              <tr key={row.id} style={{ textAlign: "center" }}>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  {index + 1}
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="text"
-                    value={row.employeeName}
-                    onChange={(e) =>
-                      handleChange(row.id, "employeeName", e.target.value)
-                    }
-                    style={inputStyle}
-                  />
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="text"
-                    value={row.empCode}
-                    onChange={(e) =>
-                      handleChange(row.id, "empCode", e.target.value)
-                    }
-                    style={inputStyle}
-                  />
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="text"
-                    value={row.desc}
-                    onChange={(e) =>
-                      handleChange(row.id, "desc", e.target.value)
-                    }
-                    style={inputStyle}
-                  />
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="text"
-                    value={row.hsnSac}
-                    onChange={(e) =>
-                      handleChange(row.id, "hsnSac", e.target.value)
-                    }
-                    style={inputStyle}
-                  />
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="number"
-                    value={row.rate}
-                    onChange={(e) =>
-                      handleChange(row.id, "rate", Number(e.target.value))
-                    }
-                    style={{ ...inputStyle, width: "90px", textAlign: "right" }}
-                  />
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <input
-                    type="number"
-                    value={row.qty}
-                    onChange={(e) =>
-                      handleChange(row.id, "qty", Number(e.target.value))
-                    }
-                    style={{ ...inputStyle, width: "70px", textAlign: "right" }}
-                  />
-                </td>
+          ))}
 
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <strong>{row.qty * row.rate}</strong>
-                </td>
-                <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <button
-                    onClick={() => handleRemoveRow(row.id)}
-                    // disabled={rows.length === 1}
-                    style={{
-                      background: "#e53935",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "6px 12px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <DeleteIcon size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-            <tr style={{ backgroundColor: "#fafafa" }}>
-              <td
-                colSpan="7"
+          {/* Footer Row */}
+          <tr style={{ backgroundColor: "#fafafa" }}>
+            <td
+              style={{
+                padding: "10px",
+                border: "1px solid #ddd",
+                fontWeight: "600",
+                whiteSpace:'nowrap'
+              }}
+            >
+              <button
+                onClick={handleAddRow}
                 style={{
-                  textAlign: "right",
-                  padding: "12px",
-                  border: "1px solid #ddd",
+                  padding: "4px 10px",
+                  background: "#1976d2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "13px",
                   fontWeight: "600",
                 }}
               >
-                Total
-              </td>
-              <td
-                style={{
-                  padding: "12px",
-                  border: "1px solid #ddd",
-                  fontWeight: "600",
-                }}
-              >
-                {totalAmount}
-              </td>
-              <td style={{ border: "1px solid #ddd" }}></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                + Add Row
+              </button>
+            </td>
+            <td
+              colSpan={showEmployeeCols ? "6" : "4"}
+              style={{
+                textAlign: "right",
+                padding: "12px",
+                border: "1px solid #ddd",
+                fontWeight: "600",
+              }}
+            >
+              Total
+            </td>
+            <td
+              style={{
+                padding: "12px",
+                border: "1px solid #ddd",
+                fontWeight: "600",
+              }}
+            >
+              {totalAmount}
+            </td>
+            <td style={{ border: "1px solid #ddd" }}></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
       <div
         style={{
@@ -653,20 +639,7 @@ const GenerateINV = () => {
       </div>
 
       <div style={{ marginTop: "20px", display: "flex", gap: "12px" }}>
-        <button
-          onClick={handleAddRow}
-          style={{
-            padding: "10px 18px",
-            background: "#1976d2",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
-        >
-          + Add Row
-        </button>
+      
         <button
           onClick={handleSubmit}
           style={{

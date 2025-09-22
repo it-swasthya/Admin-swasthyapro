@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const getInitialCart = () => {
+const getInitialCart = () => { 
   try {
     const tests = JSON.parse(localStorage.getItem("tests")) || [];
     const packages = JSON.parse(localStorage.getItem("packages")) || [];

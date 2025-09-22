@@ -144,7 +144,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
     { name: "all-users", label: "Users", icon: <Users size={20} /> },
     { name: "user-Query", label: "Query", icon: <FileQuestion size={20} /> },
     { name: "user-invoices", label: "Invoices", icon: <FileScan size={20} /> },
-    { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> },
+    // { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> },
 
   ];
 

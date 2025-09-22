@@ -5,6 +5,7 @@ import {
   Checkbox,
   Chip,
   IconButton,
+  Switch,
   Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -190,26 +191,19 @@ export const getOrderTableColumns = ({
         </IconButton>
       ),
   },
-  {
-    header: "Report Shared",
-    id: "report_share",
-    Cell: ({ row }) => (
-      <Checkbox
-        variant="outlined"
-        size="small"
-        disabled={
-          (!row.original.dml_assigned &&
-            !row.original.sample_collected &&
-            !row.original.sample_received_by_lab) ||
-          row.original.report_shared
-        }
-        checked={row.original.report_shared}
-        onChange={() => onReportShareClick(row.original)}
-      >
-        {row.original.report_shared ? "Shared" : "Mark Shared"}
-      </Checkbox>
-    ),
-  },
+ 
+{
+  header: "Report Shared",
+  id: "report_share",
+  Cell: ({ row }) => (
+    <Switch
+      size="small"
+      color="primary"
+      checked ={row.original.report_shared}
+onChange={(event) => onReportShareClick(row.original, event.target.checked)}
+    />
+  ),
+},
   // {
   //   accessorKey: "dmlName",
   //   header: "DML-Name",

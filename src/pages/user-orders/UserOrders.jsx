@@ -122,9 +122,9 @@ const OrderExportTable = () => {
     setMethodStatus(true);
   };
 
-  const handleMarkReportShared = async (order) => {
+  const handleMarkReportShared = async (order, status) => {
     const result = await Swal.fire({
-      title: "Mark as Shared?",
+      title: `Mark as ${status? 'Shared' :'Unshared'}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes",
@@ -137,12 +137,15 @@ const OrderExportTable = () => {
         "https://api.swasthyapro.com/api/report/mark-report-shared",
         {
           booking_id: order.booking_id,
+          status
         }
-      );
-      Swal.fire("Success", "Marked as shared", "success");
-      fetchOrders();
+      ); 
+      Swal.fire("Success", `Marked as ${status? 'Shared' :'Unshared'}`, "success");
+     
     } catch (err) {
       Swal.fire("Error", err?.message || "Update failed", "error");
+    }finally{
+       fetchOrders();
     }
   };
 
@@ -281,7 +284,7 @@ const OrderExportTable = () => {
         );
 
      await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
-        "to": "91"+selectedOrder.User.contact,
+    "to": "91"+selectedOrder.User.contact,
     "invoice_no": createInvoiceResponse.data.invoice.id,
     "customer_name": selectedOrder.User.first_name,
     "email": selectedOrder.User.email,
