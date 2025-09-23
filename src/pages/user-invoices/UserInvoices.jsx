@@ -14,8 +14,6 @@ import { useNavigate } from "react-router-dom";
 const InvoiceTable = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
  const navigate = useNavigate()
   const dispatch = useDispatch();
 
@@ -42,14 +40,7 @@ const InvoiceTable = () => {
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row sm:justify-end gap-2">
-        <button
-          onClick={() => navigate("/generate-invoices")}
-          className=" h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
-        >
-          + Create Invoie
-        </button>
-      </div>
+      
       <TableComponent
       columns={column}
       data={invoices}

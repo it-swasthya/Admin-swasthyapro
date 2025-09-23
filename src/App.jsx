@@ -35,6 +35,8 @@ import BookTestForUser from './components/BookTestForUsers';
 import RadiologyBooking from './pages/radiologyBookingTable/RadiologyBooking';
 import RadiologyAppointments from './pages/radiologyAppointments/RadiologyAppointments';
 import GenerateINV from "./pages/generate-invoice/GenerateINV"
+import TaxInvoiceTable from "./pages/tax-invoices/Tax-invoices-table"
+import AllInvoices from "./pages/All-Invoices/All-Invoices"
 const isAuthenticated = () => {
   return localStorage.getItem('isLoggedIn') === 'true';
 };
@@ -426,7 +428,8 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 {/* <InvoiceTable/> */}
-                <InvoiceTable/>
+                {/* <InvoiceTable/> */}
+                <AllInvoices/>
               </Layout>
             </ProtectedRoute>
           }
@@ -499,6 +502,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
          
           <Route path="*" element={<NotFound   />} />
       </Routes>

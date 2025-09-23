@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { changeNavValue } from "../../Redux/reducer";
 import { DeleteIcon } from "lucide-react";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const GenerateINV = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const GenerateINV = () => {
 
   const [invoiceDetails, setInvoiceDetails] = useState({
     invoiceDate: "",
-    placeOfSupply: "",
+    placeOfSupply: "Delhi",
     dueDate: "",
     billTo: "",
     gstin: "",
@@ -147,9 +148,9 @@ const GenerateINV = () => {
 
     try {
 
-      const payload = {
+      const payloadForAdd = {
         invoice: {
-          number: "TAXINV1",
+          // number: "TAXINV1",
           date: invoiceDetails.invoiceDate,
           placeOfSupply: invoiceDetails.placeOfSupply,
           dueDate: invoiceDetails.dueDate,
@@ -174,10 +175,53 @@ const GenerateINV = () => {
           cgst:!useIGST ?cgstRate : null,
           sgst:!useIGST ? sgstRate : null,
           igst:useIGST ? igstRate : null,
+            cgst_amount:!useIGST ?cgstAmount : null,
+          sgst_amount:!useIGST ? sgstAmount : null,
+          igst_amount:useIGST ? igstAmount : null,
+          subtotal:totalAmount,
+          total:grandTotal,
           totalGst: totalGST || 0,
         },
       };
 
+      const addToDB = await axios.post("https://api.swasthyapro.com/api/invoice/tax-invoices/add" , payloadForAdd)
+
+      if(addToDB.status ===201){
+        const payloadForInvCreate = {
+        invoice: {
+          number:addToDB.data.data.invoice_id,
+          date: invoiceDetails.invoiceDate,
+          placeOfSupply: invoiceDetails.placeOfSupply,
+          dueDate: invoiceDetails.dueDate,
+        },
+
+        billTo: {
+          name: invoiceDetails.billTo,
+          address: invoiceDetails.clientAddress,
+          gstin: invoiceDetails.gstin,
+        },
+
+        items: rows.map((row) => ({
+          employeeName: row.employeeName,
+          empCode: row.empCode,
+          desc: row.desc,
+          hsnSac: row.hsnSac,
+          qty: row.qty,
+          rate: row.rate,
+        })),
+
+        taxes: {
+          cgst:!useIGST ?cgstRate : null,
+          sgst:!useIGST ? sgstRate : null,
+          igst:useIGST ? igstRate : null,
+            cgst_amount:!useIGST ?cgstAmount : null,
+          sgst_amount:!useIGST ? sgstAmount : null,
+          igst_amount:useIGST ? igstAmount : null,
+          subtotal:totalAmount,
+          total:grandTotal,
+          totalGst: totalGST || 0,
+        },
+      };
       const res = await fetch(
         "https://api.swasthyapro.com/api/invoice/tax-invoices/generate-pdf",
         {
@@ -186,7 +230,7 @@ const GenerateINV = () => {
             "Content-Type": "application/json",
             Accept: "application/pdf, application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payloadForInvCreate),
         }
       );
 
@@ -244,26 +288,6 @@ const GenerateINV = () => {
         }
       }
 
-      setInvoiceDetails({
-        invoiceDate: "",
-        placeOfSupply: "",
-        dueDate: "",
-        billTo: "",
-        gstin: "",
-        clientAddress: "",
-      });
-      setRows([
-        {
-          id: 1,
-          employeeName: "",
-          empCode: "",
-          desc: "",
-          hsnSac: "998312",
-          qty: 1,
-          rate: 0,
-        },
-      ]);
- 
       Swal.fire({
         icon: "success",
         title: "Invoice Submitted!",
@@ -271,6 +295,7 @@ const GenerateINV = () => {
       });
       const url = URL.createObjectURL(blob);
       window.open(url);
+      }
     } catch (error) {
       console.log(error);
       Swal.fire({
@@ -386,7 +411,17 @@ const GenerateINV = () => {
       {/* Toggle Button */}
       <div style={{ padding: "10px" }}>
         <button
-          onClick={() => setShowEmployeeCols(!showEmployeeCols)}
+          onClick={() => {setShowEmployeeCols(!showEmployeeCols); setRows([
+        {
+          id: 1,
+          employeeName: "",
+          empCode: "",
+          desc: "",
+          hsnSac: "998312",
+          qty: 1,
+          rate: 0,
+        },
+      ]);}}
           style={{
             padding: "4px 10px",
             background: "#455a64",
