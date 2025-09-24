@@ -19,7 +19,7 @@ import ViewPrescription from './pages/user-prescription/UserPrescription';
 // import { UserDetails } from './pages/UsersDetails';
 import CreateUserForm from './pages/CreateUserForm';
 // import { Query } from './pages/Query';
-// import InvoiceTable from './pages/InvoiceTable';
+import HospitalAppointmentTable from './pages/hospital-appointment/HospitalAppointmentTable';
 import UserEmailPaymentDetails from './pages/email-payment-details/EmailPayment';
 import Faq from './components/Faq';
 import FaqList from './components/FaqList';
@@ -395,6 +395,22 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 <RadiologyFacilities />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/hospital-appointment"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <HospitalAppointmentTable/>
               </Layout>
             </ProtectedRoute>
           }
