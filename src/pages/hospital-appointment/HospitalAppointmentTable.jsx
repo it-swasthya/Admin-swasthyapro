@@ -7,12 +7,13 @@ import TableComponent from "../../components/table/Table";
 import { getHospitalAppointmentTableColumns } from "../../components/columns/HospitalAppointmentColumn";
 import HospitalAppointmentflattenRow from "../../utils/HospitalAppointmentFlattenRow";
 
-const API_URL = "https://api.swasthyapro.com/api/appointment/ipd/all-appointment";
+const API_URL =
+  "https://api.swasthyapro.com/api/appointment/ipd/all-appointment";
 
-const HospitalAppointmentTable = () => {
+const HospitalAppointmentTable = () => { 
   const dispatch = useDispatch();
-  const [appointment, setAppointment] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [appointment,setAppointment] = useState([]);
+  const [loading,setLoading] = useState(false);
 
   const showLoader = () => {
     Swal.fire({
@@ -34,13 +35,10 @@ const HospitalAppointmentTable = () => {
     try {
       setLoading(true);
       showLoader();
-
       const res = await axios.get(API_URL, { signal });
-
       const list = Array.isArray(res?.data?.allIpdAppointment)
         ? res.data.allIpdAppointment
         : [];
-
       setAppointment(list);
     } catch (err) {
       if (axios.isCancel?.(err) || err?.name === "CanceledError") return;
@@ -66,21 +64,15 @@ const HospitalAppointmentTable = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-
-    // kick off fetch
     getHospitalAppointment(controller.signal);
     dispatch(changeNavValue("Hospital-Appointment"));
-
-    // cleanup: cancel request + close any loader
     return () => {
       controller.abort();
       closeLoaderIfOpen();
     };
   }, [dispatch, getHospitalAppointment]);
 
-  const columns = getHospitalAppointmentTableColumns({
-    // pass any actions/callbacks you need here
-  });
+  const columns = getHospitalAppointmentTableColumns({});
 
   return (
     <TableComponent

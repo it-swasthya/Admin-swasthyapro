@@ -148,11 +148,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
       label: "Hospital",
       icon: <SquarePlusIcon size={20} />,
       submenus: [
-        // {
-        //   name: "hospital-appointment",
-        //   label: "Orders",
-        //   icon: <Package size={20} />,
-        // },
+       
         {
           name: "hospital-appointment",
           label: "Appointments",
