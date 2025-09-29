@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Paper } from "@mui/material";
 
-const UserDetailsMobileView = ({ userData, handleOpenModal, handleBookTest }) => {
+const UserDetailsMobileView = ({
+  userData,
+  handleOpenModal,
+  handleBookTest,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredUsers = userData.filter((user) =>

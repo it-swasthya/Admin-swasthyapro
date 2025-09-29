@@ -9,8 +9,8 @@ function AddPackages() {
   const location = useLocation();
   const navigate = useNavigate();
   const editData = location.state?.packageData || null;
-  const editTest = location.state?.data || null
-  
+  const editTest = location.state?.data || null;
+
   const dispatch = useDispatch();
   const [packageName, setPackageName] = useState("");
   const [price, setPrice] = useState("");
@@ -24,9 +24,12 @@ function AddPackages() {
 
   const parsedPrice = parseFloat(price) || 0;
   const parsedDiscount = parseFloat(discount) || 0;
-  const calculatedAfterDiscount = parsedPrice - ((parsedPrice * parsedDiscount) / 100);
+  const calculatedAfterDiscount =
+    parsedPrice - (parsedPrice * parsedDiscount) / 100;
   useEffect(() => {
-    dispatch(changeNavValue(editData || editTest ? "Edit Package" : "Add Package"));
+    dispatch(
+      changeNavValue(editData || editTest ? "Edit Package" : "Add Package")
+    );
     const storedTests = JSON.parse(localStorage.getItem("selectedTests")) || [];
     setSelectedTests(storedTests);
     const storedState = JSON.parse(localStorage.getItem("addPackageForm"));
@@ -42,7 +45,10 @@ function AddPackages() {
       setTestDetails(storedState?.testDetails || "");
     }
     if (editData) {
-      localStorage.setItem("selectedTests", JSON.stringify(editData?.test_data));
+      localStorage.setItem(
+        "selectedTests",
+        JSON.stringify(editData?.test_data)
+      );
       setPackageName(editData?.package_name || "");
       setPrice(editData?.market_price || "");
       setDiscount(editData?.discount_percentage || "");
@@ -56,7 +62,7 @@ function AddPackages() {
     return () => {
       const allowedRoutes = ["/list-tests"];
       const nextPath = window.location.pathname;
-     
+
       if (!allowedRoutes.includes(nextPath)) {
         localStorage.removeItem("selectedTests");
         localStorage.removeItem("addPackageForm");
@@ -86,7 +92,7 @@ function AddPackages() {
       test_TAT: testTAT,
       Package_type: packageType,
     };
-  
+
     try {
       const action = editData || editTest ? "Update" : "Add";
       const confirmation = await Swal.fire({
@@ -99,9 +105,10 @@ function AddPackages() {
       });
 
       if (!confirmation.isConfirmed) return;
-      const url = editData || editTest
-        ? `https://api.swasthyapro.com/api/database/update-package/${editData?.id || editTest?.id}`
-        : "https://api.swasthyapro.com/api/database/add-package";
+      const url =
+        editData || editTest
+          ? `https://api.swasthyapro.com/api/database/update-package/${editData?.id || editTest?.id}`
+          : "https://api.swasthyapro.com/api/database/add-package";
       const method = editData || editTest ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -119,8 +126,8 @@ function AddPackages() {
           `Package ${action.toLowerCase()}d successfully`,
           "success"
         );
-        localStorage.removeItem("addPackageForm")
-        localStorage.removeItem("selectedTests")
+        localStorage.removeItem("addPackageForm");
+        localStorage.removeItem("selectedTests");
 
         navigate("/list-packages");
       } else {
@@ -149,7 +156,6 @@ function AddPackages() {
         sampleType,
         testTAT,
         testDetails,
-      
       })
     );
     navigate("/list-tests", {
@@ -326,7 +332,7 @@ function AddPackages() {
               type="submit"
               className="bg-blue-600 text-white px-6 py-2 rounded"
             >
-              {editData ||editTest ? "Update Package" : "Add Package"}
+              {editData || editTest ? "Update Package" : "Add Package"}
             </button>
           </div>
         </form>

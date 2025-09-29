@@ -29,14 +29,16 @@ const CouponTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
- const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const fetchCoupons = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://api.swasthyapro.com/api/coupons/all-coupon");
+      const response = await axios.get(
+        "https://api.swasthyapro.com/api/coupons/all-coupon"
+      );
       setCoupons(response.data || []);
       setFilteredCoupons(response.data || []);
     } catch (error) {
@@ -51,7 +53,7 @@ const CouponTable = () => {
   };
 
   useEffect(() => {
-    dispatch(changeNavValue('Coupon Table'))
+    dispatch(changeNavValue("Coupon Table"));
     fetchCoupons();
   }, []);
 
@@ -119,21 +121,23 @@ const CouponTable = () => {
         Swal.fire({
           icon: "error",
           title: "Deletion Failed",
-          text: error.response?.data?.message || "Could not delete coupon. Try again.",
+          text:
+            error.response?.data?.message ||
+            "Could not delete coupon. Try again.",
         });
       }
     }
   };
-const handleEdit = async (coupon) => {
-  const { value: formValues } = await Swal.fire({
-    title: "Edit Coupon",
-    width: 400, // Smaller width
-    showCancelButton: true,
-    confirmButtonText: "Update",
-    customClass: {
-      popup: "rounded-md",
-    },
-    html: `
+  const handleEdit = async (coupon) => {
+    const { value: formValues } = await Swal.fire({
+      title: "Edit Coupon",
+      width: 400, // Smaller width
+      showCancelButton: true,
+      confirmButtonText: "Update",
+      customClass: {
+        popup: "rounded-md",
+      },
+      html: `
       <style>
         .swal2-field-group {
           display: flex;
@@ -189,44 +193,53 @@ const handleEdit = async (coupon) => {
         <label for="edit_active">Active</label>
       </div>
     `,
-    focusConfirm: false,
-    preConfirm: () => {
-      const name = document.getElementById("edit_coupon_name").value.trim();
-      const discount = parseInt(document.getElementById("edit_discount").value);
-      const category = document.getElementById("edit_category").value.trim();
-      const valid_from = document.getElementById("edit_valid_from").value;
-      const valid_to = document.getElementById("edit_valid_to").value;
-      const active = document.getElementById("edit_active").checked;
+      focusConfirm: false,
+      preConfirm: () => {
+        const name = document.getElementById("edit_coupon_name").value.trim();
+        const discount = parseInt(
+          document.getElementById("edit_discount").value
+        );
+        const category = document.getElementById("edit_category").value.trim();
+        const valid_from = document.getElementById("edit_valid_from").value;
+        const valid_to = document.getElementById("edit_valid_to").value;
+        const active = document.getElementById("edit_active").checked;
 
-      if (!name || isNaN(discount) || !category || !valid_from || !valid_to) {
-        Swal.showValidationMessage("All fields must be filled correctly.");
-        return false;
+        if (!name || isNaN(discount) || !category || !valid_from || !valid_to) {
+          Swal.showValidationMessage("All fields must be filled correctly.");
+          return false;
+        }
+
+        return {
+          coupon_name: name,
+          discount_percentage: discount,
+          category,
+          valid_from,
+          valid_to,
+          active,
+        };
+      },
+    });
+    if (formValues) {
+      try {
+        const response = await axios.put(
+          `https://api.swasthyapro.com/api/coupons/edit-coupon/${coupon.id}`,
+          formValues
+        );
+        Swal.fire(
+          "Updated!",
+          response.data?.message || "Coupon updated successfully",
+          "success"
+        );
+        fetchCoupons();
+      } catch (error) {
+        Swal.fire(
+          "Error",
+          error.response?.data?.message || "Failed to update coupon",
+          "error"
+        );
       }
-
-      return {
-        coupon_name: name,
-        discount_percentage:discount,
-        category,
-        valid_from,
-        valid_to,
-        active,
-      };
-    },
-  });
-  if (formValues) {
-    try {
-      const response = await axios.put(
-        `https://api.swasthyapro.com/api/coupons/edit-coupon/${coupon.id}`,
-        formValues
-      );
-      Swal.fire("Updated!", response.data?.message || "Coupon updated successfully", "success");
-      fetchCoupons();
-    } catch (error) {
-      Swal.fire("Error", error.response?.data?.message || "Failed to update coupon", "error");
     }
-  }
-};
-
+  };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -260,93 +273,181 @@ const handleEdit = async (coupon) => {
         }}
       >
         {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="300px"
+          >
             <CircularProgress />
           </Box>
         ) : (
-          <Table stickyHeader aria-label="coupon table" sx={{ minWidth: 1500 }}
->
-         <TableHead>
-  <TableRow>
-    {[
-      "Coupon ID",
-      "Name",
-      "Discount (%)",
-      "Discount (₹)",
-      "Amount Range From (₹)",
-      "Amount Range To (₹)",
-      "Active",
-      "Category",
-      "Valid From",
-      "Valid To",
-      "Created At",
-      "Action",
-    ].map((head, idx) => (
-      <TableCell
-        key={idx}
-        align="center"
-        sx={{
-          background: "linear-gradient(90deg, #4b6cb7, #182848)",
-          color: "white",
-          fontWeight: "bold",
-          fontSize: "0.9rem",
-          padding: "6px 8px",
-        }}
-      >
-        {head}
-      </TableCell>
-    ))}
-  </TableRow>
-</TableHead>
+          <Table stickyHeader aria-label="coupon table" sx={{ minWidth: 1500 }}>
+            <TableHead>
+              <TableRow>
+                {[
+                  "Coupon ID",
+                  "Name",
+                  "Discount (%)",
+                  "Discount (₹)",
+                  "Amount Range From (₹)",
+                  "Amount Range To (₹)",
+                  "Active",
+                  "Category",
+                  "Valid From",
+                  "Valid To",
+                  "Created At",
+                  "Action",
+                ].map((head, idx) => (
+                  <TableCell
+                    key={idx}
+                    align="center"
+                    sx={{
+                      background: "linear-gradient(90deg, #4b6cb7, #182848)",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "0.9rem",
+                      padding: "6px 8px",
+                    }}
+                  >
+                    {head}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
 
+            <TableBody>
+              {filteredCoupons.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={13} align="center" sx={{ py: 2 }}>
+                    <span className="text-gray-500 text-sm">
+                      No coupons found.
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredCoupons
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((coupon, index) => (
+                    <TableRow hover key={index}>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(coupon.id, searchQuery)}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(coupon.coupon_name, searchQuery)}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          `${coupon.discount_percentage}%`,
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          `₹${coupon.discount_rupee}`,
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          `₹${coupon.amount_range_from}`,
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          `₹${coupon.amount_range_to}`,
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          coupon.active ? "Yes" : "No",
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(coupon.category, searchQuery)}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          new Date(coupon.valid_from).toLocaleDateString(),
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          new Date(coupon.valid_to).toLocaleDateString(),
+                          searchQuery
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        {highlightMatch(
+                          new Date(coupon.createdAt).toLocaleString(),
+                          searchQuery
+                        )}
+                      </TableCell>
 
-           <TableBody>
-  {filteredCoupons.length === 0 ? (
-    <TableRow>
-      <TableCell colSpan={13} align="center" sx={{ py: 2 }}>
-        <span className="text-gray-500 text-sm">No coupons found.</span>
-      </TableCell>
-    </TableRow>
-  ) : (
-    filteredCoupons
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((coupon, index) => (
-        <TableRow hover key={index}>
-          <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(coupon.id, searchQuery)}</TableCell>
-          <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(coupon.coupon_name, searchQuery)}</TableCell>
-         <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(`${coupon.discount_percentage}%`, searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(`₹${coupon.discount_rupee}`, searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(`₹${coupon.amount_range_from}`, searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(`₹${coupon.amount_range_to}`, searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(coupon.active ? "Yes" : "No", searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>{highlightMatch(coupon.category, searchQuery)}</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-  {highlightMatch(new Date(coupon.valid_from).toLocaleDateString(), searchQuery)}
-</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-  {highlightMatch(new Date(coupon.valid_to).toLocaleDateString(), searchQuery)}
-</TableCell>
-<TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-  {highlightMatch(new Date(coupon.createdAt).toLocaleString(), searchQuery)}
-</TableCell>
-
-          <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-            <Tooltip title="Edit Coupon">
-              <IconButton onClick={() => handleEdit(coupon)} color="primary" size="small">
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Coupon">
-              <IconButton onClick={() => handleDelete(coupon.id)} color="error" size="small">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </TableCell>
-        </TableRow>
-      ))
-  )}
-</TableBody>
-
+                      <TableCell
+                        align="center"
+                        sx={{ py: 0.5, fontSize: "0.75rem" }}
+                      >
+                        <Tooltip title="Edit Coupon">
+                          <IconButton
+                            onClick={() => handleEdit(coupon)}
+                            color="primary"
+                            size="small"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Coupon">
+                          <IconButton
+                            onClick={() => handleDelete(coupon.id)}
+                            color="error"
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              )}
+            </TableBody>
           </Table>
         )}
       </TableContainer>

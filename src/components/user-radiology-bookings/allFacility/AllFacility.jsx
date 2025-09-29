@@ -1,9 +1,22 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, useMediaQuery, Skeleton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  useMediaQuery,
+  Skeleton,
+} from "@mui/material";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import FacilityItem from "./FacilityCard";
 
-const AllFacilityCards = ({ testData, onNext, onBack, currentPage, totalPages, isLoading }) => {
+const AllFacilityCards = ({
+  testData,
+  onNext,
+  onBack,
+  currentPage,
+  totalPages,
+  isLoading,
+}) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -38,7 +51,7 @@ const AllFacilityCards = ({ testData, onNext, onBack, currentPage, totalPages, i
           {skeletons}
         </Box>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 0, pb: 1}}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0, pb: 1 }}>
           {testData.length > 0 ? (
             testData.map((data, index) => (
               <FacilityItem
@@ -48,11 +61,7 @@ const AllFacilityCards = ({ testData, onNext, onBack, currentPage, totalPages, i
               />
             ))
           ) : (
-            <Typography
-              color="error"
-              textAlign="center"
-              sx={{ width: "100%" }}
-            >
+            <Typography color="error" textAlign="center" sx={{ width: "100%" }}>
               Nothing to Show
             </Typography>
           )}

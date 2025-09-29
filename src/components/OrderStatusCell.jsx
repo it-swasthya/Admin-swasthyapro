@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 
 import {
   TableCell,
@@ -335,7 +335,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
     };
     setReportUserCred({
       userEmail: order.User.email,
-      orderID:order.booking_id,
+      orderID: order.booking_id,
       userName: `${order.User.first_name} ${order.User.last_name}`,
     });
     setReportData(payload);
@@ -345,57 +345,57 @@ const OrderStatusCell = ({ order, getOrders }) => {
     <>
       {/* Status Cell */}
 
-        <div className="flex whitespace-nowrap gap-1">
-          {order.status !== "cancelled" ? (
-            statusFields.map(({ label, key }) => {
-              const isActive = order?.[key];
-              const bgColor = isActive ? "#e6f4ea" : "#fdecea";
-              const textColor = isActive ? "#2e7d32" : "#c62828";
+      <div className="flex whitespace-nowrap gap-1">
+        {order.status !== "cancelled" ? (
+          statusFields.map(({ label, key }) => {
+            const isActive = order?.[key];
+            const bgColor = isActive ? "#e6f4ea" : "#fdecea";
+            const textColor = isActive ? "#2e7d32" : "#c62828";
 
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    px: 1.5,
-                    py: 0.5,
-                    backgroundColor: bgColor,
-                    color: textColor,
-                    borderRadius: "12px",
-                    fontWeight: 600,
-                    fontSize: "10px",
-                    minWidth: 60,
-                    textAlign: "center",
-                    border: `1px solid ${isActive ? "#a5d6a7" : "#ef9a9a"}`,
-                  }}
-                >
-                  {label}
-                </Box>
-              );
-            })
-          ) : (
-            <Box
-              sx={{
-                backgroundColor: "#fdecea",
-                color: "#c62828",
-                borderRadius: "12px",
-                fontWeight: 600,
-                fontSize: "10px",
-                px: 2,
-                py: 0.5,
-                border: "1px solid #ef9a9a",
-                lineHeight: 1.5,
-                alignItems: "end",
-                height: "24px",
-              }}
-            >
-              {"Cancelled"}
-            </Box>
-          )}
-        </div>
-        {order.status !== "cancelled" &&
-          Object.values(status).includes(false) && (
-            <div className="flex justify-center">
-            <Tooltip title="Edit Status" sx={{margin:"0 auto"}}>
+            return (
+              <Box
+                key={key}
+                sx={{
+                  px: 1.5,
+                  py: 0.5,
+                  backgroundColor: bgColor,
+                  color: textColor,
+                  borderRadius: "12px",
+                  fontWeight: 600,
+                  fontSize: "10px",
+                  minWidth: 60,
+                  textAlign: "center",
+                  border: `1px solid ${isActive ? "#a5d6a7" : "#ef9a9a"}`,
+                }}
+              >
+                {label}
+              </Box>
+            );
+          })
+        ) : (
+          <Box
+            sx={{
+              backgroundColor: "#fdecea",
+              color: "#c62828",
+              borderRadius: "12px",
+              fontWeight: 600,
+              fontSize: "10px",
+              px: 2,
+              py: 0.5,
+              border: "1px solid #ef9a9a",
+              lineHeight: 1.5,
+              alignItems: "end",
+              height: "24px",
+            }}
+          >
+            {"Cancelled"}
+          </Box>
+        )}
+      </div>
+      {order.status !== "cancelled" &&
+        Object.values(status).includes(false) && (
+          <div className="flex justify-center">
+            <Tooltip title="Edit Status" sx={{ margin: "0 auto" }}>
               <IconButton
                 size="small"
                 onClick={() => {
@@ -416,9 +416,8 @@ const OrderStatusCell = ({ order, getOrders }) => {
                 <EditIcon fontSize="small" style={{ color: "#333" }} />
               </IconButton>
             </Tooltip>
-            </div>
-          )}
-     
+          </div>
+        )}
 
       {/* Upload Button Cell */}
       {/* <TableCell align="center">
@@ -460,160 +459,166 @@ const OrderStatusCell = ({ order, getOrders }) => {
       </TableCell> */}
 
       {/* Status Dialog */}
-  {open &&
-  ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="animate-fadeInScale bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-300 dark:border-gray-700 w-full max-w-md p-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-              Order Status for {order.User.first_name}
-            </h3>
+      {open &&
+        ReactDOM.createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div className="animate-fadeInScale bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-300 dark:border-gray-700 w-full max-w-md p-6">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                Order Status for {order.User.first_name}
+              </h3>
 
-            <ul className="divide-y divide-gray-200 dark:divide-gray-600 border rounded-lg overflow-hidden mb-4">
-              {statusFields.map(({ label, key }) => (
-                <li key={key} className="px-3 py-2 bg-white dark:bg-gray-700">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2">
-                      <input
-                        id={`${key}-checkbox`}
-                        type="checkbox"
-                        checked={status[key]}
-                        onChange={() => handleCheckboxChange(key)}
-                        className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
-                      />
-                      <label
-                        htmlFor={`${key}-checkbox`}
-                        className="text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {label}
-                      </label>
+              <ul className="divide-y divide-gray-200 dark:divide-gray-600 border rounded-lg overflow-hidden mb-4">
+                {statusFields.map(({ label, key }) => (
+                  <li key={key} className="px-3 py-2 bg-white dark:bg-gray-700">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2">
+                        <input
+                          id={`${key}-checkbox`}
+                          type="checkbox"
+                          checked={status[key]}
+                          onChange={() => handleCheckboxChange(key)}
+                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
+                        />
+                        <label
+                          htmlFor={`${key}-checkbox`}
+                          className="text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          {label}
+                        </label>
+                      </div>
+
+                      {status[key] &&
+                        label !== "Sample received by lab" &&
+                        label !== "Sample collected" && (
+                          <button
+                            disabled={disableDMLFields}
+                            onClick={() => sendEmailForStatus(key)}
+                            className={`bg-white text-blue-600 small hover:text-blue-800 transition ${
+                              disableDMLFields
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }`}
+                          >
+                            Send Email
+                          </button>
+                        )}
                     </div>
+                    {/* || key==='sample_collected' */}
+                    {key === "dml_assigned" &&
+                      status[key] &&
+                      !hideDMLInputs && (
+                        <div className="mt-3 grid grid-cols-1 gap-2 px-2">
+                          <input
+                            type="date"
+                            placeholder="Date"
+                            className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
+                            value={dmlData.date}
+                            onChange={(e) =>
+                              setDmlData({ ...dmlData, date: e.target.value })
+                            }
+                          />
+                          <input
+                            type="text"
+                            placeholder="DML Name"
+                            className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
+                            value={dmlData.dmlName}
+                            onChange={(e) =>
+                              setDmlData({
+                                ...dmlData,
+                                dmlName: e.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            type="email"
+                            placeholder="DML Email"
+                            className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
+                            value={dmlEmail}
+                            onChange={(e) => setDMLemail(e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="DML Contact"
+                            className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
+                            value={dmlData.dmlContact}
+                            onChange={(e) =>
+                              setDmlData({
+                                ...dmlData,
+                                dmlContact: Number(e.target.value),
+                              })
+                            }
+                          />
+                          <input
+                            type="time"
+                            className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
+                            value={dmlData.time}
+                            onChange={(e) =>
+                              setDmlData({ ...dmlData, time: e.target.value })
+                            }
+                          />
+                          <button
+                            onClick={() => sendEmailForStatus(key)}
+                            className={`bg-white text-blue-600 hover:text-blue-800 transition ${
+                              disableDMLFields
+                                ? "cursor-not-allowed opacity-50"
+                                : ""
+                            }`}
+                          >
+                            Send Email
+                          </button>
+                        </div>
+                      )}
+                    {key === "dml_assigned" && status[key] && hideDMLInputs && (
+                      <p className="text-md text-white italic mt-2">
+                        DML has been assigned and email already sent.
+                      </p>
+                    )}
 
-                    {status[key] &&
-                      label !== "Sample received by lab" &&
-                      label !== "Sample collected" && (
+                    {key === "sample_collected" && status[key] && (
+                      <div className="mt-3 grid grid-cols-1 gap-2 px-2">
                         <button
                           disabled={disableDMLFields}
-                          onClick={() => sendEmailForStatus(key)}
-                          className={`bg-white text-blue-600 small hover:text-blue-800 transition ${
+                          className={`bg-white text-blue-600 hover:text-blue-800 transition ${
                             disableDMLFields
                               ? "opacity-50 cursor-not-allowed"
                               : ""
                           }`}
+                          onClick={() => {
+                            handleSendSampleMail(key);
+                          }}
                         >
-                          Send Email
+                          Send Mail
                         </button>
-                      )}
-                  </div>
-                  {/* || key==='sample_collected' */}
-                  {key === "dml_assigned" && status[key] && !hideDMLInputs && (
-                    <div className="mt-3 grid grid-cols-1 gap-2 px-2">
-                      <input
-                        type="date"
-                        placeholder="Date"
-                        className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
-                        value={dmlData.date}
-                        onChange={(e) =>
-                          setDmlData({ ...dmlData, date: e.target.value })
-                        }
-                      />
-                      <input
-                        type="text"
-                        placeholder="DML Name"
-                        className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
-                        value={dmlData.dmlName}
-                        onChange={(e) =>
-                          setDmlData({ ...dmlData, dmlName: e.target.value })
-                        }
-                      />
-                      <input
-                        type="email"
-                        placeholder="DML Email"
-                        className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
-                        value={dmlEmail}
-                        onChange={(e) => setDMLemail(e.target.value)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="DML Contact"
-                        className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
-                        value={dmlData.dmlContact}
-                        onChange={(e) =>
-                          setDmlData({
-                            ...dmlData,
-                            dmlContact: Number(e.target.value),
-                          })
-                        }
-                      />
-                      <input
-                        type="time"
-                        className="p-2 text-sm border rounded-md dark:bg-gray-600 dark:text-white"
-                        value={dmlData.time}
-                        onChange={(e) =>
-                          setDmlData({ ...dmlData, time: e.target.value })
-                        }
-                      />
-                      <button
-                        onClick={() => sendEmailForStatus(key)}
-                        className={`bg-white text-blue-600 hover:text-blue-800 transition ${
-                          disableDMLFields
-                            ? "cursor-not-allowed opacity-50"
-                            : ""
-                        }`}
-                      >
-                        Send Email
-                      </button>
-                    </div>
-                  )}
-                  {key === "dml_assigned" && status[key] && hideDMLInputs && (
-                    <p className="text-md text-white italic mt-2">
-                      DML has been assigned and email already sent.
-                    </p>
-                  )}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
 
-                  {key === "sample_collected" && status[key] && (
-                    <div className="mt-3 grid grid-cols-1 gap-2 px-2">
-                      <button
-                        disabled={disableDMLFields}
-                        className={`bg-white text-blue-600 hover:text-blue-800 transition ${
-                          disableDMLFields
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                        onClick={() => {
-                          handleSendSampleMail(key);
-                        }}
-                      >
-                        Send Mail
-                      </button>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex justify-end gap-2 mt-6">
-              <button
-                onClick={() => {
-                  setStatus(originalStatus);
-                  setOpen(false);
-                }}
-                className="px-4 py-2 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  updateStatus();
-                  setOpen(false);
-                }}
-                className="px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
-              >
-                Update Status
-              </button>
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  onClick={() => {
+                    setStatus(originalStatus);
+                    setOpen(false);
+                  }}
+                  className="px-4 py-2 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    updateStatus();
+                    setOpen(false);
+                  }}
+                  className="px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
+                >
+                  Update Status
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-     ,document.body )}
+          </div>,
+          document.body
+        )}
 
       {/* Upload Report Modal */}
       {/* <UploadModal

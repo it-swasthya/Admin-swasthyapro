@@ -43,7 +43,6 @@ const Query = () => {
       );
       setData(response.data.data || []);
       setFilteredData(response.data.data || []);
-
     } catch (err) {
       console.error(err);
     } finally {
@@ -56,7 +55,6 @@ const Query = () => {
     getQueries();
   }, []);
 
-  
   const onInfoClick = (query) => {
     setSelectedQuery(query);
     setOpen(true);
@@ -74,7 +72,11 @@ const Query = () => {
   return (
     <>
       {isMobile ? (
-        <MobileViewQuery data={data}  filteredData={filteredData} handleShowForm={handleShowForm}/>
+        <MobileViewQuery
+          data={data}
+          filteredData={filteredData}
+          handleShowForm={handleShowForm}
+        />
       ) : (
         <TableComponent
           columns={column}

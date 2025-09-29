@@ -14,16 +14,15 @@ export const getRadiologyAppointmentTableColumns = ({
     size: 180,
   },
   { accessorKey: "contact", header: "Contact", size: 140 },
- {
-  accessorKey: "email",
-  header: "Email",
-  size: 180,
-  Cell: ({ cell }) => {
-    const email = cell.getValue();
-    return email ? email : <span style={{ color: "gray" }}>N/A</span>;
+  {
+    accessorKey: "email",
+    header: "Email",
+    size: 180,
+    Cell: ({ cell }) => {
+      const email = cell.getValue();
+      return email ? email : <span style={{ color: "gray" }}>N/A</span>;
+    },
   },
-},
-
 
   {
     accessorKey: "prescription_file",
@@ -49,16 +48,13 @@ export const getRadiologyAppointmentTableColumns = ({
       );
     },
   },
-{
-  accessorKey: "createdAt",
-  header: "Date",
-  size: 140,
-  Cell: ({ cell }) => {
-    const dateValue = cell.getValue();
-    return dateValue
-      ? new Date(dateValue).toLocaleDateString()
-      : "N/A";
+  {
+    accessorKey: "createdAt",
+    header: "Date",
+    size: 140,
+    Cell: ({ cell }) => {
+      const dateValue = cell.getValue();
+      return dateValue ? new Date(dateValue).toLocaleDateString() : "N/A";
+    },
   },
-},
- 
 ];

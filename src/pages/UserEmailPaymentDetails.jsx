@@ -11,7 +11,12 @@ import {
   TextField,
   TablePagination,
   CircularProgress,
-  useMediaQuery, useTheme, Card, CardContent, Typography, Divider 
+  useMediaQuery,
+  useTheme,
+  Card,
+  CardContent,
+  Typography,
+  Divider,
 } from "@mui/material";
 
 import { useDispatch } from "react-redux";
@@ -26,8 +31,8 @@ const PaymentsTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDirection, setSortDirection] = useState("desc");
   const [loading, setLoading] = useState(true);
-const theme = useTheme();
-const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -181,7 +186,10 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
                       </Typography>
                       <Typography variant="body2">
                         <strong>Invoice:</strong>{" "}
-                        {highlightMatch(invoice.invoice_id || "N/A", searchQuery)}
+                        {highlightMatch(
+                          invoice.invoice_id || "N/A",
+                          searchQuery
+                        )}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Email:</strong>{" "}
@@ -202,28 +210,37 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
                       <Typography variant="body2">
                         <strong>Packages:</strong>{" "}
                         {highlightMatch(
-                          invoice.packages?.map((p) => p.name).join(", ") || "N/A",
+                          invoice.packages?.map((p) => p.name).join(", ") ||
+                            "N/A",
                           searchQuery
                         )}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Amount:</strong> ₹
-                        {highlightMatch(invoice.amount?.toString() || "0", searchQuery)}
+                        {highlightMatch(
+                          invoice.amount?.toString() || "0",
+                          searchQuery
+                        )}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Payment Method:</strong>{" "}
-                        {highlightMatch(invoice.payment_method || "N/A", searchQuery)}
+                        {highlightMatch(
+                          invoice.payment_method || "N/A",
+                          searchQuery
+                        )}
                       </Typography>
                       <Typography variant="body2">
                         <strong>Status:</strong>{" "}
-                        {highlightMatch(invoice.payment_status || "N/A", searchQuery)}
+                        {highlightMatch(
+                          invoice.payment_status || "N/A",
+                          searchQuery
+                        )}
                       </Typography>
                     </CardContent>
                   </Card>
                 ))
             )}
-            </div>
-         
+          </div>
         </>
       )}
     </Paper>

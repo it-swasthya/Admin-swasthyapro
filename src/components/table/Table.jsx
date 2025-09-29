@@ -1,19 +1,18 @@
-import React from 'react';
+import React from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table';
-import { Box, Button } from '@mui/material';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { mkConfig, generateCsv, download } from 'export-to-csv';
+} from "material-react-table";
+import { Box, Button } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { mkConfig, generateCsv, download } from "export-to-csv";
 
-
-const TableComponent = ({ columns, data ,flattenRow , filename }) => {
+const TableComponent = ({ columns, data, flattenRow, filename }) => {
   const csvConfig = mkConfig({
-    fieldSeparator: ',',
-    decimalSeparator: '.',
+    fieldSeparator: ",",
+    decimalSeparator: ".",
     useKeysAsHeaders: true,
-    filename:filename,
+    filename: filename,
   });
 
   const handleExportRows = (rows) => {
@@ -32,18 +31,22 @@ const TableComponent = ({ columns, data ,flattenRow , filename }) => {
     columns,
     data,
     enableRowSelection: true,
-    columnFilterDisplayMode: 'popover',
-    paginationDisplayMode: 'pages',
-    positionToolbarAlertBanner: 'bottom',
+    columnFilterDisplayMode: "popover",
+    paginationDisplayMode: "pages",
+    positionToolbarAlertBanner: "bottom",
 
     renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', gap: '16px', padding: '8px', flexWrap: 'wrap' }}>
+      <Box
+        sx={{ display: "flex", gap: "16px", padding: "8px", flexWrap: "wrap" }}
+      >
         <Button onClick={handleExportData} startIcon={<FileDownloadIcon />}>
           Export All Data
         </Button>
         <Button
           disabled={table.getPrePaginationRowModel().rows.length === 0}
-          onClick={() => handleExportRows(table.getPrePaginationRowModel().rows)}
+          onClick={() =>
+            handleExportRows(table.getPrePaginationRowModel().rows)
+          }
           startIcon={<FileDownloadIcon />}
         >
           Export All Rows

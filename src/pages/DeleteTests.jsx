@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem ,
+  MenuItem,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -39,11 +39,11 @@ import AddParameterModal from "../components/AddParamter.modal";
 import axios from "axios";
 import { LabCustomModal } from "../components/LabPricesShowModal";
 import { Eye } from "lucide-react";
-import {decryptEncryptedData} from "../utils/DecodeFormatData"
+import { decryptEncryptedData } from "../utils/DecodeFormatData";
 
 // Table column definitions
-const columns = [ 
-   { id: "test_id", label: "Test ID", minWidth: 150 },
+const columns = [
+  { id: "test_id", label: "Test ID", minWidth: 150 },
   { id: "test_name", label: "Test Name", minWidth: 150 },
   { id: "facility_name", label: "Facility Name", minWidth: 150 },
   { id: "market_price", label: "Market Price", minWidth: 100, align: "right" },
@@ -55,7 +55,7 @@ const columns = [
   },
   { id: "test_details", label: "Details", align: "center" },
   { id: "total_parameters", label: "Parameters", align: "center" },
-    { id: "TestLabPrices", label: "Test Lab Prices", align: "center" },
+  { id: "TestLabPrices", label: "Test Lab Prices", align: "center" },
 
   { id: "parameters", label: "Add Parameters", align: "center" },
   { id: "labs", label: "Add Test to Labs", align: "center" },
@@ -113,22 +113,20 @@ export default function StickyHeadTable() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const showCheckbox = location.state !== null;
-const [openTestModal, setOpenTestModal] = React.useState(false);
-const [testForm, setTestForm] = React.useState({
-  lab_id: "",
-  CPT: "",
-  CPRT: "",
-});
-const [submitting, setSubmitting] = React.useState(false);
-const [labOptions, setLabOptions] = React.useState([]);
+  const [openTestModal, setOpenTestModal] = React.useState(false);
+  const [testForm, setTestForm] = React.useState({
+    lab_id: "",
+    CPT: "",
+    CPRT: "",
+  });
+  const [submitting, setSubmitting] = React.useState(false);
+  const [labOptions, setLabOptions] = React.useState([]);
 
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalTitle, setModalTitle] = React.useState("");
   const [modalContent, setModalContent] = React.useState("");
 
-
-
-   const fetchData = async () => {
+  const fetchData = async () => {
     dispatch(changeNavValue("Tests List"));
     setLoading(true);
     try {
@@ -136,7 +134,7 @@ const [labOptions, setLabOptions] = React.useState([]);
         `https://api.swasthyapro.com/api/database/page/${page + 1}/limit/${rowsPerPage}?q=${searchTerm}`
       );
       const data = await res.json();
-      const decodedData  = await decryptEncryptedData(data)
+      const decodedData = await decryptEncryptedData(data);
       setTotalItems(decodedData.totalCount);
       setRows(decodedData.data || []);
       setTotalPages(decodedData.totalPages || 1);
@@ -147,66 +145,62 @@ const [labOptions, setLabOptions] = React.useState([]);
     }
   };
 
-
-const handleTestFormChange = (field, value) => {
-  setTestForm((prev) => ({ ...prev, [field]: value }));
-};
-
-// Fetch lab list for dropdown
-React.useEffect(() => {
-  if (openTestModal && labOptions.length === 0) {
-    axios
-      .get("https://api.swasthyapro.com/api/labs/get-all-lab")
-      .then((res) => {
-        const data = res.data.data || [];
-        setLabOptions(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching lab options:", err);
-      });
-  }
-}, [openTestModal, labOptions.length]);
-
-
-const handleSubmitTestLab = () => {
-  const payload = {
-    ...testForm,
-    test_id: selectedTest?.id || null,
-    CPT: parseFloat(testForm.CPT),
-    CPRT: parseFloat(testForm.CPRT),
+  const handleTestFormChange = (field, value) => {
+    setTestForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  setSubmitting(true);
-  axios
-    .post("https://api.swasthyapro.com/api/labs/add-test-lab", payload)
-    .then((res) => {
-      setOpenTestModal(false);
-      setTestForm({lab_id: "", CPT: "", CPRT: "" });
+  // Fetch lab list for dropdown
+  React.useEffect(() => {
+    if (openTestModal && labOptions.length === 0) {
+      axios
+        .get("https://api.swasthyapro.com/api/labs/get-all-lab")
+        .then((res) => {
+          const data = res.data.data || [];
+          setLabOptions(data);
+        })
+        .catch((err) => {
+          console.error("Error fetching lab options:", err);
+        });
+    }
+  }, [openTestModal, labOptions.length]);
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Test Lab Added',
-        text: 'The test lab was added successfully!',
-        confirmButtonColor: '#3085d6',
+  const handleSubmitTestLab = () => {
+    const payload = {
+      ...testForm,
+      test_id: selectedTest?.id || null,
+      CPT: parseFloat(testForm.CPT),
+      CPRT: parseFloat(testForm.CPRT),
+    };
+
+    setSubmitting(true);
+    axios
+      .post("https://api.swasthyapro.com/api/labs/add-test-lab", payload)
+      .then((res) => {
+        setOpenTestModal(false);
+        setTestForm({ lab_id: "", CPT: "", CPRT: "" });
+
+        Swal.fire({
+          icon: "success",
+          title: "Test Lab Added",
+          text: "The test lab was added successfully!",
+          confirmButtonColor: "#3085d6",
+        });
+        fetchData();
+      })
+      .catch((err) => {
+        console.error("Error submitting test lab:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Submission Failed",
+          text: "An error occurred while adding the test lab.",
+          confirmButtonColor: "#d33",
+        });
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
-      fetchData()
-    })
-    .catch((err) => {
-      console.error("Error submitting test lab:", err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Submission Failed',
-        text: 'An error occurred while adding the test lab.',
-        confirmButtonColor: '#d33',
-      });
-    })
-    .finally(() => {
-      setSubmitting(false);
-    });
-};
+  };
 
-
- 
   React.useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("selectedTests")) || [];
     setPreSelectedIds(stored.map((test) => test.id));
@@ -370,13 +364,12 @@ const handleSubmitTestLab = () => {
     return sortedData;
   }, [rows, order, orderBy]);
 
-
-const showLabPrices = (tests) => {
-
-    const rows = Array.isArray(tests.TestLabPrices) && tests.TestLabPrices.length > 0
-      ? tests.TestLabPrices.map((test, index) => {
-          const rowClass = index % 2 === 1 ? "bg-green-100" : "";
-          return `
+  const showLabPrices = (tests) => {
+    const rows =
+      Array.isArray(tests.TestLabPrices) && tests.TestLabPrices.length > 0
+        ? tests.TestLabPrices.map((test, index) => {
+            const rowClass = index % 2 === 1 ? "bg-green-100" : "";
+            return `
             <tr class="${rowClass}">
               <td class="px-4 py-2 break-words">${test.Lab.lab_name}</td>
               <td class="px-4 py-2 text-center">
@@ -386,8 +379,8 @@ const showLabPrices = (tests) => {
                 ${test.CPRT}
               </td>
             </tr>`;
-        }).join("")
-      : `<tr><td colspan="3" class="text-gray-600 text-sm py-4 text-center">No Lab Price Available</td></tr>`;
+          }).join("")
+        : `<tr><td colspan="3" class="text-gray-600 text-sm py-4 text-center">No Lab Price Available</td></tr>`;
     const tableHTML = `
       <table class="min-w-full border-collapse">
         <thead>
@@ -562,7 +555,7 @@ const showLabPrices = (tests) => {
                         />
                       </TableCell>
                     )}
-                      <TableCell
+                    <TableCell
                       align="center"
                       sx={{ py: 0.5, fontSize: "0.75rem" }}
                     >
@@ -652,21 +645,19 @@ const showLabPrices = (tests) => {
                         0
                       )}
                     </TableCell>
-                      <TableCell
+                    <TableCell
                       align="center"
                       sx={{ py: 0.5, fontSize: "0.75rem" }}
                     >
-                    
-                     <Button
+                      <Button
                         variant="contained"
                         size="small"
                         sx={{ mr: 1 }}
-                        startIcon={<Eye/>}
+                        startIcon={<Eye />}
                         onClick={() => showLabPrices(row)}
                       >
                         Show Lab Prices
                       </Button>
-                    
                     </TableCell>
                     <TableCell
                       align="center"
@@ -692,7 +683,10 @@ const showLabPrices = (tests) => {
                         size="small"
                         sx={{ mr: 1 }}
                         startIcon={<AddIcon />}
-                        onClick={() => {setSelectedTest(row) ;setOpenTestModal(true)}}
+                        onClick={() => {
+                          setSelectedTest(row);
+                          setOpenTestModal(true);
+                        }}
                       >
                         Labs
                       </Button>
@@ -796,67 +790,73 @@ const showLabPrices = (tests) => {
         onSubmit={handleSubmitParams}
         selectedTest={selectedTest}
       />
-     <Dialog open={openTestModal} onClose={() => setOpenTestModal(false)} fullWidth maxWidth="sm">
-  <DialogTitle>Add Test to Lab</DialogTitle>
-  <DialogContent dividers>
-   <TextField
-  select
-  label="Select Lab Name"
-  fullWidth
-  margin="normal"
-  value={testForm.lab_id}
-  onChange={(e) => handleTestFormChange("lab_id", e.target.value)}
->
-  <MenuItem value="">-- Select Lab --</MenuItem>
-  {labOptions.map((lab) => (
-    <MenuItem key={lab.id} value={lab.id}>
-      {lab.lab_name}
-    </MenuItem>
-  ))}
-</TextField>
+      <Dialog
+        open={openTestModal}
+        onClose={() => setOpenTestModal(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Add Test to Lab</DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            select
+            label="Select Lab Name"
+            fullWidth
+            margin="normal"
+            value={testForm.lab_id}
+            onChange={(e) => handleTestFormChange("lab_id", e.target.value)}
+          >
+            <MenuItem value="">-- Select Lab --</MenuItem>
+            {labOptions.map((lab) => (
+              <MenuItem key={lab.id} value={lab.id}>
+                {lab.lab_name}
+              </MenuItem>
+            ))}
+          </TextField>
 
+          <TextField
+            label="CPT"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={testForm.CPT}
+            onChange={(e) => handleTestFormChange("CPT", e.target.value)}
+          />
+          <TextField
+            label="CPRT"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={testForm.CPRT}
+            onChange={(e) => handleTestFormChange("CPRT", e.target.value)}
+          />
+        </DialogContent>
 
-    <TextField
-      label="CPT"
-      type="number"
-      fullWidth
-      margin="normal"
-      value={testForm.CPT}
-      onChange={(e) => handleTestFormChange("CPT", e.target.value)}
-    />
-    <TextField
-      label="CPRT"
-      type="number"
-      fullWidth
-      margin="normal"
-      value={testForm.CPRT}
-      onChange={(e) => handleTestFormChange("CPRT", e.target.value)}
-    />
-  </DialogContent>
-
-  <DialogActions>
-    <Button onClick={() => setOpenTestModal(false)} disabled={submitting}>Cancel</Button>
-    <Button
-      variant="contained"
-      onClick={handleSubmitTestLab}
-      disabled={
-        submitting ||
-        !testForm.lab_id ||
-        !testForm.CPT ||
-        !testForm.CPRT
-      }
-    >
-      {submitting ? "Submitting..." : "Submit"}
-    </Button>
-  </DialogActions>
-</Dialog>
-  <LabCustomModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={modalTitle}>
-        <div dangerouslySetInnerHTML={{ __html: modalContent }} className="prose max-w-none" />
+        <DialogActions>
+          <Button onClick={() => setOpenTestModal(false)} disabled={submitting}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmitTestLab}
+            disabled={
+              submitting || !testForm.lab_id || !testForm.CPT || !testForm.CPRT
+            }
+          >
+            {submitting ? "Submitting..." : "Submit"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <LabCustomModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+      >
+        <div
+          dangerouslySetInnerHTML={{ __html: modalContent }}
+          className="prose max-w-none"
+        />
       </LabCustomModal>
     </Paper>
   );
 }
-
-
-
-

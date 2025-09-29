@@ -9,7 +9,9 @@ const formatINR = (n) => {
 const PriceRow = ({ label, value, highlight }) => (
   <div className="flex justify-between text-xs">
     <span className="text-gray-500">{label}</span>
-    <span className={highlight ? "font-semibold text-blue-600" : "text-gray-800"}>
+    <span
+      className={highlight ? "font-semibold text-blue-600" : "text-gray-800"}
+    >
       {value != null ? `₹${formatINR(value)}` : "—"}
     </span>
   </div>
@@ -41,8 +43,10 @@ const RadiologyFacility = ({
             const plainStudy = test.plain_study ?? null;
             const contrastStudy = test.contrast_study ?? null;
             const plainRate = test.plain_swasthyapro_rate ?? null;
-            const rate = test.swasthyapro_rate ?? test.after_discount_price ?? null;
-            const contrastSwasthyaproRate = test.contrast_swasthyapro_rate ?? null;
+            const rate =
+              test.swasthyapro_rate ?? test.after_discount_price ?? null;
+            const contrastSwasthyaproRate =
+              test.contrast_swasthyapro_rate ?? null;
             const primary = rate ?? plainRate ?? contrastStudy ?? mrp ?? 0;
 
             return (
@@ -73,8 +77,11 @@ const RadiologyFacility = ({
                   <PriceRow label="Contrast Study" value={contrastStudy} />
                   <PriceRow label="Plain SwasthyaPro" value={plainRate} />
                   <PriceRow label="SwasthyaPro Rate" value={rate} highlight />
-                   <PriceRow label="Contrast SwasthyaPro Rate" value={contrastSwasthyaproRate} highlight />
-
+                  <PriceRow
+                    label="Contrast SwasthyaPro Rate"
+                    value={contrastSwasthyaproRate}
+                    highlight
+                  />
                 </div>
               </label>
             );

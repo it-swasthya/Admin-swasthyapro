@@ -70,10 +70,11 @@ export const getOrderTableColumns = ({
   //   header: "Amount Paid",
   //   Cell: ({ cell }) => `₹${cell.getValue()}`,
   // },
-   {
+  {
     accessorKey: "amount_paid",
     header: "Amount Paid",
-    Cell: ({ row }) => `₹${row.original.paymentStatus.toLowerCase() === "successful" ? row.original.Payment.amount : 0}`,
+    Cell: ({ row }) =>
+      `₹${row.original.paymentStatus.toLowerCase() === "successful" ? row.original.Payment.amount : 0}`,
   },
   {
     accessorKey: "coupon",
@@ -114,7 +115,7 @@ export const getOrderTableColumns = ({
       return (
         <>
           {method}
-          { pending && (
+          {pending && (
             <Tooltip title="Edit method">
               <IconButton
                 size="small"
@@ -191,19 +192,21 @@ export const getOrderTableColumns = ({
         </IconButton>
       ),
   },
- 
-{
-  header: "Report Shared",
-  id: "report_share",
-  Cell: ({ row }) => (
-    <Switch
-      size="small"
-      color="primary"
-      checked ={row.original.report_shared}
-onChange={(event) => onReportShareClick(row.original, event.target.checked)}
-    />
-  ),
-},
+
+  {
+    header: "Report Shared",
+    id: "report_share",
+    Cell: ({ row }) => (
+      <Switch
+        size="small"
+        color="primary"
+        checked={row.original.report_shared}
+        onChange={(event) =>
+          onReportShareClick(row.original, event.target.checked)
+        }
+      />
+    ),
+  },
   // {
   //   accessorKey: "dmlName",
   //   header: "DML-Name",

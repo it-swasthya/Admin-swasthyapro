@@ -35,10 +35,12 @@ const TestList = ({ searchQuery }) => {
 
   const highlightText = (text, query) => {
     if (!query) return text;
-    const regex = new RegExp(`(${query})`, 'gi');
+    const regex = new RegExp(`(${query})`, "gi");
     return text.split(regex).map((part, index) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="bg-yellow-200 font-semibold">{part}</span>
+        <span key={index} className="bg-yellow-200 font-semibold">
+          {part}
+        </span>
       ) : (
         part
       )
@@ -60,10 +62,14 @@ const TestList = ({ searchQuery }) => {
 
   return (
     <div className="w-full p-6 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Search Results</h2>
+      <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+        Search Results
+      </h2>
 
       {testList.length === 0 ? (
-        <p className="text-center text-gray-500">No tests found for this search.</p>
+        <p className="text-center text-gray-500">
+          No tests found for this search.
+        </p>
       ) : (
         <div className="space-y-6">
           {testList.map((test) => {

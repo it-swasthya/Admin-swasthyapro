@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Modal,
   Box,
@@ -9,17 +9,17 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Button
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+  Button,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 600,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
   p: 4,
@@ -31,9 +31,9 @@ const ItemsModal = ({ open, handleClose, items }) => {
       <Box sx={style}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             mb: 2,
           }}
         >

@@ -59,7 +59,6 @@ function AddTests() {
     }
   }, [editData]);
 
-
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));

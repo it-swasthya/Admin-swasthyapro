@@ -14,8 +14,10 @@ function PackagesCard() {
 
   useEffect(() => {
     const getPackages = async () => {
-      const response = await axios.get(`https://api.swasthyapro.com/api/database/${routesToObfuscated["get-packages"]}`);
-      const decodedData = await decryptEncryptedData(response.data)
+      const response = await axios.get(
+        `https://api.swasthyapro.com/api/database/${routesToObfuscated["get-packages"]}`
+      );
+      const decodedData = await decryptEncryptedData(response.data);
       setData(decodedData.data);
     };
 
@@ -23,14 +25,14 @@ function PackagesCard() {
 
     // Load selected packages from localStorage
     const storedPackages = JSON.parse(localStorage.getItem("packages")) || [];
-    const storedNames = storedPackages.map(pkg => pkg.name);
+    const storedNames = storedPackages.map((pkg) => pkg.name);
     setSelectedPackages(storedNames);
   }, []);
 
   const handleCheckboxChange = (item) => {
     const isSelected = selectedPackages.includes(item.Package_type);
     const updatedSelected = isSelected
-      ? selectedPackages.filter(name => name !== item.Package_type)
+      ? selectedPackages.filter((name) => name !== item.Package_type)
       : [...selectedPackages, item.Package_type];
 
     setSelectedPackages(updatedSelected);
@@ -39,7 +41,12 @@ function PackagesCard() {
 
   const showTestsPopup = (pkg) => {
     const testList = Array.isArray(pkg.test_data)
-      ? pkg.test_data.map((test, index) => `<li><strong>${index + 1}</strong> - ${test.test_name}</li>`).join("")
+      ? pkg.test_data
+          .map(
+            (test, index) =>
+              `<li><strong>${index + 1}</strong> - ${test.test_name}</li>`
+          )
+          .join("")
       : "<li>No test data available.</li>";
 
     Swal.fire({

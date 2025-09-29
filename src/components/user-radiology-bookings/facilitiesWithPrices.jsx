@@ -29,7 +29,7 @@ const FacilityWithPrices = ({ facilityName, searchQuery }) => {
       }
     };
 
-    if (facilityName||searchQuery) getTests();
+    if (facilityName || searchQuery) getTests();
 
     const storedTests = JSON.parse(localStorage.getItem("tests")) || [];
     setSelectedTestNames(storedTests.map((test) => test.name));
@@ -39,14 +39,15 @@ const FacilityWithPrices = ({ facilityName, searchQuery }) => {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
   };
 
-
   const highlightText = (text, query) => {
     if (!query) return text;
     const escapedQuery = escapeRegExp(query);
-    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
     return text.split(regex).map((part, index) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="bg-yellow-200 font-semibold">{part}</span>
+        <span key={index} className="bg-yellow-200 font-semibold">
+          {part}
+        </span>
       ) : (
         part
       )
@@ -54,9 +55,13 @@ const FacilityWithPrices = ({ facilityName, searchQuery }) => {
   };
 
   const handleCheckboxChange = (test) => {
-    const isSelected = selectedTestNames.includes(test.test_name || test.type_of_study);
+    const isSelected = selectedTestNames.includes(
+      test.test_name || test.type_of_study
+    );
     const updatedSelected = isSelected
-      ? selectedTestNames.filter((name) => name !== test.test_name && name !== test.type_of_study)
+      ? selectedTestNames.filter(
+          (name) => name !== test.test_name && name !== test.type_of_study
+        )
       : [...selectedTestNames, test.test_name || test.type_of_study];
     setSelectedTestNames(updatedSelected);
 
@@ -67,56 +72,56 @@ const FacilityWithPrices = ({ facilityName, searchQuery }) => {
   if (error) return <p className="p-6 text-red-500">{error}</p>;
 
   return (
-//   <div className="w-full p-4 sm:p-6 max-w-7xl mx-auto">
-//   <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 sm:mb-8 text-center">
-//     {facilityName?.toUpperCase()}
-//   </h2>
+    //   <div className="w-full p-4 sm:p-6 max-w-7xl mx-auto">
+    //   <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 sm:mb-8 text-center">
+    //     {facilityName?.toUpperCase()}
+    //   </h2>
 
-//   {testList.length === 0 ? (
-//     <p className="text-center text-gray-500">No tests available for this category.</p>
-//   ) : (
-//     <div className="space-y-4">
-//       {testList.map((test) => {
-//         const selected = selectedTestNames.includes(test.test_name);
-//         return (
-//           <label
-//             key={test.id}
-//             className="flex justify-between items-center p-3 sm:p-4 border border-gray-300 rounded-xl bg-gray-50 hover:bg-white hover:shadow-lg transition-all"
-//           >
-//             <div className="flex items-center gap-3 sm:gap-4">
-//               <input
-//                 type="checkbox"
-//                 checked={selected}
-//                 onChange={() => handleCheckboxChange(test)}
-//                 className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 transition"
-//               />
-//               <span className="text-gray-800 font-medium text-base sm:text-lg">
-//                 {highlightText(test.test_name, searchQuery)}
-//               </span>
-//             </div>
+    //   {testList.length === 0 ? (
+    //     <p className="text-center text-gray-500">No tests available for this category.</p>
+    //   ) : (
+    //     <div className="space-y-4">
+    //       {testList.map((test) => {
+    //         const selected = selectedTestNames.includes(test.test_name);
+    //         return (
+    //           <label
+    //             key={test.id}
+    //             className="flex justify-between items-center p-3 sm:p-4 border border-gray-300 rounded-xl bg-gray-50 hover:bg-white hover:shadow-lg transition-all"
+    //           >
+    //             <div className="flex items-center gap-3 sm:gap-4">
+    //               <input
+    //                 type="checkbox"
+    //                 checked={selected}
+    //                 onChange={() => handleCheckboxChange(test)}
+    //                 className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 transition"
+    //               />
+    //               <span className="text-gray-800 font-medium text-base sm:text-lg">
+    //                 {highlightText(test.test_name, searchQuery)}
+    //               </span>
+    //             </div>
 
-//             <div className="text-right">
-//               <div className="text-sm text-gray-400 line-through">
-//                 MRP ₹{test.market_price}
-//               </div>
-//               <div className="text-blue-600 font-semibold text-lg sm:text-xl">
-//                 ₹{test.after_discount_price}
-//               </div>
-//             </div>
-//           </label>
-//         );
-//       })}
-//     </div>
-//   )}
-// </div>
-<RadiologyTests
-  facilityName={facilityName}
-  testList={testList}
-  selectedTestNames={selectedTestNames}
-  handleCheckboxChange={handleCheckboxChange}
-  highlightText={highlightText}
-  searchQuery={searchQuery}
-/>
+    //             <div className="text-right">
+    //               <div className="text-sm text-gray-400 line-through">
+    //                 MRP ₹{test.market_price}
+    //               </div>
+    //               <div className="text-blue-600 font-semibold text-lg sm:text-xl">
+    //                 ₹{test.after_discount_price}
+    //               </div>
+    //             </div>
+    //           </label>
+    //         );
+    //       })}
+    //     </div>
+    //   )}
+    // </div>
+    <RadiologyTests
+      facilityName={facilityName}
+      testList={testList}
+      selectedTestNames={selectedTestNames}
+      handleCheckboxChange={handleCheckboxChange}
+      highlightText={highlightText}
+      searchQuery={searchQuery}
+    />
   );
 };
 

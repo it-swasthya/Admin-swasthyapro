@@ -4,18 +4,7 @@ import { changeNavValue } from "../../Redux/reducer";
 import { DeleteIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { ToWords } from "to-words";
 
 const GenerateINV = () => {
@@ -116,10 +105,8 @@ const GenerateINV = () => {
   };
 
   const handleSubmit = async () => {
-    // --- Validation ---
     const missingFields = [];
 
-    // Check invoice header fields
     if (!invoiceDetails.invoiceDate) missingFields.push("Invoice Date");
     if (!invoiceDetails.dueDate) missingFields.push("Due Date");
     if (!invoiceDetails.placeOfSupply) missingFields.push("Place of Supply");
@@ -127,7 +114,6 @@ const GenerateINV = () => {
     if (!invoiceDetails.clientAddress) missingFields.push("Client’s Address");
     if (!invoiceDetails.gstin) missingFields.push("GSTIN");
 
-    // Check rows
     rows.forEach((row, index) => {
       if (!row.employeeName)
         missingFields.push(`Employee Name (Row ${index + 1})`);
@@ -163,14 +149,12 @@ const GenerateINV = () => {
     try {
       const payloadForAdd = {
         invoice: {
-          // number: "TAXINV1",
           date: invoiceDetails.invoiceDate,
           placeOfSupply: invoiceDetails.placeOfSupply,
           dueDate: invoiceDetails.dueDate,
         },
 
         billTo: {
-          name: invoiceDetails.billTo,
           address: invoiceDetails.clientAddress,
           gstin: invoiceDetails.gstin,
         },
@@ -205,12 +189,12 @@ const GenerateINV = () => {
       if (addToDB.status === 201) {
         const payloadForInvCreate = {
           invoice: {
-            vcode:invoiceDetails.vender_code,
+            vcode: invoiceDetails.vender_code,
             number: addToDB.data.data.invoice_id,
             date: invoiceDetails.invoiceDate,
             placeOfSupply: invoiceDetails.placeOfSupply,
             dueDate: invoiceDetails.dueDate,
-            rev_change:invoiceDetails.Reverse_Charge
+            rev_change: invoiceDetails.Reverse_Charge,
           },
 
           billTo: {
@@ -296,7 +280,6 @@ const GenerateINV = () => {
           if (s.startsWith("%PDF-")) {
             blob = new Blob([s], { type: "application/pdf" });
           } else {
-            // base64 fallback
             const byteChars = atob(s);
             const byteArray = new Uint8Array(byteChars.length);
             for (let i = 0; i < byteChars.length; i++) {
@@ -326,8 +309,6 @@ const GenerateINV = () => {
 
   return (
     <div style={{ padding: "10px", fontFamily: "Arial, sans-serif" }}>
-      {/* <h2 style={{ marginBottom: "20px", color: "#333" }}>Create Invoice</h2> */}
-
       {/* Invoice Header Section */}
       <div
         style={{
@@ -404,7 +385,7 @@ const GenerateINV = () => {
 
           <div>
             <label style={{ fontWeight: "600", color: "#555" }}>
-               Vendor Code
+              Vendor Code
             </label>
             <input
               type="text"
@@ -710,7 +691,7 @@ const GenerateINV = () => {
           Use IGST (instead of CGST + SGST)
         </label>
 
-        {!useIGST && (
+        {/* {!useIGST && (
           <div style={{ marginTop: "12px", display: "flex", gap: "20px" }}>
             <div>
               <label>CGST %</label>
@@ -768,7 +749,201 @@ const GenerateINV = () => {
 
         <div style={{ marginTop: "16px", fontWeight: "600" }}>
           Total GST: ₹{totalGST.toFixed(2)}
+        </div> */}
+
+        {!useIGST && (
+          <table
+            style={{
+              marginTop: "12px",
+              borderCollapse: "collapse",
+              width: "100%",
+              maxWidth: "500px",
+            }}
+          >
+            <thead>
+              <tr style={{ background: "#f9f9f9" }}>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "left",
+                  }}
+                >
+                  Tax
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "center",
+                  }}
+                >
+                  Rate %
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Amount (₹)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  CGST
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "center",
+                  }}
+                >
+                  <input
+                    type="number"
+                    value={cgstRate}
+                    onChange={(e) => setCgstRate(Number(e.target.value))}
+                    style={{
+                      width: "80px",
+                      border: "1px solid #ccc",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  ₹{cgstAmount.toFixed(2)}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  SGST
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "center",
+                  }}
+                >
+                  <input
+                    type="number"
+                    value={sgstRate}
+                    onChange={(e) => setSgstRate(Number(e.target.value))}
+                    style={{
+                      width: "80px",
+                      border: "1px solid #ccc",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  ₹{sgstAmount.toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        )}
+
+        {useIGST && (
+          <table
+            style={{
+              marginTop: "12px",
+              borderCollapse: "collapse",
+              width: "100%",
+              maxWidth: "500px",
+            }}
+          >
+            <thead>
+              <tr style={{ background: "#f9f9f9" }}>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "left",
+                  }}
+                >
+                  Tax
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "center",
+                  }}
+                >
+                  Rate %
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Amount (₹)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  IGST
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "center",
+                  }}
+                >
+                  <input
+                    type="number"
+                    value={igstRate}
+                    onChange={(e) => setIgstRate(Number(e.target.value))}
+                    style={{
+                      width: "80px",
+                      border: "1px solid #ccc",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  ₹{igstAmount.toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        )}
+
+        <div style={{ marginTop: "16px", fontWeight: "600" }}>
+          Total GST: ₹{totalGST.toFixed(2)}
         </div>
+
         <div style={{ marginTop: "6px", fontWeight: "700", fontSize: "16px" }}>
           Grand Total(Including GST): ₹{grandTotal.toFixed(2)}
         </div>

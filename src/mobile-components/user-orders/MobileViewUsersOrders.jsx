@@ -49,9 +49,7 @@ const OrderCardMObile = ({
           order.paymentMethod,
         ]
           .filter(Boolean)
-          .some((field) =>
-            field.toString().toLowerCase().includes(query)
-          );
+          .some((field) => field.toString().toLowerCase().includes(query));
   });
 
   return (
@@ -87,23 +85,23 @@ const OrderCardMObile = ({
                   {highlightText(order.displayName, searchQuery)}
                 </p>
               </div>
-                 <div className="flex items-center gap-2 px-1 text-xs font-medium rounded-full bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
-                    <span>{order.paymentMethod}</span>
-                    {order.paymentMethod?.toLowerCase() === "cash" &&
-                      order.paymentStatus?.toLowerCase() === "pending" && (
-                        <Tooltip title="Edit method">
-                          <IconButton
-                            size="small"
-                            onClick={() => {
-                              handleEditPayment(order);
-                            }}
-                            sx={{ padding: 0 }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                  </div>
+              <div className="flex items-center gap-2 px-1 text-xs font-medium rounded-full bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
+                <span>{order.paymentMethod}</span>
+                {order.paymentMethod?.toLowerCase() === "cash" &&
+                  order.paymentStatus?.toLowerCase() === "pending" && (
+                    <Tooltip title="Edit method">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          handleEditPayment(order);
+                        }}
+                        sx={{ padding: 0 }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+              </div>
             </div>
 
             <div className="text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-1 mb-2">

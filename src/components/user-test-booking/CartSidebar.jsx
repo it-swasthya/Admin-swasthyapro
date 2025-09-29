@@ -53,7 +53,9 @@ const CartSidebar = ({
                     >
                       <div>
                         <div className="font-medium">{test.name}</div>
-                        <div className="text-sm text-gray-500">₹{test.price}</div>
+                        <div className="text-sm text-gray-500">
+                          ₹{test.price}
+                        </div>
                       </div>
                       <button
                         onClick={() => handleDeleteTest(idx)}
@@ -80,7 +82,9 @@ const CartSidebar = ({
                     >
                       <div>
                         <div className="font-medium">{pkg.name}</div>
-                        <div className="text-sm text-gray-500">₹{pkg.price}</div>
+                        <div className="text-sm text-gray-500">
+                          ₹{pkg.price}
+                        </div>
                       </div>
                       <button
                         onClick={() => handleDeletePackage(idx)}
@@ -143,7 +147,7 @@ const CartSidebar = ({
             {/* Time Slot */}
             <div className="text-left text-black">
               <label htmlFor="timeSlot" className="block mb-1 font-medium">
-               <span className="text-red-600 p-1">*</span> Select Time Slot:
+                <span className="text-red-600 p-1">*</span> Select Time Slot:
               </label>
               <select
                 id="timeSlot"
@@ -163,7 +167,10 @@ const CartSidebar = ({
             {/* Coupons */}
             {coupons.length > 0 && (
               <div className="text-left text-black">
-                <label htmlFor="couponSelect" className="block mb-1 font-medium">
+                <label
+                  htmlFor="couponSelect"
+                  className="block mb-1 font-medium"
+                >
                   Available Coupons:
                 </label>
                 <div className="relative">
@@ -171,7 +178,9 @@ const CartSidebar = ({
                     id="couponSelect"
                     value={selectedCoupon?.id || ""}
                     onChange={(e) => {
-                      const selected = coupons.find((c) => c.id === e.target.value);
+                      const selected = coupons.find(
+                        (c) => c.id === e.target.value
+                      );
                       setSelectedCoupon(selected || null);
                     }}
                     className="w-full px-3 py-2 border border-blue-600 rounded-md text-sm text-blue-600 bg-white"
@@ -193,8 +202,7 @@ const CartSidebar = ({
             <div className="flex justify-between items-center pt-4">
               <span className="font-semibold text-lg">Total Price:</span>
               <span className="font-bold text-xl text-green-600">
-                ₹
-                {cartData.total - (customPrice || 0) + Number(dmlCharge || 0)}
+                ₹{cartData.total - (customPrice || 0) + Number(dmlCharge || 0)}
               </span>
             </div>
             {selectedCoupon && (

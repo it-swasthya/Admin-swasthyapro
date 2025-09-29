@@ -38,7 +38,7 @@ const FacilityItem = ({ data }) => {
             >
               {data.type_of_study}
             </Typography>
-            
+
             <Typography
               fontWeight={500}
               sx={{ color: "red", whiteSpace: "nowrap" }}
@@ -48,121 +48,120 @@ const FacilityItem = ({ data }) => {
           </Box>
 
           {/* Pricing Section */}
-<Box sx={{ mt: 1 }}>
-  <Typography
-    fontWeight={600}
-    sx={{ color: "blue", whiteSpace: "nowrap" }}
-  >
-    ● {data.facility}
-  </Typography>
-</Box>
+          <Box sx={{ mt: 1 }}>
+            <Typography
+              fontWeight={600}
+              sx={{ color: "blue", whiteSpace: "nowrap" }}
+            >
+              ● {data.facility}
+            </Typography>
+          </Box>
 
-{/* Pricing Section below */}
-<Box sx={{ display: "flex", gap: 4, flexWrap: "wrap", mt: 1 }}>
-  {/* Column 1: Standard Prices */}
-  <Box>
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569" }}
-    >
-      MRP
-    </Typography>
-    <Typography
-      variant="subtitle1"
-      fontWeight={700}
-      sx={{
-        color: "#b91c1c",
-        backgroundColor: "#fee2e2",
-        px: 1,
-        borderRadius: 1,
-        display: "inline-block",
-        mt: 0.3,
-      }}
-    >
-      ₹{data.mrp || "N/A"}
-    </Typography>
+          {/* Pricing Section below */}
+          <Box sx={{ display: "flex", gap: 4, flexWrap: "wrap", mt: 1 }}>
+            {/* Column 1: Standard Prices */}
+            <Box>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569" }}
+              >
+                MRP
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                fontWeight={700}
+                sx={{
+                  color: "#b91c1c",
+                  backgroundColor: "#fee2e2",
+                  px: 1,
+                  borderRadius: 1,
+                  display: "inline-block",
+                  mt: 0.3,
+                }}
+              >
+                ₹{data.mrp || "N/A"}
+              </Typography>
 
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569", mt: 1 }}
-    >
-      Swasthyapro Rate
-    </Typography>
-    <Typography
-      variant="subtitle1"
-      fontWeight={700}
-      sx={{
-        color: "#15803d",
-        backgroundColor: "#dcfce7",
-        px: 1,
-        borderRadius: 1,
-        display: "inline-block",
-        mt: 0.3,
-      }}
-    >
-      ₹{data.swasthyapro_max_rate || "N/A"}
-    </Typography>
-  </Box>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569", mt: 1 }}
+              >
+                Swasthyapro Rate
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                fontWeight={700}
+                sx={{
+                  color: "#15803d",
+                  backgroundColor: "#dcfce7",
+                  px: 1,
+                  borderRadius: 1,
+                  display: "inline-block",
+                  mt: 0.3,
+                }}
+              >
+                ₹{data.swasthyapro_max_rate || "N/A"}
+              </Typography>
+            </Box>
 
-  {/* Column 2: Study Prices */}
-  <Box>
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569" }}
-    >
-      Plain Study
-    </Typography>
-    <Typography variant="subtitle2" sx={{ color: "#1e293b" }}>
-      ₹{data.plain_study || "N/A"}
-    </Typography>
+            {/* Column 2: Study Prices */}
+            <Box>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569" }}
+              >
+                Plain Study
+              </Typography>
+              <Typography variant="subtitle2" sx={{ color: "#1e293b" }}>
+                ₹{data.plain_study || "N/A"}
+              </Typography>
 
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569", mt: 0.5 }}
-    >
-      Contrast Study
-    </Typography>
-    <Typography variant="subtitle2" sx={{ color: "#1e293b" }}>
-      ₹{data.contrast_study || "N/A"}
-    </Typography>
-  </Box>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569", mt: 0.5 }}
+              >
+                Contrast Study
+              </Typography>
+              <Typography variant="subtitle2" sx={{ color: "#1e293b" }}>
+                ₹{data.contrast_study || "N/A"}
+              </Typography>
+            </Box>
 
-  {/* Column 3: Swasthyapro Study Prices */}
-  <Box>
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569" }}
-    >
-      Plain (Swasthyapro)
-    </Typography>
-    <Typography
-      variant="subtitle2"
-      sx={{ color: "#15803d", fontWeight: 600 }}
-    >
-      ₹{data.plain_swasthyapro_rate || "N/A"}
-    </Typography>
+            {/* Column 3: Swasthyapro Study Prices */}
+            <Box>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569" }}
+              >
+                Plain (Swasthyapro)
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "#15803d", fontWeight: 600 }}
+              >
+                ₹{data.plain_swasthyapro_rate || "N/A"}
+              </Typography>
 
-    <Typography
-      variant="body2"
-      fontWeight={500}
-      sx={{ color: "#475569", mt: 0.5 }}
-    >
-      Contrast (Swasthyapro)
-    </Typography>
-    <Typography
-      variant="subtitle2"
-      sx={{ color: "#15803d", fontWeight: 600 }}
-    >
-      ₹{data.contrast_swasthyapro_rate || "N/A"}
-    </Typography>
-  </Box>
-</Box>
-
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: "#475569", mt: 0.5 }}
+              >
+                Contrast (Swasthyapro)
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "#15803d", fontWeight: 600 }}
+              >
+                ₹{data.contrast_swasthyapro_rate || "N/A"}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
 
         {/* Right side (Add to Cart button) */}

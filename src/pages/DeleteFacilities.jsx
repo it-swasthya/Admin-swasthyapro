@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { changeNavValue } from "../Redux/reducer";
 
 function DeleteFacilities() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [facilities, setFacilities] = useState([]);
   const [filteredFacilities, setFilteredFacilities] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +14,7 @@ function DeleteFacilities() {
   const [currentFacility, setCurrentFacility] = useState(null);
 
   useEffect(() => {
-    dispatch(changeNavValue("Manage Facilities"))
+    dispatch(changeNavValue("Manage Facilities"));
     const fetchFacilities = async () => {
       try {
         const response = await fetch(
@@ -132,7 +132,10 @@ function DeleteFacilities() {
   };
 
   return (
-    <div className="relative min-h-screen p-3 bg-gray-50" style={{marginTop:"-12px"}}>
+    <div
+      className="relative min-h-screen p-3 bg-gray-50"
+      style={{ marginTop: "-12px" }}
+    >
       <input
         type="text"
         placeholder="Search facilities..."

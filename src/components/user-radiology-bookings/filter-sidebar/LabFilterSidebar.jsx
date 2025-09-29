@@ -12,12 +12,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useParams } from "react-router-dom";
 
-const FilterSidebar = ({
-  labs,
-  center,
-  onFilterChange,
-  showAll = true,
-}) => {
+const FilterSidebar = ({ labs, center, onFilterChange, showAll = true }) => {
   const [selectedFilter, setSelectedFilter] = useState();
   const { facilityName } = useParams();
 
@@ -35,7 +30,6 @@ const FilterSidebar = ({
     const newValue = selectedFilter === label ? "All" : label;
     setSelectedFilter(newValue);
     onFilterChange(newValue);
-   
   };
 
   const filterContent = (
@@ -58,7 +52,7 @@ const FilterSidebar = ({
       <Typography
         fontWeight={600}
         gutterBottom
-        sx={{ p: 1, textAlign: "center",color:"#0f172a" }}
+        sx={{ p: 1, textAlign: "center", color: "#0f172a" }}
       >
         Labs
       </Typography>
@@ -86,62 +80,60 @@ const FilterSidebar = ({
                 "& .MuiFormControlLabel-label": {
                   textTransform: "capitalize",
                   fontWeight: 500,
-                  color:"black"
+                  color: "black",
                 },
               }}
             />
           </ListItem>
         )}
 
-        {labs.map((item, idx) =>
-         <ListItem key={idx} disablePadding>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    icon={<RadioButtonUncheckedIcon />}
-                    checkedIcon={<CheckCircleIcon />}
-                    checked={selectedFilter === item.id}
-                    onChange={() => handleCheckboxChange(item.id)}
-                    sx={{
+        {labs.map((item, idx) => (
+          <ListItem key={idx} disablePadding>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  icon={<RadioButtonUncheckedIcon />}
+                  checkedIcon={<CheckCircleIcon />}
+                  checked={selectedFilter === item.id}
+                  onChange={() => handleCheckboxChange(item.id)}
+                  sx={{
+                    color: "#0f172a",
+                    "&.Mui-checked": {
                       color: "#0f172a",
-                      "&.Mui-checked": {
-                        color: "#0f172a",
-                      },
-                    }}
-                  />
-                }
-                label={item.name}
-                sx={{
-                  ml: 1,
-                  "& .MuiFormControlLabel-label": {
-                    textTransform: "capitalize",
-                    fontWeight: 500,
-                    color:"black"
-                  },
-                }}
-              />
-            </ListItem>
-        )}
+                    },
+                  }}
+                />
+              }
+              label={item.name}
+              sx={{
+                ml: 1,
+                "& .MuiFormControlLabel-label": {
+                  textTransform: "capitalize",
+                  fontWeight: 500,
+                  color: "black",
+                },
+              }}
+            />
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
 
   return (
     <>
-    
-
       {/* Desktop Sidebar */}
-        <Box
-          sx={{
-            width: 260,
-            height: "auto",
-            border: "1px solid #eee",
-            marginLeft: 10,
-            borderRadius: "14px",
-          }}
-        >
-          {filterContent}
-        </Box>
+      <Box
+        sx={{
+          width: 260,
+          height: "auto",
+          border: "1px solid #eee",
+          marginLeft: 10,
+          borderRadius: "14px",
+        }}
+      >
+        {filterContent}
+      </Box>
     </>
   );
 };

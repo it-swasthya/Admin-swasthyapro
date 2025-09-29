@@ -61,7 +61,7 @@ const MobileViewPrescription = ({ users, handleShowForm }) => {
                 mb: 3,
                 borderRadius: 3,
                 transition: "0.3s",
-                '&:hover': {
+                "&:hover": {
                   boxShadow: 6,
                   transform: "translateY(-2px)",
                 },
@@ -79,14 +79,33 @@ const MobileViewPrescription = ({ users, handleShowForm }) => {
                     gap: 2,
                   }}
                 >
-                  <Typography variant="body2"><strong>Contact:</strong> {item.contact}</Typography>
-                  <Typography variant="body2"><strong>Email:</strong> {item.email}</Typography>
-                  <Typography variant="body2"><strong>Address:</strong> {item.address}</Typography>
-                  <Typography variant="body2"><strong>Prescription:</strong> {item.prescription.name}</Typography>
-                  <Typography variant="body2"><strong>Date:</strong> {new Date(item.prescription.createdAt).toLocaleDateString()}</Typography>
-                  <Typography variant="body2"><strong>Status:</strong> {item.prescription.status}</Typography>
-                  <Typography variant="body2"><strong>Seen:</strong> {item.prescription.seen ? "Seen" : "Not Seen"}</Typography>
-                  <Typography variant="body2"><strong>Remark:</strong> {item.prescription.remarks || "N/A"}</Typography>
+                  <Typography variant="body2">
+                    <strong>Contact:</strong> {item.contact}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Email:</strong> {item.email}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Address:</strong> {item.address}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Prescription:</strong> {item.prescription.name}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Date:</strong>{" "}
+                    {new Date(item.prescription.createdAt).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Status:</strong> {item.prescription.status}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Seen:</strong>{" "}
+                    {item.prescription.seen ? "Seen" : "Not Seen"}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Remark:</strong>{" "}
+                    {item.prescription.remarks || "N/A"}
+                  </Typography>
                 </Box>
                 <Box mt={3} display="flex" justifyContent="flex-end">
                   <Button

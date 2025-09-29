@@ -56,8 +56,8 @@ function Faq() {
     setFormData((prev) => ({
       ...prev,
       facility_id: e.target.value,
-    })); 
-    try { 
+    }));
+    try {
       const response = await fetch(
         `https://api.swasthyapro.com/api/database/page/1/limit/1000?q=${selectedFacility.name || ""}`
       );

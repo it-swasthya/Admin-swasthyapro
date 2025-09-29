@@ -120,8 +120,8 @@ const RadiologyFacilities = () => {
     const stored = JSON.parse(localStorage.getItem("radiology")) || [];
     if (stored?.length > 0) {
       fetRadiologyCart(stored);
-    }else{
-      setIsModalOpen(false)
+    } else {
+      setIsModalOpen(false);
     }
   }, [isModalOpen]);
 
@@ -176,7 +176,10 @@ const RadiologyFacilities = () => {
                 labs.find((lab) => lab.id === center)?.name || "Selected Center"
               }
               variant="outlined"
-              onDelete={() => {setCenter('All');setCenter("All")}}
+              onDelete={() => {
+                setCenter("All");
+                setCenter("All");
+              }}
             />
           )}
         </Box>

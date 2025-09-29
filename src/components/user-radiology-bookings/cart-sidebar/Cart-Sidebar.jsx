@@ -223,7 +223,8 @@ const RadiologyCartSidebar = ({
             3: nameArr.map((item) => item).join(", "),
             4: response.data.data.net_amount,
             5: total_amount,
-            6: Math.ceil(
+            6:
+              Math.ceil(
                 100 - (response.data.data.net_amount / total_amount) * 100
               ) + "%",
             7: atCenter ? "pending" : "paid",
@@ -258,7 +259,7 @@ const RadiologyCartSidebar = ({
             map_link: cartData[0]?.lab_details?.map_location_link || "",
           }
         );
-        localStorage.removeItem("radiology"); 
+        localStorage.removeItem("radiology");
         dispatch(clearCart());
         setSelectedDate("");
         setSelectedTimeSlot("");

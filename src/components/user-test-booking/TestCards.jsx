@@ -61,7 +61,17 @@ const TestsCard = () => {
   if (error) return <p className={styles.status}>{error}</p>;
 
   return (
-   <Card title={'Test Category'} searchQuery={searchQuery} handleSearchChange={handleSearchChange} openModal={openModal} handleCloseModal={handleCloseModal} facility={facility} handleCardClick={handleCardClick} testType={testType} isModalContentReady={isModalContentReady} />
+    <Card
+      title={"Test Category"}
+      searchQuery={searchQuery}
+      handleSearchChange={handleSearchChange}
+      openModal={openModal}
+      handleCloseModal={handleCloseModal}
+      facility={facility}
+      handleCardClick={handleCardClick}
+      testType={testType}
+      isModalContentReady={isModalContentReady}
+    />
   );
 };
 

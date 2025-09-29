@@ -8,23 +8,29 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 
-const UserFamilyAccordion = ({ userData}) => {
+const UserFamilyAccordion = ({ userData }) => {
   return (
-
-    <Box mt={1} ml={1} sx={{width:"97%"}}>
-      { userData.length > 0 ? (
+    <Box mt={1} ml={1} sx={{ width: "97%" }}>
+      {userData.length > 0 ? (
         <TableContainer component={Paper} sx={{ mt: 1 }}>
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{textAlign:"center"}}><strong>Name</strong></TableCell>
-                <TableCell sx={{textAlign:"center"}}><strong>Age</strong></TableCell>
-                <TableCell sx={{textAlign:"center"}}><strong>Gender</strong></TableCell>
-                <TableCell sx={{textAlign:"center"}}><strong>Relation</strong></TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <strong>Age</strong>
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <strong>Gender</strong>
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  <strong>Relation</strong>
+                </TableCell>
 
                 {/* <TableCell sx={{textAlign:"center"}}><strong>Packages</strong></TableCell> */}
                 {/* <TableCell sx={{textAlign:"center"}}><strong>Upload Report</strong></TableCell> */}
@@ -33,7 +39,7 @@ const UserFamilyAccordion = ({ userData}) => {
             <TableBody>
               {userData.map((member, index) => (
                 <TableRow key={member.member_id || index}>
-                  <TableCell sx={{textAlign:"center"}}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     <Box display="flex" alignItems="center" gap={1}>
                       <PersonIcon fontSize="small" color="action" />
                       <Typography variant="subtitle2" fontWeight={600}>
@@ -42,28 +48,23 @@ const UserFamilyAccordion = ({ userData}) => {
                     </Box>
                   </TableCell>
 
-                  <TableCell sx={{textAlign:"center"}}>
-                    <Typography variant="body2">
-                      {member.age} 
-                    </Typography>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Typography variant="body2">{member.age}</Typography>
                   </TableCell>
-                  
-                    <TableCell sx={{textAlign:"center"}}>
+
+                  <TableCell sx={{ textAlign: "center" }}>
                     <Typography variant="body2">
                       {member.gender === "M"
                         ? "Male"
                         : member.gender === "F"
-                        ? "Female"
-                        : member.gender}{" "}
-                     
+                          ? "Female"
+                          : member.gender}{" "}
                     </Typography>
                   </TableCell>
-                    <TableCell sx={{textAlign:"center"}}>
-                    <Typography variant="body2">
-                     {member.relation}
-                    </Typography>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <Typography variant="body2">{member.relation}</Typography>
                   </TableCell>
-                   {/* <TableCell sx={{textAlign:"center"}}>
+                  {/* <TableCell sx={{textAlign:"center"}}>
                     <Typography variant="body2">
                      {member.item_name}
                     </Typography>
@@ -109,7 +110,6 @@ const UserFamilyAccordion = ({ userData}) => {
         </Typography>
       )}
     </Box>
-
   );
 };
 

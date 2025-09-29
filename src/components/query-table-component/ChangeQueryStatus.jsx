@@ -15,7 +15,6 @@ import {
 import axios from "axios";
 import Swal from "sweetalert2";
 
-
 const StatusFormModal = ({ open, onClose, row, getQueries }) => {
   const [status, setStatus] = useState(row.status ? row.status : "open");
   const [seen, setSeen] = useState(row.seen ? row.seen : false);

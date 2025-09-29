@@ -10,10 +10,10 @@ import HospitalAppointmentflattenRow from "../../utils/HospitalAppointmentFlatte
 const API_URL =
   "https://api.swasthyapro.com/api/appointment/ipd/all-appointment";
 
-const HospitalAppointmentTable = () => { 
+const HospitalAppointmentTable = () => {
   const dispatch = useDispatch();
-  const [appointment,setAppointment] = useState([]);
-  const [loading,setLoading] = useState(false);
+  const [appointment, setAppointment] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const showLoader = () => {
     Swal.fire({

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import UserDetailModal from "../../components/user-info-modal/UserDetailsModal.jsx";
@@ -124,7 +124,7 @@ const OrderExportTable = () => {
 
   const handleMarkReportShared = async (order, status) => {
     const result = await Swal.fire({
-      title: `Mark as ${status? 'Shared' :'Unshared'}?`,
+      title: `Mark as ${status ? "Shared" : "Unshared"}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes",
@@ -137,15 +137,18 @@ const OrderExportTable = () => {
         "https://api.swasthyapro.com/api/report/mark-report-shared",
         {
           booking_id: order.booking_id,
-          status
+          status,
         }
-      ); 
-      Swal.fire("Success", `Marked as ${status? 'Shared' :'Unshared'}`, "success");
-     
+      );
+      Swal.fire(
+        "Success",
+        `Marked as ${status ? "Shared" : "Unshared"}`,
+        "success"
+      );
     } catch (err) {
       Swal.fire("Error", err?.message || "Update failed", "error");
-    }finally{
-       fetchOrders();
+    } finally {
+      fetchOrders();
     }
   };
 
@@ -187,7 +190,7 @@ const OrderExportTable = () => {
   });
 
   const updatePaymentMethod = async () => {
-     setMethodStatus(false)
+    setMethodStatus(false);
     const mergeIdsArray = [
       ...selectedOrder.Cart.testIds,
       ...selectedOrder.Cart.packageIds,
@@ -208,103 +211,110 @@ const OrderExportTable = () => {
         }
       );
 
-      if (updatePaymentResponse.status === 200) {
-        const cartResponse = await axios.post(
-          "https://api.swasthyapro.com/api/cart/get-cart-tests",
-          {
-            test_ids: mergeIdsArray.map((test) => test),
-          }
-        );
-        const mergeCartItems = [
-          ...cartResponse.data.corporate_package,
-          ...cartResponse.data.corporate_test,
-        ];
+      Swal.fire({
+        text: "Status updated",
+        icon: "success",
+        timer: 1000,
+      });
+      fetchOrders();
 
-        // Prepare test data
-        const testData = mergeCartItems.map((data) => ({
-          price: Number(data.market_price_range || data.market_price),
-          test_name: data.test_name || data.package_name,
-          quantity: 1,
-          discount: Number(data.discount_percentage),
-          net_price: Number(
-            data.after_discount_price || data.swasthyapro_price
-          ), // already discounted price
-        }));
+      //   if (updatePaymentResponse.status === 200) {
+      //     const cartResponse = await axios.post(
+      //       "https://api.swasthyapro.com/api/cart/get-cart-tests",
+      //       {
+      //         test_ids: mergeIdsArray.map((test) => test),
+      //       }
+      //     );
+      //     const mergeCartItems = [
+      //       ...cartResponse.data.corporate_package,
+      //       ...cartResponse.data.corporate_test,
+      //     ];
 
-        // Calculate subtotal (before discount)
-        const subtotal = testData
-          .reduce((sum, test) => sum + (test.price || 0), 0)
-          .toFixed(2);
+      //     // Prepare test data
+      //     const testData = mergeCartItems.map((data) => ({
+      //       price: Number(data.market_price_range || data.market_price),
+      //       test_name: data.test_name || data.package_name,
+      //       quantity: 1,
+      //       discount: Number(data.discount_percentage),
+      //       net_price: Number(
+      //         data.after_discount_price || data.swasthyapro_price
+      //       ), // already discounted price
+      //     }));
 
-        // Total discount = subtotal - sum of net prices
-        const totalNetPrice = testData
-          .reduce((sum, test) => sum + (test.net_price || 0), 0)
-          .toFixed(2);
+      //     // Calculate subtotal (before discount)
+      //     const subtotal = testData
+      //       .reduce((sum, test) => sum + (test.price || 0), 0)
+      //       .toFixed(2);
 
-        const total_discount = (subtotal - totalNetPrice).toFixed(2);
+      //     // Total discount = subtotal - sum of net prices
+      //     const totalNetPrice = testData
+      //       .reduce((sum, test) => sum + (test.net_price || 0), 0)
+      //       .toFixed(2);
 
-        // Grand total should be sum of net prices
-        const grand_total = totalNetPrice;
+      //     const total_discount = (subtotal - totalNetPrice).toFixed(2);
 
-        // Create invoice
-        const createInvoiceResponse = await axios.post(
-          "https://api.swasthyapro.com/api/invoice/create-invoice",
-          {
-            payment_id: selectedOrder.Payment.payment_id,
-            user_id: selectedOrder.User.User_id,
-            booking_id: selectedOrder.booking_id,
-            dmlCharges: selectedOrder.dml_charges || 0,
-          }
-        );
+      //     // Grand total should be sum of net prices
+      //     const grand_total = totalNetPrice;
 
-        await axios.post(
-          "https://api.swasthyapro.com/api/invoice/gen-invoice",
-          {
-            invoice_no: createInvoiceResponse.data.invoice.id,
-            date: new Date().toISOString().split("T")[0],
-            customer_name: selectedOrder.User.first_name,
-            customer_id: selectedOrder.User.User_id,
-            customer_gstn: "NA",
-            billing_details: testData,
-            subtotal,
-            total_discount,
-            gst_percentage: "NA",
-            gst: "NA",
-            grand_total:
-              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
-            payment_made:
-              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
-            payment_status: "Paid",
-            account_no: "NA",
-            ifsc: "NA",
-            bank_name: "NA",
-            visit_type: "NA",
-            dmlCharges: selectedOrder.dml_charges || 0,
-          }
-        );
+      //     // Create invoice
+      //     const createInvoiceResponse = await axios.post(
+      //       "https://api.swasthyapro.com/api/invoice/create-invoice",
+      //       {
+      //         payment_id: selectedOrder.Payment.payment_id,
+      //         user_id: selectedOrder.User.User_id,
+      //         booking_id: selectedOrder.booking_id,
+      //         dmlCharges: selectedOrder.dml_charges || 0,
+      //       }
+      //     );
 
-     await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
-    "to": "91"+selectedOrder.User.contact,
-    "invoice_no": createInvoiceResponse.data.invoice.id,
-    "customer_name": selectedOrder.User.first_name,
-    "email": selectedOrder.User.email,
-        })
+      //     await axios.post(
+      //       "https://api.swasthyapro.com/api/invoice/gen-invoice",
+      //       {
+      //         invoice_no: createInvoiceResponse.data.invoice.id,
+      //         date: new Date().toISOString().split("T")[0],
+      //         customer_name: selectedOrder.User.first_name,
+      //         customer_id: selectedOrder.User.User_id,
+      //         customer_gstn: "NA",
+      //         billing_details: testData,
+      //         subtotal,
+      //         total_discount,
+      //         gst_percentage: "NA",
+      //         gst: "NA",
+      //         grand_total:
+      //           Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+      //         payment_made:
+      //           Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+      //         payment_status: "Paid",
+      //         account_no: "NA",
+      //         ifsc: "NA",
+      //         bank_name: "NA",
+      //         visit_type: "NA",
+      //         dmlCharges: selectedOrder.dml_charges || 0,
+      //       }
+      //     );
 
-        const sendInvoice = await axios.post(
-          "https://api.swasthyapro.com/api/invoice/send-invoice",
-          {
-            email: selectedOrder.User.email,
-            invoice_no: createInvoiceResponse.data.invoice.id,
-            customer_name: selectedOrder.User.first_name,
-          }
-        );
-        Swal.fire({
-          text: "Status updated",
-          icon: "success",
-          timer: 1000,
-        });
-        fetchOrders();
-      }
+      //  await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
+      // "to": "91"+selectedOrder.User.contact,
+      // "invoice_no": createInvoiceResponse.data.invoice.id,
+      // "customer_name": selectedOrder.User.first_name,
+      // "email": selectedOrder.User.email,
+      //     })
+
+      //     const sendInvoice = await axios.post(
+      //       "https://api.swasthyapro.com/api/invoice/send-invoice",
+      //       {
+      //         email: selectedOrder.User.email,
+      //         invoice_no: createInvoiceResponse.data.invoice.id,
+      //         customer_name: selectedOrder.User.first_name,
+      //       }
+      //     );
+      //     // Swal.fire({
+      //     //   text: "Status updated",
+      //     //   icon: "success",
+      //     //   timer: 1000,
+      //     // });
+      //     // fetchOrders();
+      //   }
     } catch (err) {
       console.log(err);
       Swal.fire({

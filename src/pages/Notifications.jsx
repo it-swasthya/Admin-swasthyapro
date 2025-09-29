@@ -155,8 +155,4 @@ const NotificationBell = () => {
   );
 };
 
-
-
-
-
 export default NotificationBell;

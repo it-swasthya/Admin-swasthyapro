@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   Box,
@@ -12,30 +12,29 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FileUpIcon } from "lucide-react";
 
-const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTable }) => {
+const UploadModal = ({
+  userData,
+  reportData,
+  open,
+  onClose,
+  getOrders,
+  onCloseTable,
+}) => {
   const [filledPdfUrl, setFilledPdfUrl] = useState(null);
-  const [logoPdfUrl, setLogoPdfUrl] = useState(null);
+  const [logoPdfUrl, setLogoPdfUrl] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [logoLoading, setLogoLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
-  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);      
+  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);   
   const [isSendEmailEnable, setisSendEmailEnable] = useState(false);
+  const [isCGHS , setIsCGHS] = useState(false)
+
   const handleApiCall = async (pdfUrl) => {
     setLoading(true);
     setFilledPdfUrl(null);
-    setLogoPdfUrl(null); 
+    setLogoPdfUrl(null);
     try {
-      // const payload = {
-      //   bookingId: "12345678",
-      //   name: "Sunil Gupta",
-      //   gender: "Male",
-      //   date: "2025-06-02",
-      //   age: "45",
-      //   package: "Basic Health Checkup",
-      //   pdfUrl,
-      // };
-
       const response = await axios.post(
         "https://api.swasthyapro.com/api/report/fill",
         { ...reportData, pdfUrl },
@@ -54,26 +53,41 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
   };
 
   const handleCapClick = () => {
+        setIsCGHS(false)
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-with-cap.pdf"
     );
   };
+  const handleCGHSWithCapClick = () => {
+    setIsCGHS(true)
+    handleApiCall(
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_with_cap.pdf"
+    );
+  };
+   const handleCGHSWithOutCapClick = () => {
+    setIsCGHS(true)
+    handleApiCall(
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_without_cap.pdf"
+    );
+  };
 
   const handleWithoutCapClick = () => {
+       setIsCGHS(false)
+ 
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-without-cap.pdf"
     );
   };
 
   const handleUploadAndAddLogo = async () => {
-    if (!pdfFile || !logoFile) {
-      alert("Please upload PDF and logo.");
+    if (!pdfFile ) {
+      alert("Please upload PDF");
       return;
     }
     setLoading(true);
     const formData = new FormData();
     formData.append("uploaded_pdf", pdfFile);
-    formData.append("logo", logoFile);
+    formData.append("logo", logoFile || null);
 
     formData.append(
       "letterheadUrl",
@@ -172,6 +186,24 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
           >
             Without Cap
           </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleCGHSWithCapClick}
+            disabled={loading}
+            sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
+          >
+            CGHS (With Cap)
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleCGHSWithOutCapClick}
+            disabled={loading}
+            sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
+          >
+            CGHS (Without Cap)
+          </Button>
         </Stack>
 
         {loading && (
@@ -204,71 +236,86 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
               Upload PDF & Logo
             </Typography>
 
-           <Stack spacing={3} mb={3}>
-      {/* PDF Upload */}
-      <Stack spacing={1}>
-        <Typography fontWeight="medium">Upload PDF:</Typography>
-        <Button
-          variant="outlined"
-          component="label"
-          startIcon={<FileUpIcon />}
-          sx={{ textTransform: 'none', borderRadius: 2, width: 'fit-content' }}
-        >
-          Choose PDF File
-          <input
-            type="file"
-            accept="application/pdf"
-            hidden
-            onChange={(e) => {
-              if (e.target.files[0]) setPdfFile(e.target.files[0]);
-            }}
-          />
-        </Button>
-        {pdfFile && (
-          <Typography variant="body2" color="text.secondary" mt={0.5}>
-            Selected: {pdfFile.name}
-          </Typography>
-        )}
-      </Stack>
+            <Stack spacing={3} mb={3}>
+              {/* PDF Upload */}
+              <Stack spacing={1}>
+                <Typography fontWeight="medium">Upload PDF:</Typography>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<FileUpIcon />}
+                  sx={{
+                    textTransform: "none",
+                    borderRadius: 2,
+                    width: "fit-content",
+                  }}
+                >
+                  Choose PDF File
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    hidden
+                    onChange={(e) => {
+                      if (e.target.files[0]) setPdfFile(e.target.files[0]);
+                    }}
+                  />
+                </Button>
+                {pdfFile && (
+                  <Typography variant="body2" color="text.secondary" mt={0.5}>
+                    Selected: {pdfFile.name}
+                  </Typography>
+                )}
+              </Stack>
 
-      {/* Logo Upload */}
-      <Stack spacing={1}>
-        <Typography fontWeight="medium">Upload Logo:</Typography>
-        <Button
-          variant="outlined"
-          component="label"
-          startIcon={<FileUpIcon />}
-          sx={{ textTransform: 'none', borderRadius: 2, width: 'fit-content' }}
-        >
-          Choose Logo Image
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={(e) => {
-              if (e.target.files[0]) setLogoFile(e.target.files[0]);
-            }}
-          />
-        </Button>
-        {logoFile && (
-          <Typography variant="body2" color="text.secondary" mt={0.5}>
-            Selected: {logoFile.name}
-          </Typography>
-        )}
-      </Stack>
-
-      {/* Upload Button */}
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleUploadAndAddLogo}
-        disabled={logoLoading}
-        sx={{ borderRadius: 2, textTransform: "none", width: "fit-content" }}
-      >
-        {logoLoading ? "Processing..." : "Upload & Add Logo + Header/Footer"}
-      </Button>
-    </Stack>
-            {logoLoading && (
+              {/* Logo Upload */}
+              {!isCGHS && 
+              <Stack spacing={1}>
+                <Typography fontWeight="medium">Upload Logo:</Typography>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<FileUpIcon />}
+                  sx={{
+                    textTransform: "none",
+                    borderRadius: 2,
+                    width: "fit-content",
+                  }}
+                >
+                  Choose Logo Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={(e) => {
+                      if (e.target.files[0]) setLogoFile(e.target.files[0]);
+                    }}
+                  />
+                </Button>
+                {logoFile && (
+                  <Typography variant="body2" color="text.secondary" mt={0.5}>
+                    Selected: {logoFile.name}
+                  </Typography>
+                )}
+              </Stack>
+}
+              {/* Upload Button */}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleUploadAndAddLogo}
+                disabled={logoLoading}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  width: "fit-content",
+                }}
+              >
+                {logoLoading
+                  ? "Processing..."
+                  : "Upload & Add Logo + Header/Footer"}
+              </Button>
+            </Stack>
+            {logoLoading && !isCGHS && (
               <Box
                 display="flex"
                 justifyContent="center"
@@ -335,7 +382,7 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
               color="success"
               onClick={async () => {
                 onClose();
-                onCloseTable()
+                onCloseTable();
                 try {
                   Swal.fire({
                     title: "Sending Report...",
@@ -349,12 +396,12 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
                   await axios.post(
                     "https://api.swasthyapro.com/api/report/send-upload-report",
                     {
-                      member_id:userData.memberId,
+                      member_id: userData.memberId,
                       userName: userData.userName,
                       booking_id: userData.orderID,
-                      test_type:userData.test_type,
-                      mobile_number:`${'91'+userData.mobile_number}`,
-                      date:userData.date
+                      test_type: userData.test_type,
+                      mobile_number: `${"91" + userData.mobile_number}`,
+                      date: userData.date,
                     }
                   );
 
@@ -364,7 +411,7 @@ const UploadModal = ({ userData, reportData, open, onClose,getOrders,onCloseTabl
                     text: "The report has been successfully whatsapp to the user.",
                     timer: 1000,
                   });
-                    getOrders()
+                  getOrders();
                 } catch (err) {
                   console.error(err);
                   await Swal.fire({

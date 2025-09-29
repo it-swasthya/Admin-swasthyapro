@@ -22,29 +22,25 @@ import flattenInvoiceRow from "../../utils/Tax-invoice-flatten";
 import ItemsModal from "../../components/tax-invoice-component/ItemModal";
 import GstModal from "../../components/tax-invoice-component/GstModal";
 
-
 const TaxInvoiceTable = () => {
   const dispatch = useDispatch();
   const [invoices, setInvoices] = useState([]);
   const [error, setError] = useState(null);
   const [openItemsModal, setOpenItemsModal] = useState(false);
-const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
 
-const [openGstModal, setOpenGstModal] = useState(false);
-const [selectedGst, setSelectedGst] = useState(null);
+  const [openGstModal, setOpenGstModal] = useState(false);
+  const [selectedGst, setSelectedGst] = useState(null);
 
-const handleOpenGstModal = (gstData) => {
-  setSelectedGst(gstData);
-  setOpenGstModal(true);
-};
+  const handleOpenGstModal = (gstData) => {
+    setSelectedGst(gstData);
+    setOpenGstModal(true);
+  };
 
-const handleCloseGstModal = () => {
-  setSelectedGst(null);
-  setOpenGstModal(false);
-};
-
-
-
+  const handleCloseGstModal = () => {
+    setSelectedGst(null);
+    setOpenGstModal(false);
+  };
 
   const getTaxInvoiceData = async () => {
     try {
@@ -72,25 +68,23 @@ const handleCloseGstModal = () => {
     getTaxInvoiceData();
   }, [dispatch]);
 
-
   const handleOpenItemsModal = (items) => {
-  setSelectedItems(items || []);
-  setOpenItemsModal(true);
-};
+    setSelectedItems(items || []);
+    setOpenItemsModal(true);
+  };
 
-const handleCloseItemsModal = () => {
-  setSelectedItems([]);
-  setOpenItemsModal(false);
-};
+  const handleCloseItemsModal = () => {
+    setSelectedItems([]);
+    setOpenItemsModal(false);
+  };
 
-
-
-  const column = getInvoiceTableColumns({handleOpenItemsModal,handleOpenGstModal})
+  const column = getInvoiceTableColumns({
+    handleOpenItemsModal,
+    handleOpenGstModal,
+  });
 
   return (
     <>
-      
-
       <TableComponent
         columns={column}
         data={invoices}
@@ -98,17 +92,16 @@ const handleCloseItemsModal = () => {
         filename={"Tax-invoice file"}
       />
 
-<ItemsModal
-  open={openItemsModal}
-  handleClose={handleCloseItemsModal}
-  items={selectedItems}
-/>
-<GstModal
-  open={openGstModal}
-  handleClose={handleCloseGstModal}
-  gstData={selectedGst}
-/>
-
+      <ItemsModal
+        open={openItemsModal}
+        handleClose={handleCloseItemsModal}
+        items={selectedItems}
+      />
+      <GstModal
+        open={openGstModal}
+        handleClose={handleCloseGstModal}
+        gstData={selectedGst}
+      />
     </>
   );
 };

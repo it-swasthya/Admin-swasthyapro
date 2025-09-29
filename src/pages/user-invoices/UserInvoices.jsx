@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const InvoiceTable = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
- const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const getInvoices = async () => {
@@ -40,14 +40,13 @@ const InvoiceTable = () => {
 
   return (
     <>
-      
       <TableComponent
-      columns={column}
-      data={invoices}
-      flattenRow={flattenInvoiceRow}
-      filename={"user-invoice-file"}
-    /></>
-    
+        columns={column}
+        data={invoices}
+        flattenRow={flattenInvoiceRow}
+        filename={"user-invoice-file"}
+      />
+    </>
   );
 };
 

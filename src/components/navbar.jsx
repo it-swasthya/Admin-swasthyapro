@@ -28,7 +28,7 @@ function Navbar({ sidebarOpen, toggleSidebar, activeMenu }) {
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-400 text-white font-semibold text-xs  border border-red-700 hover:border-red-500 rounded block sm:hidden px-0 py-0"
               >
-               <LogOutIcon size={14}/>
+                <LogOutIcon size={14} />
               </button>
               <button
                 onClick={handleLogout}

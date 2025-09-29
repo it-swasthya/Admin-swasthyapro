@@ -26,8 +26,8 @@ const InvoiceTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const [sortDirection, setSortDirection] = useState("desc");
-const theme = useTheme();
-const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const dispatch = useDispatch();
 
@@ -51,7 +51,6 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     getInvoices();
   }, []);
 
-
   const sortByTime = (direction) => {
     const sorted = [...filteredInvoices].sort((a, b) => {
       const timeA = new Date(a.createdAt).getTime();
@@ -66,7 +65,7 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     setSortDirection(newDirection);
     sortByTime(newDirection);
   };
-  
+
   const handleSearch = (query) => {
     setSearchQuery(query);
     const filtered = invoices.filter((invoice) =>
@@ -137,174 +136,249 @@ const isMobile = useMediaQuery(theme.breakpoints.down("md"));
       </div>
 
       {isMobile ? (
- <div className="p-4 space-y-4 pb-20">
-  {filteredInvoices.map((invoice, idx) => (
-    <Paper
-      key={idx}
-      className="p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out"
-      sx={{
-        backgroundColor: "#fff",
-        borderRadius: 2,
-        boxShadow: 3,
-        padding: "16px",
-      }}
-    >
-      <div className="text-lg font-semibold text-gray-900">
-        <strong>ID:</strong> {highlightMatch(invoice.id, searchQuery)}
-      </div>
-      <div className="text-sm text-gray-600">
-        <strong>Booking ID:</strong> {highlightMatch(invoice.booking_id, searchQuery)}
-      </div>
-      <div className="text-sm text-gray-600">
-        <strong>Amount:</strong> ₹{highlightMatch(invoice.total_amount?.toString(), searchQuery)}
-      </div>
-      <div className="text-sm text-gray-600">
-        <strong>Time:</strong> {new Date(invoice.createdAt).toLocaleString()}
-      </div>
-    </Paper>
-  ))}
-</div>
-
-):(
-  
-<>      <div style={{ overflowX: "auto", width: "100%" }}>
-        <TableContainer
-          component={Paper}
-          sx={{
-            maxHeight: 400,
-            flexGrow: 2,
-            minWidth: 800,
-            overflowY: "scroll",
-            "&::-webkit-scrollbar": {
-              display: "none",
-            },
-            "-ms-overflow-style": "none",
-            scrollbarWidth: "none",
-          }}
-        >
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              minHeight="300px"
+        <div className="p-4 space-y-4 pb-20">
+          {filteredInvoices.map((invoice, idx) => (
+            <Paper
+              key={idx}
+              className="p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out"
+              sx={{
+                backgroundColor: "#fff",
+                borderRadius: 2,
+                boxShadow: 3,
+                padding: "16px",
+              }}
             >
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Table stickyHeader aria-label="sticky table" sx={{ minWidth: 1500 }}>
-              <TableHead>
-                <TableRow>
-                {[
-  "Invoice ID",
-  "User ID",
-  "Booking ID",
-  "Payment ID",
-  "Invoice Type",
-  "Time",
-  "Billing Name",
-  "Billing Phone",
-  "Billing Address",
-  "State",
-  "Total Amount",
-].map((head, idx) => (
-  <TableCell
-    key={idx}
-    align="center"
-    sx={{
-      background: "linear-gradient(90deg, #4b6cb7, #182848)",
-      color: "white",
-      fontWeight: "bold",
-      fontSize: "1rem",
-      padding: "3px",
-      borderBottom: "none",
-      cursor: head === "Time" ? "pointer" : "default",
-    }}
-    onClick={head === "Time" ? handleSortClick : undefined}
-  >
-    {head === "Time" ? `${head} ${sortDirection === "asc" ? "▲" : "▼"}` : head}
-  </TableCell>
-))}
+              <div className="text-lg font-semibold text-gray-900">
+                <strong>ID:</strong> {highlightMatch(invoice.id, searchQuery)}
+              </div>
+              <div className="text-sm text-gray-600">
+                <strong>Booking ID:</strong>{" "}
+                {highlightMatch(invoice.booking_id, searchQuery)}
+              </div>
+              <div className="text-sm text-gray-600">
+                <strong>Amount:</strong> ₹
+                {highlightMatch(invoice.total_amount?.toString(), searchQuery)}
+              </div>
+              <div className="text-sm text-gray-600">
+                <strong>Time:</strong>{" "}
+                {new Date(invoice.createdAt).toLocaleString()}
+              </div>
+            </Paper>
+          ))}
+        </div>
+      ) : (
+        <>
+          {" "}
+          <div style={{ overflowX: "auto", width: "100%" }}>
+            <TableContainer
+              component={Paper}
+              sx={{
+                maxHeight: 400,
+                flexGrow: 2,
+                minWidth: 800,
+                overflowY: "scroll",
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+                "-ms-overflow-style": "none",
+                scrollbarWidth: "none",
+              }}
+            >
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  minHeight="300px"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Table
+                  stickyHeader
+                  aria-label="sticky table"
+                  sx={{ minWidth: 1500 }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      {[
+                        "Invoice ID",
+                        "User ID",
+                        "Booking ID",
+                        "Payment ID",
+                        "Invoice Type",
+                        "Time",
+                        "Billing Name",
+                        "Billing Phone",
+                        "Billing Address",
+                        "State",
+                        "Total Amount",
+                      ].map((head, idx) => (
+                        <TableCell
+                          key={idx}
+                          align="center"
+                          sx={{
+                            background:
+                              "linear-gradient(90deg, #4b6cb7, #182848)",
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "1rem",
+                            padding: "3px",
+                            borderBottom: "none",
+                            cursor: head === "Time" ? "pointer" : "default",
+                          }}
+                          onClick={
+                            head === "Time" ? handleSortClick : undefined
+                          }
+                        >
+                          {head === "Time"
+                            ? `${head} ${sortDirection === "asc" ? "▲" : "▼"}`
+                            : head}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
 
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {filteredInvoices.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={11} align="center" sx={{ py: 2 }}>
-                      <span className="text-gray-500 text-sm">No invoices found.</span>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredInvoices
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((invoice, index) => (
-                      <TableRow hover key={index} sx={{ height: 36 }}>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.id || "N/A", searchQuery)}
+                  <TableBody>
+                    {filteredInvoices.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={11} align="center" sx={{ py: 2 }}>
+                          <span className="text-gray-500 text-sm">
+                            No invoices found.
+                          </span>
                         </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.user_id || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.booking_id || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.payment_id || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.invoice_type || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(
-                            new Date(invoice.createdAt).toLocaleString() || "N/A",
-                            searchQuery
-                          )}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.billing_name || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.billing_phone || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.billing_address || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          {highlightMatch(invoice.billing_state || "N/A", searchQuery)}
-                        </TableCell>
-                        <TableCell align="center" sx={{ py: 0.5, fontSize: "0.75rem" }}>
-                          ₹{highlightMatch(invoice.total_amount?.toString() || "0", searchQuery)}
-                        </TableCell>
-                       
                       </TableRow>
-                    ))
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </TableContainer>
-      </div>
-
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={filteredInvoices.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{
-          position: "sticky",
-          bottom: 0,
-          background: "#fff",
-          zIndex: 1,
-        }}
-      /></>
-)}
-
-
+                    ) : (
+                      filteredInvoices
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((invoice, index) => (
+                          <TableRow hover key={index} sx={{ height: 36 }}>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(invoice.id || "N/A", searchQuery)}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.user_id || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.booking_id || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.payment_id || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.invoice_type || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                new Date(invoice.createdAt).toLocaleString() ||
+                                  "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.billing_name || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.billing_phone || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.billing_address || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              {highlightMatch(
+                                invoice.billing_state || "N/A",
+                                searchQuery
+                              )}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{ py: 0.5, fontSize: "0.75rem" }}
+                            >
+                              ₹
+                              {highlightMatch(
+                                invoice.total_amount?.toString() || "0",
+                                searchQuery
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </TableContainer>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={filteredInvoices.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{
+              position: "sticky",
+              bottom: 0,
+              background: "#fff",
+              zIndex: 1,
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };

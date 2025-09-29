@@ -79,7 +79,7 @@ const AllUsers = () => {
     dispatch(changeNavValue("All Users"));
     localStorage.removeItem("tests");
     localStorage.removeItem("packages");
-    localStorage.removeItem('radiology')
+    localStorage.removeItem("radiology");
 
     getUsers();
   }, [dispatch]);
@@ -91,25 +91,25 @@ const AllUsers = () => {
   //   });
   // };
 
-    const handleBookTest = (user) => {
-    const { fullName, email, id, address,contact } = user;
+  const handleBookTest = (user) => {
+    const { fullName, email, id, address, contact } = user;
 
     Swal.fire({
-      title: 'Choose an Option',
-      text: 'Where do you want to go?',
-      icon: 'question',
+      title: "Choose an Option",
+      text: "Where do you want to go?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonText: 'Book Test',
-      cancelButtonText: 'Book Radiology',
+      confirmButtonText: "Book Test",
+      cancelButtonText: "Book Radiology",
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate('/book-test', {
-          state: { user: { fullName, email, id, address,contact } },
+        navigate("/book-test", {
+          state: { user: { fullName, email, id, address, contact } },
         });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        navigate('/book-radiology', {
-          state: { user: { fullName, email, id, address ,contact} },
+        navigate("/book-radiology", {
+          state: { user: { fullName, email, id, address, contact } },
         });
       }
     });

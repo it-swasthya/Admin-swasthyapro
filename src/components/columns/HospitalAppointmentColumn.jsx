@@ -95,25 +95,23 @@ export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
     accessorKey: "createdAt",
     header: "Created At",
     Cell: ({ cell }) =>
-      cell.getValue()
-        ? new Date(cell.getValue()).toLocaleDateString()
-        : "N/A",
+      cell.getValue() ? new Date(cell.getValue()).toLocaleDateString() : "N/A",
     size: 150,
   },
-  
-//   {
-//     header: "Update Status",
-//     id: "update-status-action",
-//     Cell: ({ row }) => (
-//       <Button
-//         variant="outlined"
-//         size="small"
-//         onClick={() => onUpdateClick(row.original)}
-//         sx={{ fontSize: "0.7rem", py: 0, px: 1 }}
-//       >
-//         Update
-//       </Button>
-//     ),
-//     size: 130,
-//   },
+
+  //   {
+  //     header: "Update Status",
+  //     id: "update-status-action",
+  //     Cell: ({ row }) => (
+  //       <Button
+  //         variant="outlined"
+  //         size="small"
+  //         onClick={() => onUpdateClick(row.original)}
+  //         sx={{ fontSize: "0.7rem", py: 0, px: 1 }}
+  //       >
+  //         Update
+  //       </Button>
+  //     ),
+  //     size: 130,
+  //   },
 ];

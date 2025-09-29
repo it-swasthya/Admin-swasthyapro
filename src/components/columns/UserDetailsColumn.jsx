@@ -1,9 +1,9 @@
 // utils/userTableColumns.js
-import { Button, IconButton, Tooltip } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import { NotebookTabsIcon } from 'lucide-react';
+import { Button, IconButton, Tooltip } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";
+import { NotebookTabsIcon } from "lucide-react";
 
 export const getUserTableColumns = ({
   onBookTest,
@@ -11,55 +11,55 @@ export const getUserTableColumns = ({
   onPrescriptionClick,
 }) => [
   {
-    accessorKey: 'id',
-    header: 'User ID',
+    accessorKey: "id",
+    header: "User ID",
     size: 140,
   },
   {
-    accessorKey: 'fullName',
-    header: 'Full Name',
+    accessorKey: "fullName",
+    header: "Full Name",
     size: 180,
   },
   {
-    accessorKey: 'contact',
-    header: 'Contact',
+    accessorKey: "contact",
+    header: "Contact",
     size: 140,
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: "email",
+    header: "Email",
     size: 180,
   },
   {
-    accessorKey: 'age',
-    header: 'Age',
+    accessorKey: "age",
+    header: "Age",
     size: 80,
   },
   {
-    accessorKey: 'address',
-    header: 'Address',
+    accessorKey: "address",
+    header: "Address",
     size: 200,
   },
   {
-    accessorKey: 'pincode',
-    header: 'Pincode',
+    accessorKey: "pincode",
+    header: "Pincode",
     size: 100,
   },
   {
-    accessorKey: 'state',
-    header: 'State',
+    accessorKey: "state",
+    header: "State",
     size: 140,
   },
   {
-    accessorKey: 'DOB',
-    header: 'DOB',
+    accessorKey: "DOB",
+    header: "DOB",
     Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
     size: 120,
   },
- 
+
   {
-    header: 'Book-Test',
-    id: 'Book-Test',
+    header: "Book-Test",
+    id: "Book-Test",
     Cell: ({ row }) => (
       <Button
         onClick={() => onBookTest(row.original)}

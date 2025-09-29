@@ -71,7 +71,6 @@ const RadiologyBooking = () => {
     getRadiologyBooking();
   }, [dispatch]);
 
-
   const updatePaymentStatus = async () => {
     setStatusUpdate(false);
     Swal.fire({
@@ -113,7 +112,10 @@ const RadiologyBooking = () => {
     setStatusUpdate(true);
   };
 
-  const column = getRadiologyBookingColumn({ handleEditPayment , getRadiologyBooking });
+  const column = getRadiologyBookingColumn({
+    handleEditPayment,
+    getRadiologyBooking,
+  });
 
   return (
     <>
