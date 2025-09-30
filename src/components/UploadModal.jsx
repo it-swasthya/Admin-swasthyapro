@@ -26,7 +26,8 @@ const UploadModal = ({
   const [logoLoading, setLogoLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
   const [logoFile, setLogoFile] = useState(null);      
-  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);   
+  const [mergedPdfUrl, setMergedPdfUrl] = useState(null); 
+  const [seletedTab , setSeletedTab] = useState('')  
   const [isSendEmailEnable, setisSendEmailEnable] = useState(false);
   const [isCGHS , setIsCGHS] = useState(false)
 
@@ -86,10 +87,12 @@ const UploadModal = ({
     }
     setLoading(true);
     const formData = new FormData();
-    formData.append("uploaded_pdf", pdfFile);
+    formData.append(isCGHS ? 'uploaded_cghs':"uploaded_pdf", pdfFile);
     formData.append("logo", logoFile || null);
 
-    formData.append(
+
+if(!isCGHS){
+ formData.append(
       "letterheadUrl",
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-header.jpg"
     );
@@ -97,10 +100,12 @@ const UploadModal = ({
       "footerUrl",
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-footer.jpg"
     );
+}
+  
 
     try {
       const response = await axios.post(
-        "https://api.swasthyapro.com/api/report/add-logo",
+      isCGHS ? 'https://api.swasthyapro.com/api/report/upload-only' :"https://api.swasthyapro.com/api/report/add-logo",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -118,12 +123,13 @@ const UploadModal = ({
       setLoading(false);
     }
   };
+  
 
   const handleMergePdfs = async () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://api.swasthyapro.com/api/report/merge",
+        isCGHS ? "https://api.swasthyapro.com/api/report/merge-cghs" :"https://api.swasthyapro.com/api/report/merge",
         {},
         { responseType: "blob" }
       );
@@ -169,9 +175,9 @@ const UploadModal = ({
 
         <Stack direction="row" spacing={2} mb={4}>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
-            onClick={handleCapClick}
+            onClick={()=>{handleCapClick(); setSeletedTab("CAP")}}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -180,7 +186,7 @@ const UploadModal = ({
           <Button
             variant="outlined"
             color="primary"
-            onClick={handleWithoutCapClick}
+            onClick={()=>{handleWithoutCapClick(); setSeletedTab("Without Cap")}}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -189,7 +195,10 @@ const UploadModal = ({
           <Button
             variant="outlined"
             color="primary"
-            onClick={handleCGHSWithCapClick}
+            onClick={()=>{
+              handleCGHSWithCapClick();
+              setSeletedTab("CGHS with Cap")
+            }}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -198,7 +207,7 @@ const UploadModal = ({
           <Button
             variant="outlined"
             color="primary"
-            onClick={handleCGHSWithOutCapClick}
+            onClick={()=>{handleCGHSWithOutCapClick() ; setSeletedTab("CGHS without Cap")}}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -220,7 +229,7 @@ const UploadModal = ({
         {!loading && filledPdfUrl && (
           <>
             <Typography variant="subtitle1" fontWeight="bold" mb={1}>
-              Filled PDF Preview
+              Filled PDF Preview ({seletedTab})
             </Typography>
             <Box
               component="iframe"
@@ -312,7 +321,7 @@ const UploadModal = ({
               >
                 {logoLoading
                   ? "Processing..."
-                  : "Upload & Add Logo + Header/Footer"}
+                  : isCGHS ? "Upload Report":"Upload & Add Logo + Header/Footer"} 
               </Button>
             </Stack>
             {logoLoading && !isCGHS && (
