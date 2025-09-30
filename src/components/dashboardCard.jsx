@@ -4,7 +4,7 @@ function DashboardCard({ title, value, color, icon }) {
   const Icon = icon || Layers;
 
   return (
-    <div className=" rounded-lg shadow p-6 shadow-sm shadow-cyan-500/50">
+    <div className=" rounded-lg  p-6 shadow-md shadow-cyan-500/50">
       <div
         className={`w-12 h-12 ${color} rounded-lg mb-4 flex items-center justify-center text-green shadow-lg shadow-cyan-500/50`}
       >

@@ -7,6 +7,7 @@ import {
   Typography,
   Divider,
   Stack,
+  Chip,
 } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -123,7 +124,8 @@ if(!isCGHS){
       setLoading(false);
     }
   };
-  
+   
+   
 
   const handleMergePdfs = async () => {
     setLoading(true);
@@ -133,7 +135,7 @@ if(!isCGHS){
         {},
         { responseType: "blob" }
       );
-
+ 
       const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
       setMergedPdfUrl(blobUrl);
@@ -228,9 +230,19 @@ if(!isCGHS){
 
         {!loading && filledPdfUrl && (
           <>
-            <Typography variant="subtitle1" fontWeight="bold" mb={1}>
-              Filled PDF Preview ({seletedTab})
-            </Typography>
+           <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        Filled PDF Preview
+      </Typography>
+
+      <Chip
+        label={seletedTab || "None"}
+        color="success"    
+        variant="filled"
+        size="small"
+        sx={{ fontWeight: 500 }}
+      />
+    </Stack>
             <Box
               component="iframe"
               src={filledPdfUrl}
