@@ -155,6 +155,7 @@ const GenerateINV = () => {
         },
 
         billTo: {
+          name: invoiceDetails.billTo,
           address: invoiceDetails.clientAddress,
           gstin: invoiceDetails.gstin,
         },

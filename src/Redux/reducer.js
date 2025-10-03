@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import Swal from "sweetalert2";
 
 const getInitialCart = () => { 
   try {
@@ -20,14 +21,56 @@ const getInitialCart = () => {
     return [];
   }
 };
+export const logOutUser = createAsyncThunk(
+  "auth/logOut",
+  async (_, thunkAPI) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, log out!",
+    });
+
+    if (!result.isConfirmed) {
+      return thunkAPI.rejectWithValue("User cancelled logout.");
+    }
+
+    let accessToken = localStorage.getItem("accessToken");
+     await fetch(
+      `https://api.swasthyapro.com/api/auth/logout-cookie`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    localStorage.removeItem("accessToken");
+      Swal.fire({
+        title: "Logged Out!",
+        text: "Logout Successfully",
+        icon: "success",
+      });
+  }
+);
 
 const navBarSlice = createSlice({
   name: "navbar",
   initialState: {
     navBarValue: null,
     cart: getInitialCart(),
+    isLogin:false
   },
   reducers: {
+    isuserLogin: (state, action) => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        state.isLogin = true;
+      }else{
+      state.isLogin = false;
+      }
+    },
     changeNavValue: (state, action) => {
       state.navBarValue = action.payload;
     },
@@ -122,6 +165,12 @@ const navBarSlice = createSlice({
       localStorage.removeItem("radiology");
     },
   },
+  extraReducers(builder){
+ builder.addCase(logOutUser.fulfilled, (state, action) => {
+        state.isLogin = false;
+        localStorage.removeItem("accessToken");
+      })
+  }
 });
 
 export const {
@@ -131,8 +180,11 @@ export const {
   addPackageToCart,
   addRadiologyItemToCart,
   removeRadiologyItemFromCart,
+  isuserLogin
 } = navBarSlice.actions;
+
 export const navVal = (state) => state.navReducer.navBarValue;
 export const cartValue = (state) => state.navReducer.cart;
+export const isLoggedIn = (state) => state.navReducer.isLogin;
 
 export default navBarSlice.reducer;

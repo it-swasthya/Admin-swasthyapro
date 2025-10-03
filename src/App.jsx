@@ -37,15 +37,23 @@ import RadiologyAppointments from './pages/radiologyAppointments/RadiologyAppoin
 import GenerateINV from "./pages/generate-invoice/GenerateINV"
 import TaxInvoiceTable from "./pages/tax-invoices/Tax-invoices-table"
 import AllInvoices from "./pages/All-Invoices/All-Invoices"
+import { fetchProtectedData } from './utils/adminAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import { isLoggedIn, isuserLogin } from './Redux/reducer';
 const isAuthenticated = () => {
-  return localStorage.getItem('isLoggedIn') === 'true';
+  const isUserLoggedIn = useSelector(isLoggedIn)
+  if(isUserLoggedIn){
+    return true
+  }else{
+    return false
+  }
 };
 
 const ProtectedRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/login" />;
 };
 
-const PublicRoute = ({ children }) => {
+const   PublicRoute = ({ children }) => {
   return isAuthenticated() ? <Navigate to="/dashboard" /> : children;
 };
 
@@ -55,10 +63,22 @@ function App() {
     return localStorage.getItem('activeMenu') || 'dashboard';
   });
 
+  const dispatch = useDispatch()
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   useEffect(() => {
     localStorage.setItem('activeMenu', activeMenu);
+     const fetchUserDetails = async () => {
+      try {
+       const response=  await fetchProtectedData("https://api.swasthyapro.com/api/auth/me");
+       if(response.message !== "Invalid or expired token"){
+        dispatch(isuserLogin());
+       }
+      } catch (error) {
+        console.error("Auth check failed", error);
+      }
+    };
+    fetchUserDetails();
   }, [activeMenu]);
 
   return (

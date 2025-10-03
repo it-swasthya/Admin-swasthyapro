@@ -1,17 +1,17 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { navVal } from "../Redux/reducer";
+import { isLoggedIn, logOutUser, navVal } from "../Redux/reducer";
 import NotificationBell from "../pages/Notifications";
 import { LogOutIcon } from "lucide-react";
 
 function Navbar({ sidebarOpen, toggleSidebar, activeMenu }) {
   const navigate = useNavigate();
   const navValue = useSelector(navVal);
-  const isAuthenticated = localStorage.getItem("isLoggedIn") === "true";
+  const isLogin = useSelector(isLoggedIn)
+  const dispatch = useDispatch()
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    navigate("/login");
+    dispatch(logOutUser())
   };
 
   return (
@@ -22,7 +22,7 @@ function Navbar({ sidebarOpen, toggleSidebar, activeMenu }) {
         <div className="flex items-center gap-4">
           <NotificationBell />
 
-          {isAuthenticated ? (
+          {isLogin ? (
             <>
               <button
                 onClick={handleLogout}

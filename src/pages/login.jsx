@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { isuserLogin } from "../Redux/reducer";
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
@@ -9,10 +13,10 @@ function LoginAdmin() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+ const dispatch = useDispatch()
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     setError("");
     if (!email || !password) {
@@ -22,16 +26,18 @@ function LoginAdmin() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try{
+     const response = await axios.post('https://api.swasthyapro.com/api/auth/login-cookie' , { email, password })
+     
+   localStorage.setItem("accessToken" ,response.data.accessToken)
+   dispatch(isuserLogin())
+    }catch(err){
+      Swal.fire("","Invalid Credentials", 'warning')
+    }finally{
+          setIsLoading(false);
 
-      if (email === "adminpro@gmail.com" && password === "swasthya7890") {
-        localStorage.setItem("isLoggedIn", "true");
-        navigate("/");
-      } else {
-        setError("Invalid email or password");
-      }
-    }, 1500);
+    }
+  
   };
 
   return (
