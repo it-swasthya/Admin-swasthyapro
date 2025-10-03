@@ -9,7 +9,7 @@ const flattenInvoiceRow = (invoice) => ({
   Billing_Name: invoice.billing_name || "N/A",
   Billing_Phone: invoice.billing_phone || "N/A",
   Billing_Address: invoice.billing_address || "N/A",
-  Billing_State: invoice.billing_state || "N/A",
+  Billing_State: invoice.state || "N/A",
   Total_Amount:
     invoice.total_amount !== undefined
       ? `₹${invoice.total_amount}`

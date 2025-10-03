@@ -1,5 +1,4 @@
 // utils/invoiceTableColumns.js
-import { Typography } from "@mui/material";
 
 export const getInvoiceTableColumns = () => [
   {
@@ -61,7 +60,7 @@ export const getInvoiceTableColumns = () => [
     size: 200,
   },
   {
-    accessorKey: "billing_state",
+    accessorKey: "state",
     header: "State",
     Cell: ({ cell }) => cell.getValue() || "N/A",
     size: 120,
