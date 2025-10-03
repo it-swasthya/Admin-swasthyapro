@@ -14,12 +14,15 @@ export const getInvoiceTableColumns = () => [
     Cell: ({ cell }) => cell.getValue() || "N/A",
     size: 150,
   },
-  {
-    accessorKey: "booking_id",
-    header: "Booking ID",
-    Cell: ({ cell }) => cell.getValue() || "N/A",
-    size: 150,
-  },
+{
+  accessorKey: "booking_id",
+  header: "Booking ID",
+  Cell: ({ row }) =>
+    row.original.booking_id ||
+    row.original.radiology_booking_id ||
+    "N/A",
+  size: 150,
+},
   {
     accessorKey: "payment_id",
     header: "Payment ID",
