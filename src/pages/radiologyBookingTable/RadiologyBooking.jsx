@@ -19,15 +19,14 @@ import {
 } from "@mui/material";
 import { changeNavValue } from "../../Redux/reducer";
 import { getRadiologyBookingColumn } from "../../components/columns/RadiologyBookingColumn";
-import { RadiologyAppointmentFlattenRow } from "../../utils/RadiologyBookingFlattenRow";
+import { RadiologyBookingFlattenRow } from "../../utils/RadiologyBookingFlattenRow";
 
 const RadiologyBooking = () => {
   const dispatch = useDispatch();
   const [appointment, setAppointment] = useState([]);
   const [error, setError] = useState(null);
 
-  // Modal states
-  // const [openModal, setOpenModal] = useState(false);
+   // const [openModal, setOpenModal] = useState(false);
   // const [selectedUser, setSelectedUser] = useState(null);
   // const [selectedCenter, setSelectedCenter] = useState("");
   const [opentStatusUpdate, setStatusUpdate] = useState(false);
@@ -54,7 +53,7 @@ const RadiologyBooking = () => {
       );
 
       const formatted = response.data.result.map((appointment) =>
-        RadiologyAppointmentFlattenRow(appointment)
+        RadiologyBookingFlattenRow(appointment)
       );
 
       setAppointment(formatted);
@@ -82,7 +81,7 @@ const RadiologyBooking = () => {
     });
     try {
       const response = await axios.patch(
-        "https://api.swasthyapro.com/api/labs/radiology/RADBOOK698019/payment",
+        `https://api.swasthyapro.com/api/labs/radiology/${selectedOrder.id}/payment`,
         {
           payment_status: seletedPaymentMethod,
         }
@@ -122,7 +121,7 @@ const RadiologyBooking = () => {
       <TableComponent
         columns={column}
         data={appointment}
-        flattenRow={RadiologyAppointmentFlattenRow}
+        flattenRow={RadiologyBookingFlattenRow}
         filename={"Radiology Appointments file"}
       />
       <Dialog open={opentStatusUpdate} onClose={() => setStatusUpdate(false)}>

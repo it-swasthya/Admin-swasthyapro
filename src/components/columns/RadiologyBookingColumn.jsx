@@ -22,14 +22,12 @@ export const getRadiologyBookingColumn = ({
 }) => {
   const TestInfoCell = ({ row }) => {
     const [open, setOpen] = useState(false);
-    const tests = row.original.testDetails || [];
-
+    const tests = JSON.parse(row.original.testDetails) || [];
     return (
       <>
         <IconButton color="primary" size="small" onClick={() => setOpen(true)}>
           <InfoIcon fontSize="small" />
         </IconButton>
-
         <Dialog
           open={open}
           onClose={() => setOpen(false)}

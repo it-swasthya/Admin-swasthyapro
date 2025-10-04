@@ -1,9 +1,21 @@
-import { Button, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 export const getInvoiceTableColumns = ({
   handleOpenItemsModal,
   handleOpenGstModal,
+  handleDelete,
+  changeINVstatus,
 }) => [
   {
     accessorKey: "invoice_id",
@@ -69,10 +81,7 @@ export const getInvoiceTableColumns = ({
     header: "GST Details",
     Cell: ({ row }) => (
       <Tooltip title="View GST" arrow>
-        <IconButton
-          size="small"
-          onClick={() => handleOpenGstModal(row.original)}
-        >
+        <IconButton size="small" onClick={() => handleOpenGstModal(row.original)}>
           <InfoOutlinedIcon color="primary" />
         </IconButton>
       </Tooltip>
@@ -85,12 +94,68 @@ export const getInvoiceTableColumns = ({
     Cell: ({ cell }) => (cell.getValue() ? `₹${cell.getValue()}` : "N/A"),
     size: 120,
   },
-
   {
     accessorKey: "total",
     header: "Total",
     Cell: ({ cell }) => (cell.getValue() ? `₹${cell.getValue()}` : "N/A"),
     size: 120,
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    Cell: ({ row }) => {
+      const status = row.original.status || "Pending";
+      const isApproved = status === "approved";
+      const isCancelled = status === "cancelled";
+
+      return (
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: isApproved
+                ? "green"
+                : isCancelled
+                ? "red"
+                : "text.secondary",
+              fontWeight: 600,
+            }}
+          >
+            {status?.toUpperCase()}
+          </Typography>
+          { !isCancelled && (
+            <>
+             
+              <Tooltip title="Cancel">
+                <IconButton
+                  color="error"
+                  size="small"
+                  onClick={() => changeINVstatus(row.original)}
+                >
+                  <CancelOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
+        </div>
+      );
+    },
+    size: 160,
+  },
+  {
+    header: "Delete",
+    Cell: ({ row }) => (
+      <Tooltip title="Delete Invoice">
+        <IconButton
+          color="error"
+          size="small"
+          onClick={() => handleDelete(row.original)}
+        >
+          <DeleteOutlineIcon />
+        </IconButton>
+      </Tooltip>
+    ),
+    size: 100,
   },
   {
     accessorKey: "createdAt",

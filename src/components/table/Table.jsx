@@ -35,6 +35,25 @@ const TableComponent = ({ columns, data, flattenRow, filename }) => {
     paginationDisplayMode: "pages",
     positionToolbarAlertBanner: "bottom",
 
+    muiTableBodyRowProps: ({ row }) => {
+      const status = row.original.status?.toLowerCase();
+
+      let backgroundColor = "white"; 
+      if (status === "approved" ) backgroundColor = "#e8f5e9"; 
+      else if (status === "cancelled") backgroundColor = "#ffebee";
+      else if (status === "pending") backgroundColor = "#fffde7"; 
+
+      return {
+        sx: {
+          backgroundColor,
+          "&:hover": {
+            backgroundColor: "#f1f1f1",
+          },
+          transition: "background-color 0.3s ease",
+        },
+      };
+    },
+
     renderTopToolbarCustomActions: ({ table }) => (
       <Box
         sx={{ display: "flex", gap: "16px", padding: "8px", flexWrap: "wrap" }}

@@ -1,20 +1,25 @@
-export const RadiologyAppointmentFlattenRow = (appointment) => ({
-  id: appointment.id,
-  user_id: appointment.user_id,
+export const RadiologyBookingFlattenRow = (booking) => ({
+  id: booking.id || "N/A",
+  user_id: booking.user_id || "N/A",
   fullName:
-    `${appointment.user?.first_name || ""} ${appointment.user?.last_name || ""}`.trim(),
-  contact: appointment.user?.contact || "",
-  email: appointment.user?.email || "",
-  labName: appointment.lab?.lab_name || "",
-  testDetails: appointment.test_name || [],
-  slotTime: appointment.slot_time,
-  additional_discount: "₹" + appointment.additional_discount,
-  totalAmount: "₹" + appointment.total_amount,
-  netAmount: "₹" + appointment.net_amount,
-  paymentStatus: appointment.payment_status,
-  paymentMethod: appointment.payment_method || "N/A",
-  booking_status:appointment.booking_status || 'N/A',
-  rescheduled_date:appointment.rescheduled_date ? new Date(appointment.rescheduled_date).toLocaleString() : "N/A",
-  reportStatus: appointment.report_shared ? "Yes" : "No",
-  createdAt: appointment.createdAt,
+    `${booking.user?.first_name || ""} ${booking.user?.last_name || ""}`.trim() || "N/A",
+  contact: booking.user?.contact || "N/A",
+  email: booking.user?.email || "N/A",
+  labName: booking.lab?.lab_name || "N/A",
+
+  testDetails: JSON.stringify(booking.test_name),
+  slotTime: booking.slot_time || "N/A",
+  additional_discount: booking.additional_discount
+    ? "₹" + booking.additional_discount
+    : "N/A",
+  totalAmount: booking.total_amount ? "₹" + booking.total_amount : "N/A",
+  netAmount: booking.net_amount ? "₹" + booking.net_amount : "N/A",
+  paymentStatus: booking.payment_status || "N/A",
+  paymentMethod: booking.payment_method || "N/A",
+  booking_status: booking.booking_status || "N/A",
+  rescheduled_date: booking.rescheduled_date
+    ? new Date(booking.rescheduled_date).toLocaleString()
+    : "N/A",
+  reportStatus: booking.report_shared ? "Yes" : "No",
+  createdAt: booking.createdAt || "N/A",
 });

@@ -19,6 +19,7 @@ const GenerateINV = () => {
       hsnSac: "998312",
       qty: 1,
       rate: 0,
+      service_charge: 0,
     },
   ]);
 
@@ -86,11 +87,17 @@ const GenerateINV = () => {
   };
 
   // Totals
-  const totalAmount = rows.reduce((sum, row) => sum + row.qty * row.rate, 0);
-
-  const cgstAmount = useIGST ? 0 : (totalAmount * cgstRate) / 100;
-  const sgstAmount = useIGST ? 0 : (totalAmount * sgstRate) / 100;
-  const igstAmount = useIGST ? (totalAmount * igstRate) / 100 : 0;
+  const totalAmount = rows.reduce(
+    (sum, row) => sum + row.qty * row.rate + (row.service_charge || 0),
+    0
+  );
+  const totalServiceCharge = rows.reduce(
+    (sum, row) => sum + (row.service_charge || 0),
+    0
+  );
+  const cgstAmount = useIGST ? 0 : (totalServiceCharge * cgstRate) / 100;
+  const sgstAmount = useIGST ? 0 : (totalServiceCharge * sgstRate) / 100;
+  const igstAmount = useIGST ? (totalServiceCharge * igstRate) / 100 : 0;
 
   const totalGST = cgstAmount + sgstAmount + igstAmount;
   const grandTotal = totalAmount + totalGST;
@@ -210,7 +217,7 @@ const GenerateINV = () => {
             desc: row.desc,
             hsnSac: row.hsnSac,
             qty: row.qty,
-            rate: row.rate,
+            rate: Number(row.rate + row.service_charge),
           })),
 
           taxes: {
@@ -224,6 +231,7 @@ const GenerateINV = () => {
             total: grandTotal,
             totalGst: totalGST || 0,
           },
+          service_charges: totalServiceCharge,
         };
         const res = await fetch(
           "https://api.swasthyapro.com/api/invoice/tax-invoices/generate-pdf",
@@ -245,11 +253,13 @@ const GenerateINV = () => {
           const url = URL.createObjectURL(blob);
           setInvoiceDetails({
             invoiceDate: "",
-            placeOfSupply: "",
+            placeOfSupply: "Delhi",
             dueDate: "",
             billTo: "",
             gstin: "",
             clientAddress: "",
+            Reverse_Charge: "No",
+            vender_code: "",
           });
           setRows([
             {
@@ -260,6 +270,7 @@ const GenerateINV = () => {
               hsnSac: "998312",
               qty: 1,
               rate: 0,
+              service_charge: 0,
             },
           ]);
 
@@ -522,8 +533,12 @@ const GenerateINV = () => {
               </th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>Qty</th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
+                Service Charge (₹)
+              </th>
+              <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Amount (₹)
               </th>
+
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Action
               </th>
@@ -602,7 +617,23 @@ const GenerateINV = () => {
                   />
                 </td>
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
-                  <strong>{row.qty * row.rate}</strong>
+                  <input
+                    type="number"
+                    value={row.service_charge}
+                    onChange={(e) =>
+                      handleChange(
+                        row.id,
+                        "service_charge",
+                        Number(e.target.value)
+                      )
+                    }
+                    style={{ ...inputStyle, width: "90px", textAlign: "right" }}
+                  />
+                </td>
+                <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                  <strong>
+                    {row.qty * row.rate + (row.service_charge || 0)}
+                  </strong>
                 </td>
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <button
@@ -649,7 +680,27 @@ const GenerateINV = () => {
                 </button>
               </td>
               <td
-                colSpan={showEmployeeCols ? "6" : "4"}
+                colSpan={showEmployeeCols ? "3" : "1"}
+                style={{
+                  textAlign: "right",
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  fontWeight: "600",
+                }}
+              >
+                Total Service Charge
+              </td>
+              <td
+                style={{
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  fontWeight: "600",
+                }}
+              >
+                {Number(totalServiceCharge)}
+              </td>
+              <td
+                colSpan={showEmployeeCols ? "3" : "4"}
                 style={{
                   textAlign: "right",
                   padding: "12px",
@@ -666,8 +717,9 @@ const GenerateINV = () => {
                   fontWeight: "600",
                 }}
               >
-                {totalAmount}
+                {Number(totalAmount)}
               </td>
+
               <td style={{ border: "1px solid #ddd" }}></td>
             </tr>
           </tbody>
