@@ -6,7 +6,7 @@ export const RadiologyBookingFlattenRow = (booking) => ({
   contact: booking.user?.contact || "N/A",
   email: booking.user?.email || "N/A",
   labName: booking.lab?.lab_name || "N/A",
-
+  
   testDetails: JSON.stringify(booking.test_name),
   slotTime: booking.slot_time || "N/A",
   additional_discount: booking.additional_discount
@@ -18,8 +18,8 @@ export const RadiologyBookingFlattenRow = (booking) => ({
   paymentMethod: booking.payment_method || "N/A",
   booking_status: booking.booking_status || "N/A",
   rescheduled_date: booking.rescheduled_date
-    ? new Date(booking.rescheduled_date).toLocaleString()
+    ? new Date(booking.rescheduled_date).toLocaleDateString()
     : "N/A",
   reportStatus: booking.report_shared ? "Yes" : "No",
-  createdAt: booking.createdAt || "N/A",
+  booking_date: booking.booking_date || "N/A",
 });

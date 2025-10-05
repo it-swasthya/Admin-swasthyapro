@@ -1,22 +1,28 @@
 import {
-  Select,
-  MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const UpdateBookingStatusCell = ({ row, getRadiologyBooking }) => {
   const [status, setStatus] = useState(row.booking_status || "");
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
   const handleChange = async (e) => {
     const newStatus = e.target.value;
@@ -32,6 +38,7 @@ const UpdateBookingStatusCell = ({ row, getRadiologyBooking }) => {
   };
 
   const callApi = async (newStatus, date = null) => {
+    setOpenDatePicker(false)
     try {
       Swal.fire({
         title: "Updating booking...",
@@ -47,8 +54,24 @@ const UpdateBookingStatusCell = ({ row, getRadiologyBooking }) => {
         {
           booking_status: newStatus,
           new_booking_date: date ? dayjs(date).format("YYYY-MM-DD") : null,
+          time_slot: selectedTimeSlot || null,
         }
       );
+
+    if(newStatus === 'rescheduled'){
+        await axios.post(
+        "https://api.swasthyapro.com/api/mail/send-reschedule-mail",
+        {
+          userName: row.fullName || null,
+          userEmail: row.email,
+          orderId: row.id,
+          oldDate: row.rescheduled_date !== "N/A" ? row.rescheduled_date : row.booking_date,
+          oldTime: row.slotTime,
+          newDate: dayjs(date).format("YYYY-MM-DD") || null,
+          newTime: selectedTimeSlot,
+        }
+      );
+    }
 
       Swal.fire({
         icon: "success",
@@ -78,6 +101,14 @@ const UpdateBookingStatusCell = ({ row, getRadiologyBooking }) => {
     setOpenDatePicker(false);
   };
 
+  const timeSlots = [
+    "6AM - 8AM",
+    "8AM - 10AM",
+    "10AM - 12PM",
+    "12PM - 2PM",
+    "2PM - 4PM",
+    "4PM - 6PM",
+  ];
   return (
     <>
       {row.booking_status === "cancelled" ||
@@ -85,26 +116,76 @@ const UpdateBookingStatusCell = ({ row, getRadiologyBooking }) => {
         <p>{row.booking_status}</p>
       ) : (
         <Select value={status} onChange={handleChange} size="small" fullWidth>
-          <MenuItem value="test booked">Test Booked</MenuItem>
           <MenuItem value="scheduled">Scheduled</MenuItem>
           <MenuItem value="rescheduled">Rescheduled</MenuItem>
           <MenuItem value="cancelled">Cancelled</MenuItem>
           <MenuItem value="completed">Completed</MenuItem>
         </Select>
       )}
-      <Dialog open={openDatePicker} onClose={() => setOpenDatePicker(false)}>
-        <DialogTitle>Reschedule Booking</DialogTitle>
-        <DialogContent>
-          <DatePicker
-            label="Select New Date"
-            value={rescheduleDate}
-            onChange={(newValue) => setRescheduleDate(newValue)}
-            disablePast
-          />
+      <Dialog
+        open={openDatePicker}
+        onClose={() => setOpenDatePicker(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle
+          sx={{ fontWeight: 600, textAlign: "center", pb: 1, color: "#1976d2" }}
+        >
+          Reschedule Booking
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 2 }}>
+          {/* Date Picker */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Select New Date"
+              value={rescheduleDate}
+              onChange={(newValue) => setRescheduleDate(newValue)}
+              disablePast
+              sx={{ width: "100%" }}
+            />
+          </LocalizationProvider>
+
+          {/* Time Slot Selector */}
+          <Box mt={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="timeSlot-label">Select Time Slot *</InputLabel>
+              <Select
+                labelId="timeSlot-label"
+                id="timeSlot"
+                value={selectedTimeSlot}
+                label="Select Time Slot *"
+                onChange={(e) => {
+                  setSelectedTimeSlot(e.target.value);
+                  localStorage.setItem("booking_time_slot", e.target.value);
+                }}
+              >
+                <MenuItem value="">-- Select Time Slot --</MenuItem>
+                {timeSlots.map((slot) => (
+                  <MenuItem key={slot} value={slot}>
+                    {slot}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDatePicker(false)}>Cancel</Button>
-          <Button onClick={handleConfirmReschedule} variant="contained">
+
+        <DialogActions sx={{ px: 3, pb: 2, pt: 1 }}>
+          <Button
+            onClick={() => setOpenDatePicker(false)}
+            color="inherit"
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConfirmReschedule}
+            disabled={!rescheduleDate || !selectedTimeSlot}
+            sx={{ textTransform: "none", px: 3 }}
+          >
             Confirm
           </Button>
         </DialogActions>

@@ -175,8 +175,8 @@ export const getRadiologyBookingColumn = ({
     },
 
     {
-      accessorKey: "createdAt",
-      header: "Booking Date",
+      accessorKey: "booking_date",
+      header: "Scheduled Date",
       Cell: ({ cell }) => new Date(cell.getValue()).toLocaleDateString(),
       size: 160,
     },
