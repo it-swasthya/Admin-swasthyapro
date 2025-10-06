@@ -34,7 +34,6 @@ const RegistrationForm = () => {
   const [errors, setErrors] = useState({
     contact: null,
     alternate_contact: null,
-    email: "",
   });
 
   const [password, setPassword] = useState(["", "", "", ""]);
@@ -68,10 +67,7 @@ const RegistrationForm = () => {
   const validateForm = () => {
     let formErrors = {};
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      formErrors.email = "Please enter a valid email address";
-    }
+   
     if (!formData.gender) {
       formErrors.gender = "Please select a gender";
     }
@@ -104,7 +100,7 @@ const RegistrationForm = () => {
           pincode: formData.pincode || null,
           state: formData.state || "",
           alternate_contact: formData.alternate_contact || null,
-          email: formData.email || "",
+          email: formData.email || null,
           password: formData.password || "",
           gstNO: formData || "",
           age: Number(formData.age) || null,
@@ -225,6 +221,7 @@ const RegistrationForm = () => {
               onChange={handleChange}
               type="email"
               error={errors.email}
+              required={false}
             />
             <InputField
               label="Pincode"

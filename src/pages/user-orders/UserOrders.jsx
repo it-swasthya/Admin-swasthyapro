@@ -44,6 +44,33 @@ const OrderExportTable = () => {
   const [openMethodStatus, setMethodStatus] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
+  const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
+
+// Filter orders when dates change
+useEffect(() => {
+  if (!startDate && !endDate) {
+    setFilteredOrders(orders);
+  } else {
+    const filtered = orders.filter((order) => {
+      const orderDate = new Date(order.createdAt); // or order.bookDate if you prefer
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+
+      if (start && end) {
+        return orderDate >= start && orderDate <= end;
+      } else if (start) {
+        return orderDate >= start;
+      } else if (end) {
+        return orderDate <= end;
+      }
+      return true;
+    });
+    setFilteredOrders(filtered);
+  }
+}, [startDate, endDate, orders]);
+
+
   const dispatch = useDispatch();
 
   const fetchOrders = async () => {
@@ -329,6 +356,58 @@ const OrderExportTable = () => {
 
   return (
     <>
+    <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    marginBottom: "16px",
+    flexWrap: "wrap",
+  }}
+>
+  <div>
+    <label style={{ marginRight: "8px", fontWeight: 500 }}>From:</label>
+    <input
+      type="date"
+      value={startDate}
+      onChange={(e) => setStartDate(e.target.value)}
+      style={{
+        padding: "6px 8px",
+        borderRadius: "6px",
+        border: "1px solid #ccc",
+      }}
+    />
+  </div>
+
+  <div>
+    <label style={{ marginRight: "8px", fontWeight: 500 }}>To:</label>
+    <input
+      type="date"
+      value={endDate}
+      onChange={(e) => setEndDate(e.target.value)}
+      style={{
+        padding: "6px 8px",
+        borderRadius: "6px",
+        border: "1px solid #ccc",
+      }}
+    />
+  </div>
+
+  {(startDate || endDate) && (
+    <Button
+      variant="outlined"
+      color="secondary"
+      onClick={() => {
+        setStartDate("");
+        setEndDate("");
+        setFilteredOrders(orders);
+      }}
+    >
+      Clear
+    </Button>
+  )}
+</div>
+
       {isMdDown ? (
         <OrderCardMObile
           orders={orders}
@@ -339,11 +418,12 @@ const OrderExportTable = () => {
         />
       ) : (
         <TableComponent
-          columns={columns}
-          data={orders}
-          flattenRow={userOrderFlattenRow}
-          filename={"user-order-file"}
-        />
+  columns={columns}
+  data={filteredOrders} // ✅ use filteredOrders instead of orders
+  flattenRow={userOrderFlattenRow}
+  filename={"user-order-file"}
+/>
+
       )}
 
       {selectedOrder && (

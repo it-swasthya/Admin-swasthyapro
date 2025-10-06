@@ -31,6 +31,29 @@ const AllUsers = () => {
   const [userReports, setUserReports] = useState([]);
   const [viewType, setViewType] = useState("reports");
   const [loading, setLoading] = useState(true);
+  // 🔍 Date range filter states
+const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
+
+// 🔁 Filter users based on createdAt date range
+useEffect(() => {
+  if (!startDate && !endDate) {
+    setFilteredUsers(userData);
+  } else {
+    const filtered = userData.filter((user) => {
+      const created = new Date(user.createdAt);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+
+      if (start && end) return created >= start && created <= end;
+      if (start) return created >= start;
+      if (end) return created <= end;
+      return true;
+    });
+    setFilteredUsers(filtered);
+  }
+}, [startDate, endDate, userData]);
+
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -63,6 +86,7 @@ const AllUsers = () => {
         reports: user?.Reports || "N/A",
         Prescriptions: user?.Prescriptions,
         DOB: user?.date_of_birth || "N/A",
+        createdAt: user?.createdAt 
       }));
       setUserData(formatted);
       setFilteredUsers(formatted);
@@ -83,13 +107,6 @@ const AllUsers = () => {
 
     getUsers();
   }, [dispatch]);
-
-  // const handleBookTest = (user) => {
-  //   const { fullName, email, id, address } = user;
-  //   navigate("/book-test", {
-  //     state: { user: { fullName, email, id, address } },
-  //   });
-  // };
 
   const handleBookTest = (user) => {
     const { fullName, email, id, address, contact } = user;
@@ -153,14 +170,55 @@ const AllUsers = () => {
   }
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row sm:justify-end gap-2">
-        <button
-          onClick={() => navigate("/create-user")}
-          className=" h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
-        >
-          + Create User
-        </button>
-      </div>
+     <div
+  className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+>
+  {/* 📅 Date Range Filter - Left side */}
+  <div className="flex flex-wrap items-center gap-4">
+    <div className="flex items-center gap-2">
+      <label className="font-medium">From:</label>
+      <input
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        className="border border-gray-300 rounded px-2 py-1"
+      />
+    </div>
+
+    <div className="flex items-center gap-2">
+      <label className="font-medium">To:</label>
+      <input
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        className="border border-gray-300 rounded px-2 py-1"
+      />
+    </div>
+
+    {(startDate || endDate) && (
+      <button
+        onClick={() => {
+          setStartDate("");
+          setEndDate("");
+          setFilteredUsers(userData);
+        }}
+        className="border border-gray-400 text-gray-700 px-3 py-1 rounded hover:bg-gray-100 transition"
+      >
+        Clear
+      </button>
+    )}
+  </div>
+
+  {/* ➕ Create User - Right side */}
+  <button
+    onClick={() => navigate("/create-user")}
+    className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+  >
+    + Create User
+  </button>
+</div>
+
+      
 
       {isMobile ? (
         <UserDetailsMobileView
@@ -170,12 +228,13 @@ const AllUsers = () => {
           handleBookTest={handleBookTest}
         />
       ) : (
-        <TableComponent
-          columns={column}
-          data={filteredUsers}
-          flattenRow={UserFlattenRow}
-          filename={"User-details-file"}
-        />
+      <TableComponent
+  columns={column}
+  data={filteredUsers} 
+  flattenRow={UserFlattenRow}
+  filename={"User-details-file"}
+/>
+
       )}
       <Modal
         open={openModal}
