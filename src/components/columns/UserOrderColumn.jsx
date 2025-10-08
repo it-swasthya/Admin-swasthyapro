@@ -194,19 +194,61 @@ export const getOrderTableColumns = ({
   },
 
   {
-    header: "Report Shared",
-    id: "report_share",
-    Cell: ({ row }) => (
-      <Switch
+  header: "Report Shared",
+  id: "report_share",
+  Cell: ({ row }) => (
+    <Switch
+      size="small"
+      color="primary"
+      checked={row.original.report_shared}
+      onChange={(event) =>
+        onReportShareClick(row.original, event.target.checked)
+      }
+    />
+  ),
+},
+
+// ✅ New Column Added Here
+{
+  header: "Report",
+  id: "view_report",
+  Cell: ({ row }) => {
+    const reportUrl = row.original.report; 
+
+    return reportUrl ? (
+      <Button
+        variant="outlined"
         size="small"
         color="primary"
-        checked={row.original.report_shared}
-        onChange={(event) =>
-          onReportShareClick(row.original, event.target.checked)
-        }
-      />
-    ),
+        onClick={() => window.open(reportUrl, "_blank")}
+        sx={{
+          textTransform: "none",
+          borderRadius: "8px",
+          fontSize: "12px",
+          padding: "2px 10px",
+        }}
+      >
+        View Report
+      </Button>
+    ) : (
+      <Button
+        variant="outlined"
+        size="small"
+        disabled
+        sx={{
+          textTransform: "none",
+          borderRadius: "8px",
+          fontSize: "12px",
+          padding: "2px 10px",
+          opacity: 0.6,
+        }}
+      >
+        No Report
+      </Button>
+    );
   },
+},
+
   // {
   //   accessorKey: "dmlName",
   //   header: "DML-Name",

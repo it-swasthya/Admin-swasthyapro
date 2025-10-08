@@ -17,4 +17,5 @@
   UserAddress: order.User?.address || "N/A",
   Pincode: order.User?.pincode || "N/A",
   State: order.User?.state || "N/A",
+  report:order.report || null
 });
