@@ -5,9 +5,9 @@ const HospitalAppointmentflattenRow = (item) => ({
   email: item.email || "N/A",
   city: item.city || "N/A",
   insurance: item.insurance || false,
-  adhar_file: item.adhar_file || "N/A",
-  pan_file: item.pan_file || "N/A",
-  insurance_file: item.insurance_file || "N/A",
+  adhar_file: item.adhar_file || null,
+  pan_file: item.pan_file || null,
+  insurance_file: item.insurance_file || null,
   createdAt: item.createdAt
     ? new Date(item.createdAt).toLocaleDateString()
     : "N/A",

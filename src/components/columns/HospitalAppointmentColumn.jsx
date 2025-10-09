@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 
-export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
+export const getHospitalAppointmentTableColumns = ({onAddHospital,handleViewHospitalRecords,}) => [
   {
     accessorKey: "name",
     header: "Full Name",
@@ -41,7 +41,7 @@ export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
     accessorKey: "adhar_file",
     header: "Adhar File",
     Cell: ({ cell }) =>
-      cell.getValue() !== "N/A" ? (
+      cell.getValue() !== null ? (
         <a
           href={cell.getValue()}
           target="_blank"
@@ -59,7 +59,7 @@ export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
     accessorKey: "pan_file",
     header: "PAN File",
     Cell: ({ cell }) =>
-      cell.getValue() !== "N/A" ? (
+      cell.getValue() !== null ? (
         <a
           href={cell.getValue()}
           target="_blank"
@@ -77,7 +77,7 @@ export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
     accessorKey: "insurance_file",
     header: "Insurance File",
     Cell: ({ cell }) =>
-      cell.getValue() !== "N/A" ? (
+       cell.getValue() !== null ? (
         <a
           href={cell.getValue()}
           target="_blank"
@@ -99,19 +99,35 @@ export const getHospitalAppointmentTableColumns = (onUpdateClick) => [
     size: 150,
   },
 
-  //   {
-  //     header: "Update Status",
-  //     id: "update-status-action",
-  //     Cell: ({ row }) => (
-  //       <Button
-  //         variant="outlined"
-  //         size="small"
-  //         onClick={() => onUpdateClick(row.original)}
-  //         sx={{ fontSize: "0.7rem", py: 0, px: 1 }}
-  //       >
-  //         Update
-  //       </Button>
-  //     ),
-  //     size: 130,
-  //   },
+    {
+      header: "Update Status",
+      id: "update-status-action",
+      Cell: ({ row }) => (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => onAddHospital(row.original)}
+          sx={{ fontSize: "0.7rem", py: 0, px: 1 }}
+        >
+          Add Hospital
+        </Button>
+      ),
+      size: 130,
+    },
+    {
+    header: "Hospital Records",
+    id: "view-hospital-records",
+    Cell: ({ row }) => (
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        onClick={() => handleViewHospitalRecords(row.original)}
+        sx={{ fontSize: "0.7rem", py: 0, px: 1 }}
+      >
+        View Records
+      </Button>
+    ),
+    size: 150,
+  },
 ];

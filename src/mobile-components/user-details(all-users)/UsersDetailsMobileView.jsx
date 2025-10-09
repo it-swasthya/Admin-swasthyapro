@@ -90,7 +90,7 @@ const UserDetailsMobileView = ({
               >
                 Book Test
               </button>
-              <button
+              {/* <button
                 className="bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-md px-2 py-1"
                 onClick={() => handleOpenModal(user, "reports")}
               >
@@ -101,7 +101,7 @@ const UserDetailsMobileView = ({
                 onClick={() => handleOpenModal(user, "prescriptions")}
               >
                 Prescriptions
-              </button>
+              </button> */}
             </div>
           </Paper>
         ))}
