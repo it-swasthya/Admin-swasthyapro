@@ -2,19 +2,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { changeNavValue } from "../../Redux/reducer";
 import {
-  Modal,
   Box,
-  Typography,
-  CircularProgress,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+ 
   Button,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -24,6 +16,7 @@ import HospitalAppointmentflattenRow from "../../utils/HospitalAppointmentFlatte
 import AddHospitalModal from "../../components/hospital-table-component/addHospital/AddHospitalModal";
 import HospitalRecordsModal from "../../components/hospital-table-component/HospitalRecordModal/HospitalRecordModal";
 import UpdateHospitalRecordModal from "../../components/hospital-table-component/updateRecord/UpdateRecord";
+import HospitalAppointment from "../../components/hospital-table-component/Create-appointment/Create-hospital-appointment";
 
 const API_URL =
   "https://api.swasthyapro.com/api/appointment/hospital-record";
@@ -38,6 +31,7 @@ const HospitalAppointmentTable = () => {
   const [records, setRecords] = useState([]);
     const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [createAppointmentModalOpen, setCreateAppointmentModalOpen] = useState(false);
 
   const showLoader = () => {
     Swal.fire({
@@ -153,7 +147,6 @@ const HospitalAppointmentTable = () => {
   };
 
   const handleUpdateRecord = (record) => {
-
     setSelectedRecord(record);
     setOpenHospitalRecord(false)
     setUpdateOpen(true);
@@ -168,6 +161,24 @@ const HospitalAppointmentTable = () => {
 
   return (
     <>
+      <Box
+    sx={{
+      display: "flex",
+      justifyContent:"flex-end",
+      alignItems: "center",
+      mb: 2,
+    }}
+  >
+    <Button
+      variant="contained"
+      color="primary"
+      startIcon={<AddIcon />}
+      onClick={() => setCreateAppointmentModalOpen(true)} 
+      sx={{ textTransform: "none", borderRadius: 2 }}
+    >
+      Create Appointment
+    </Button>
+  </Box>
       <TableComponent
         columns={columns}
         data={Array.isArray(appointment) ? appointment : []}
@@ -196,6 +207,11 @@ const HospitalAppointmentTable = () => {
           getHospitalAppointment={getHospitalAppointment}
         />
       )}
+       <HospitalAppointment
+        isOpen={createAppointmentModalOpen}
+        onClose={() => setCreateAppointmentModalOpen(false)}
+        getAllAppointment={getHospitalAppointment}
+      />
     </>
   );
 };

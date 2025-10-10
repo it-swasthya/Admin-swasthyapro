@@ -12,6 +12,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const UpdateHospitalRecordModal = ({ open, handleClose, record,getHospitalAppointment }) => {
+  console.log(record)
   const [formData, setFormData] = useState({
     appointment_id: record?.appointment_id || "",
     status: record?.status || "discharge",
@@ -60,25 +61,25 @@ const handleSubmit = async (e) => {
       { headers: { "Content-Type": "multipart/form-data" } }
     );
 
-
-    // Show success SweetAlert
-    Swal.fire({
-      icon: "success",
-      title: "Record Updated!",
-      text: "Hospital record updated successfully.",
-      confirmButtonColor: "#3085d6",
-    });
-    setFormData({
-    appointment_id: "",
+     setFormData({
+    appointment_id:  record?.appointment_id || '',
     status:  "discharge",
     report_date: new Date().toISOString().slice(0, 10),
     discharge_Date: "",
     report: null,
   })
 getHospitalAppointment()
+    Swal.fire({
+      icon: "success",
+      title: "Record Updated!",
+      text: "Hospital record updated successfully.",
+      confirmButtonColor: "#3085d6",
+      timer:1000
+
+    });
+   
   } catch (error) {
     console.error("❌ Update failed:", error);
-
     // Show error SweetAlert
     Swal.fire({
       icon: "error",
@@ -130,7 +131,6 @@ getHospitalAppointment()
           >
             <MenuItem value="admitted">Admitted</MenuItem>
             <MenuItem value="discharge">Discharge</MenuItem>
-            <MenuItem value="followup">Follow Up</MenuItem>
           </TextField>
 
           <TextField
@@ -141,7 +141,7 @@ getHospitalAppointment()
             onChange={handleChange}
             fullWidth
             InputLabelProps={{ shrink: true }}
-            required
+            
           />
 
           <TextField
@@ -152,7 +152,6 @@ getHospitalAppointment()
             onChange={handleChange}
             fullWidth
             InputLabelProps={{ shrink: true }}
-            required
           />
 
 <Stack direction="row" alignItems="center" spacing={2}>

@@ -45,12 +45,13 @@ function Dashboard() {
       setPackagesCount(decodePackages.count);
       setFacilitytCount(facility.data.length);
       setUserCount(users.data.users.length);
+            setTotalOrders(orders.data.testBookings.length);
+
       users.data.users.map((val) => {
         val.Prescriptions.map((prescriptions) => {
           setTotalPrescriptions((prevState) => [...prevState, prescriptions]);
         });
       });
-      setTotalOrders(orders.data.testBookings.length);
     };
     getAllData();
   }, []);
@@ -91,12 +92,12 @@ function Dashboard() {
           icon={BookCheckIcon}
         />
 
-        <DashboardCard
+        {/* <DashboardCard
           title="Total Uploaded Prescriptions"
           value={totalPrescriptions.length}
           color="bg-purple-500"
           icon={CopyIcon}
-        />
+        /> */}
       </div>
     </div>
   );
