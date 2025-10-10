@@ -6,6 +6,8 @@ import {
   BookCheckIcon,
   DatabaseIcon,
   CopyIcon,
+  TestTube2,
+  TestTubeDiagonalIcon,
 } from "lucide-react";
 import DashboardCard from "../components/dashboardCard";
 import { useEffect, useState } from "react";
@@ -14,6 +16,9 @@ import { useDispatch } from "react-redux";
 import { changeNavValue } from "../Redux/reducer";
 import { routesToObfuscated } from "../utils/RoutesKey";
 import { decryptEncryptedData } from "../utils/DecodeFormatData";
+// import PackageStats from "./dashboard-stats/PackageStat";
+import UserStats from "./dashboard-stats/UserStats";
+import TestNameCountsChart from "./dashboard-stats/TestStats";
 
 function Dashboard() {
   const [testCount, setTestCount] = useState(0);
@@ -45,7 +50,7 @@ function Dashboard() {
       setPackagesCount(decodePackages.count);
       setFacilitytCount(facility.data.length);
       setUserCount(users.data.users.length);
-            setTotalOrders(orders.data.testBookings.length);
+      setTotalOrders(orders.data.testBookings.length);
 
       users.data.users.map((val) => {
         val.Prescriptions.map((prescriptions) => {
@@ -58,18 +63,13 @@ function Dashboard() {
   return (
     <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-black">
-        <DashboardCard
-          title="Total Facilities"
-          value={facilitytCount}
-          color="bg-blue-500 "
-          icon={Layers}
-        />
+      
 
         <DashboardCard
           title="Total Available Tests"
           value={testCount}
           color="bg-green-500"
-          icon={Activity}
+          icon={TestTubeDiagonalIcon}
         />
         <DashboardCard
           title="Total Available Packages"
@@ -78,17 +78,12 @@ function Dashboard() {
           icon={Package}
         />
 
-        <DashboardCard
-          title="Total Users"
-          value={userCount}
-          color="bg-purple-500"
-          icon={User}
-        />
+
 
         <DashboardCard
           title="Total Orders"
           value={totalOrders}
-          color="bg-purple-500"
+          color="bg-red-500"
           icon={BookCheckIcon}
         />
 
@@ -99,6 +94,13 @@ function Dashboard() {
           icon={CopyIcon}
         /> */}
       </div>
+      <div>
+        <UserStats />
+        <TestNameCountsChart />
+
+
+      </div>
+
     </div>
   );
 }

@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 
 import PersonIcon from "@mui/icons-material/Person";
-import UploadReports from "../uploadReports/uploadReports";
+import UploadReports from "../uploadReports/UploadReports";
 
 const UserReportUplaod = ({ userData, getOrders, onClose }) => {
   return (
