@@ -1,31 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import TableComponent from "../../components/table/Table";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 import { changeNavValue } from "../../Redux/reducer";
-import { useTheme, useMediaQuery } from "@mui/material";
 import { getRadiologyAppointmentTableColumns } from "../../components/columns/RadiologyAppointmentColumn";
 import { RadiologyAppointmentFlattenRow } from "../../utils/RadiologyAppointmentFlattenRow";
-// import { getRadiologyAppointmentTableColumns } from "../../components/columns/RadiologyAppointments";
-// import { RadiologyAppointmentFlattenRow } from "../../utils/RadiologyAppointmentFlattenRow";
+
 
 const RadiologyAppointments = () => {
   const dispatch = useDispatch();
   const [appointment, setAppointment] = useState([]);
   const [error, setError] = useState(null);
 
-  // Modal states
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedCenter, setSelectedCenter] = useState("");
   const [price, setPrice] = useState("");
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const navigate = useNavigate();
+
 
   const getRadiologyAppointments = async () => {
     try {
@@ -53,7 +47,6 @@ const RadiologyAppointments = () => {
     getRadiologyAppointments();
   }, [dispatch]);
 
-  // Handle submit allot center
   const handleSubmitAllot = async () => {
     if (!selectedCenter || !price) {
       Swal.fire("Error", "Please select a center and enter price", "error");
@@ -61,7 +54,6 @@ const RadiologyAppointments = () => {
     }
 
     try {
-      // Show loading
       Swal.fire({
         title: "Allotting center...",
         allowOutsideClick: false,
@@ -69,28 +61,22 @@ const RadiologyAppointments = () => {
           Swal.showLoading();
         },
       });
-
-      // API request
       await axios.post("https://api.swasthyapro.com/api/labs/allot-center", {
         appointmentId: selectedUser.id,
         center: selectedCenter,
         price,
       });
 
-      Swal.close(); // close loading
+      Swal.close();
       Swal.fire("Success", "Center allotted successfully!", "success");
-
-      // Close modal & reset states
       setOpenModal(false);
       setSelectedCenter("");
       setPrice("");
       setSelectedUser(null);
-
-      // Refresh appointments
       getRadiologyAppointments();
     } catch (err) {
       console.error("Error allotting center:", err);
-      Swal.close(); // close loading in case of error
+      Swal.close(); 
       Swal.fire("Error", "Failed to allot center", "error");
     }
   };
@@ -104,15 +90,7 @@ const RadiologyAppointments = () => {
 
   return (
     <>
-      {/* <div className="mb-4 flex flex-col sm:flex-row sm:justify-end gap-2">
-        <button
-          onClick={() => navigate("/create-user")}
-          className=" h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
-        >
-          + Create User
-        </button>
-      </div> */}
-
+    
       <TableComponent
         columns={column}
         data={appointment}

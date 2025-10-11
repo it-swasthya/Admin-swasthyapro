@@ -152,7 +152,6 @@ const HospitalAppointmentTable = () => {
     setUpdateOpen(true);
   };
 
-// };
 
   const columns = getHospitalAppointmentTableColumns({
     onAddHospital,
@@ -197,7 +196,7 @@ const HospitalAppointmentTable = () => {
         loading={loading}
         patient={seletectedAppointment}
         records={records}
-        onUpdateRecord={(record) => handleUpdateRecord(record)} // 👈 add this
+        onUpdateRecord={(record) => handleUpdateRecord(record)} 
       />
        {selectedRecord && (
         <UpdateHospitalRecordModal

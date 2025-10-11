@@ -41,7 +41,7 @@ const submitIPDAppointment = async ({
   }
 };
 
- const sendIpdEmail = async (payload) => {
+const sendIpdEmail = async (payload) => {
   try {
     const response = await fetch(
       "https://api.swasthyapro.com/api/mail/send-ipd-email",
@@ -54,19 +54,15 @@ const submitIPDAppointment = async ({
       }
     );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-    }
-
     return await response.json();
   } catch (error) {
     console.error("Error sending IPD email:", error.message);
   }
 };
 
-const HospitalAppointment = ({ isOpen, onClose,getAllAppointment }) => {
+const HospitalAppointment = ({ isOpen, onClose, getAllAppointment }) => {
   const [formValues, setFormValues] = useState({
-    name:  "",
+    name: "",
     disease: "",
     mobile: "",
     city: "",
@@ -89,7 +85,6 @@ const HospitalAppointment = ({ isOpen, onClose,getAllAppointment }) => {
   const handleFileChange = (e, field) => {
     setInsuranceFiles({ ...insuranceFiles, [field]: e.target.files[0] });
   };
-
 
   const handleSubmit = async () => {
     if (
@@ -147,7 +142,7 @@ const HospitalAppointment = ({ isOpen, onClose,getAllAppointment }) => {
         "Pan Card": null,
         Insurance: null,
       });
-      getAllAppointment()
+      getAllAppointment();
       onClose();
     } else {
       Swal.fire("", "Failed to book appointment: " + result.message, "error");
@@ -164,7 +159,19 @@ const HospitalAppointment = ({ isOpen, onClose,getAllAppointment }) => {
         {/* Close Button */}
         <button
           className="absolute top-3 right-4 text-2xl text-gray-500 hover:text-gray-700"
-          onClick={onClose}
+          onClick={()=>{onClose() ;
+      setFormValues({
+        name: "",
+        disease: "",
+        mobile: "",
+        city: "Delhi",
+      });
+      setHasInsurance(false);
+      setInsuranceFiles({
+        "Aadhar Card": null,
+        "Pan Card": null,
+        Insurance: null,
+      });}}
         >
           &times;
         </button>
