@@ -16,7 +16,7 @@ const TestNameCountsChart = ({ topN = null }) => {
                 if (!json?.success || !Array.isArray(json?.data)) {
                     setErr(json?.message || "Failed to load data");
                 } else {
-                    setRows(json.data); // [{ test_name, count }, ...]
+                    setRows(json.data); 
                 }
             } catch (e) {
                 setErr(e.message || "Network error");
@@ -29,7 +29,6 @@ const TestNameCountsChart = ({ topN = null }) => {
     // Optionally show only top N items
     const data = useMemo(() => {
         const arr = [...rows];
-        // your API already seems sorted desc by count; re-sort just in case:
         arr.sort((a, b) => (b.count || 0) - (a.count || 0));
         return topN ? arr.slice(0, topN) : arr;
     }, [rows, topN]);
@@ -57,14 +56,14 @@ const TestNameCountsChart = ({ topN = null }) => {
                 fontSize: "12px",
                 colors: ["#304758"],
             },
-            textAnchor: "end", // aligns the label to the end (right side)
+            textAnchor: "end", 
 
         },
         xaxis: {
             categories,
             labels: {
                 show: true,
-                formatter: (val) => `${val}` // count axis labels
+                formatter: (val) => `${val}` 
             },
             axisBorder: { show: false },
             axisTicks: { show: false },
