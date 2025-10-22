@@ -25,7 +25,12 @@ const GenderAgePieCharts = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="300px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="300px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -57,59 +62,56 @@ const GenderAgePieCharts = () => {
   const ageLabels = data.ageGroups.map((a) => a.range);
   const ageValues = data.ageGroups.map((a) => a.count);
 
-
-
   // --- AGE BAR CHART ---
-const ageBarOptions = {
-  chart: {
-    type: "bar",
-    height: 350,
-    toolbar: { show: false },
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 6,
-      columnWidth: "50%",
+  const ageBarOptions = {
+    chart: {
+      type: "bar",
+      height: 350,
+      toolbar: { show: false },
     },
-  },
-  dataLabels: { enabled: false },
-  xaxis: {
-    categories: ageLabels,
-    labels: {
-      rotate: -45,
+    plotOptions: {
+      bar: {
+        borderRadius: 6,
+        columnWidth: "50%",
+      },
     },
+    dataLabels: { enabled: false },
+    xaxis: {
+      categories: ageLabels,
+      labels: {
+        rotate: -45,
+      },
+      title: {
+        text: "Age Groups",
+      },
+    },
+    yaxis: {
+      title: {
+        text: "User Count",
+      },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "horizontal",
+        shadeIntensity: 0.25,
+        opacityFrom: 0.9,
+        opacityTo: 0.9,
+        stops: [50, 0, 100],
+      },
+    },
+    colors: ["#06b6d4", "#a855f7", "#ef4444", "#60a5fa", "#fbbf24"],
     title: {
-      text: "Age Groups",
+      text: "Age Group Distribution (Bar)",
+      align: "center",
     },
-  },
-  yaxis: {
-    title: {
-      text: "User Count",
+    grid: {
+      row: {
+        colors: ["#fff", "#f9fafb"],
+      },
     },
-  },
-  fill: {
-    type: "gradient",
-    gradient: {
-      shade: "light",
-      type: "horizontal",
-      shadeIntensity: 0.25,
-      opacityFrom: 0.9,
-      opacityTo: 0.9,
-      stops: [50, 0, 100],
-    },
-  },
-  colors: ["#06b6d4", "#a855f7", "#ef4444", "#60a5fa", "#fbbf24"],
-  title: {
-    text: "Age Group Distribution (Bar)",
-    align: "center",
-  },
-  grid: {
-    row: { 
-      colors: ["#fff", "#f9fafb"],
-    },
-  },
-};
-
+  };
 
   const ageBarSeries = [
     {
@@ -120,10 +122,10 @@ const ageBarOptions = {
 
   return (
     <Box p={3}>
-      <Grid  spacing={3}>
+      <Grid spacing={3}>
         {/* Gender Pie */}
         <Grid item xs={12} md={4}>
-          <Paper  sx={{ p: 2 }}>
+          <Paper sx={{ p: 2 }}>
             <Chart
               options={genderChartOptions}
               series={genderValues}
@@ -133,12 +135,9 @@ const ageBarOptions = {
           </Paper>
         </Grid>
 
-        {/* Age Pie */}
-      
-
-        {/* Age Bar */}
+        { /* Age Bar */}
         <Grid item>
-          <Paper  sx={{ p: 2 }}>
+          <Paper sx={{ p: 2 }}>
             <Chart
               options={ageBarOptions}
               series={ageBarSeries}

@@ -17,7 +17,7 @@ import LoginAdmin from './pages/login';
 import NotFound from './pages/NotFound';
 import ViewPrescription from './pages/user-prescription/UserPrescription';
 // import { UserDetails } from './pages/UsersDetails';
-import CreateUserForm from './pages/CreateUserForm';
+import CreateUserForm from './pages/user-creation/CreateUserForm';
 // import { Query } from './pages/Query';
 import HospitalAppointmentTable from './pages/hospital-appointment/HospitalAppointmentTable';
 import UserEmailPaymentDetails from './pages/email-payment-details/EmailPayment';
@@ -40,6 +40,7 @@ import AllInvoices from "./pages/All-Invoices/All-Invoices"
 import { fetchProtectedData } from './utils/adminAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { isLoggedIn, isuserLogin } from './Redux/reducer';
+import RegistrationFormForCGHS from './pages/user-creation/Create-CGHS-user';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){
@@ -383,6 +384,22 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 <CreateUserForm />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/create-CGHS-user"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <RegistrationFormForCGHS />
               </Layout>
             </ProtectedRoute>
           }

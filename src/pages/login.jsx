@@ -13,10 +13,10 @@ function LoginAdmin() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
- const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!email || !password) {
@@ -26,18 +26,26 @@ function LoginAdmin() {
 
     setIsLoading(true);
 
-    try{
-     const response = await axios.post('https://api.swasthyapro.com/api/auth/login-cookie' , { email, password })
-     
-   localStorage.setItem("accessToken" ,response.data.accessToken)
-   dispatch(isuserLogin())
-    }catch(err){
-      Swal.fire("","Invalid Credentials", 'warning')
-    }finally{
-          setIsLoading(false);
+    try {
+    const response = await axios.post(
+  "https://api.swasthyapro.com/api/auth/login-cookie",
+  { email, password },
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true, // ✅ allows sending/receiving cookies
+  }
+);
 
+
+      localStorage.setItem("accessToken", response.data.accessToken);
+      dispatch(isuserLogin());
+    } catch (err) {
+      Swal.fire("", "Invalid Credentials", "warning");
+    } finally {
+      setIsLoading(false);
     }
-  
   };
 
   return (

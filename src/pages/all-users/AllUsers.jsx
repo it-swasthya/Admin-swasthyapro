@@ -132,6 +132,29 @@ useEffect(() => {
     });
   };
 
+
+  const userCreate = () => {
+  Swal.fire({
+    title: "Create a New User",
+    text: "Please choose the type of user you’d like to register:",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonText: "Create  User",
+    cancelButtonText: "Create CGHS User",
+    reverseButtons: true,
+    background: "#f9fafb",
+    color: "#111",
+    confirmButtonColor: "#16a34a",
+    cancelButtonColor: "#2563eb",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      navigate("/create-user");
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      navigate("/create-CGHS-user");
+    }
+  });
+};
+
   const handleOpenUploadModal = async (user, type) => {
     setSelectedUser(user);
     setViewType(type);
@@ -160,7 +183,7 @@ useEffect(() => {
           <span className="text-lg text-red-500">{error}</span>
         </div>
         <button
-          onClick={() => navigate("/create-user")}
+          onClick={userCreate}
           className=" h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
         >
           + Create User
@@ -211,7 +234,7 @@ useEffect(() => {
 
   {/* ➕ Create User - Right side */}
   <button
-    onClick={() => navigate("/create-user")}
+    onClick={userCreate}
     className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
   >
     + Create User
