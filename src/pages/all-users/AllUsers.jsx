@@ -32,28 +32,27 @@ const AllUsers = () => {
   const [viewType, setViewType] = useState("reports");
   const [loading, setLoading] = useState(true);
   // 🔍 Date range filter states
-const [startDate, setStartDate] = useState("");
-const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-// 🔁 Filter users based on createdAt date range
-useEffect(() => {
-  if (!startDate && !endDate) {
-    setFilteredUsers(userData);
-  } else {
-    const filtered = userData.filter((user) => {
-      const created = new Date(user.createdAt);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
+  // 🔁 Filter users based on createdAt date range
+  useEffect(() => {
+    if (!startDate && !endDate) {
+      setFilteredUsers(userData);
+    } else {
+      const filtered = userData.filter((user) => {
+        const created = new Date(user.createdAt);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
 
-      if (start && end) return created >= start && created <= end;
-      if (start) return created >= start;
-      if (end) return created <= end;
-      return true;
-    });
-    setFilteredUsers(filtered);
-  }
-}, [startDate, endDate, userData]);
-
+        if (start && end) return created >= start && created <= end;
+        if (start) return created >= start;
+        if (end) return created <= end;
+        return true;
+      });
+      setFilteredUsers(filtered);
+    }
+  }, [startDate, endDate, userData]);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -75,7 +74,14 @@ useEffect(() => {
       const formatted = users.map((user) => ({
         id: user?.User_id,
         fullName: `${user?.first_name} ${user?.last_name}`,
+        firstName: user.first_name,
+        lastName: user.last_name,
         dob: new Date(user?.date_of_birth).toLocaleDateString() || "N/A",
+        employee_id: user.employee_id || "N/A",
+        ministry: user.ministry || "N/A",
+        organisation_name: user.organisation_name || "N/A",
+        serving: user.serving || "N/A",
+
         contact: user?.contact || "N/A",
         email: user?.email || "N/A",
         age: user?.age || "N/A",
@@ -84,9 +90,10 @@ useEffect(() => {
         state: user?.state || "N/A",
         alternate_no: user?.alternate_contact || "N/A",
         reports: user?.Reports || "N/A",
+        gender: user?.gender || "N/A",
         Prescriptions: user?.Prescriptions,
         DOB: user?.date_of_birth || "N/A",
-        createdAt: user?.createdAt 
+        createdAt: user?.createdAt,
       }));
       setUserData(formatted);
       setFilteredUsers(formatted);
@@ -132,39 +139,61 @@ useEffect(() => {
     });
   };
 
+  const handleUpdateUser = (user) => {
+    const { fullName, email, id, address, contact } = user;
+    Swal.fire({
+      title: "Choose an Option",
+      text: "Where do you want to go?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Make User",
+      cancelButtonText: "Make CGHS",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/create-user", {
+          state: { user },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        navigate("/create-CGHS-user", {
+          state: { user },
+        });
+      }
+    });
+  };
 
   const userCreate = () => {
-  Swal.fire({
-    title: "Create a New User",
-    text: "Please choose the type of user you’d like to register:",
-    icon: "info",
-    showCancelButton: true,
-    confirmButtonText: "Create  User",
-    cancelButtonText: "Create CGHS User",
-    reverseButtons: true,
-    background: "#f9fafb",
-    color: "#111",
-    confirmButtonColor: "#16a34a",
-    cancelButtonColor: "#2563eb",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      navigate("/create-user");
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      navigate("/create-CGHS-user");
-    }
-  });
-};
-
-  const handleOpenUploadModal = async (user, type) => {
-    setSelectedUser(user);
-    setViewType(type);
-    if (type === "reports") {
-      setUserReports(user.reports);
-    } else {
-      setUserReports(user.Prescriptions);
-    }
-    setOpenModal(true);
+    Swal.fire({
+      title: "Create a New User",
+      text: "Please choose the type of user you’d like to register:",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Create  User",
+      cancelButtonText: "Create CGHS User",
+      reverseButtons: true,
+      background: "#f9fafb",
+      color: "#111",
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#2563eb",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/create-user");
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        navigate("/create-CGHS-user");
+      }
+    });
   };
+
+  // const handleOpenUploadModal = async (user, type) => {
+  //   setSelectedUser(user);
+  //   setViewType(type);
+  //   if (type === "reports") {
+  //     setUserReports(user.reports);
+  //   } else {
+  //     setUserReports(user.Prescriptions);
+  //   }
+  //   setOpenModal(true);
+  // };
   const handleCloseModal = () => {
     setSelectedUser(null);
     setOpenModal(false);
@@ -172,9 +201,9 @@ useEffect(() => {
 
   const column = getUserTableColumns({
     onBookTest: handleBookTest,
-    onReportClick: handleOpenUploadModal,
-    onPrescriptionClick: handleOpenUploadModal,
-    onUserInfoClick: () => console.log(""),
+    // onReportClick: handleOpenUploadModal,
+    // onPrescriptionClick: handleOpenUploadModal,
+    handleUpdateUser,
   });
   if (error) {
     return (
@@ -193,55 +222,51 @@ useEffect(() => {
   }
   return (
     <>
-     <div
-  className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
->
-  {/* 📅 Date Range Filter - Left side */}
-  <div className="flex flex-wrap items-center gap-4">
-    <div className="flex items-center gap-2">
-      <label className="font-medium">From:</label>
-      <input
-        type="date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        className="border border-gray-300 rounded px-2 py-1"
-      />
-    </div>
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* 📅 Date Range Filter - Left side */}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="font-medium">From:</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
 
-    <div className="flex items-center gap-2">
-      <label className="font-medium">To:</label>
-      <input
-        type="date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        className="border border-gray-300 rounded px-2 py-1"
-      />
-    </div>
+          <div className="flex items-center gap-2">
+            <label className="font-medium">To:</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
 
-    {(startDate || endDate) && (
-      <button
-        onClick={() => {
-          setStartDate("");
-          setEndDate("");
-          setFilteredUsers(userData);
-        }}
-        className="border border-gray-400 text-gray-700 px-3 py-1 rounded hover:bg-gray-100 transition"
-      >
-        Clear
-      </button>
-    )}
-  </div>
+          {(startDate || endDate) && (
+            <button
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+                setFilteredUsers(userData);
+              }}
+              className="border border-gray-400 text-gray-700 px-3 py-1 rounded hover:bg-gray-100 transition"
+            >
+              Clear
+            </button>
+          )}
+        </div>
 
-  {/* ➕ Create User - Right side */}
-  <button
-    onClick={userCreate}
-    className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
-  >
-    + Create User
-  </button>
-</div>
-
-      
+        {/* ➕ Create User - Right side */}
+        <button
+          onClick={userCreate}
+          className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+        >
+          + Create User
+        </button>
+      </div>
 
       {isMobile ? (
         <UserDetailsMobileView
@@ -251,13 +276,12 @@ useEffect(() => {
           handleBookTest={handleBookTest}
         />
       ) : (
-      <TableComponent
-  columns={column}
-  data={filteredUsers} 
-  flattenRow={UserFlattenRow}
-  filename={"User-details-file"}
-/>
-
+        <TableComponent
+          columns={column}
+          data={filteredUsers}
+          flattenRow={UserFlattenRow}
+          filename={"User-details-file"}
+        />
       )}
       <Modal
         open={openModal}

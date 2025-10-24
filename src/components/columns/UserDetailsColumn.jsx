@@ -3,12 +3,13 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";
-import { NotebookTabsIcon } from "lucide-react";
+import { Edit, NotebookTabsIcon } from "lucide-react";
 
 export const getUserTableColumns = ({
   onBookTest,
-  onReportClick,
-  onPrescriptionClick,
+  // onReportClick,
+  // onPrescriptionClick,
+  handleUpdateUser
 }) => [
   {
     accessorKey: "id",
@@ -72,14 +73,14 @@ export const getUserTableColumns = ({
     ),
   },
   // {
-  //   header: 'Reports',
-  //   id: 'reports',
+  //   header: 'Edit',
+  //   // id: 'edit',
   //   Cell: ({ row }) => (
   //     <IconButton
-  //       onClick={() => onReportClick(row.original,'reports')}
+  //       onClick={() => handleUpdateUser(row.original)}
   //       color="success"
   //     >
-  //       <InsertDriveFileIcon />
+  //     <Edit/>
   //     </IconButton>
   //   ),
   // },

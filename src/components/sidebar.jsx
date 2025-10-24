@@ -230,7 +230,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
           {sidebarOpen ? (
             <div className="flex items-center">
               <img
-                src="https://swasthyapro.com/static/media/headerLogo.bceb6568a573f4620979.png"
+                src="/headerLogo.png"
                 alt="SwasthyaPro Logo"
                 className="h-12 w-auto object-contain"
               />

@@ -45,31 +45,30 @@ const OrderExportTable = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   const [startDate, setStartDate] = useState("");
-const [endDate, setEndDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-// Filter orders when dates change
-useEffect(() => {
-  if (!startDate && !endDate) {
-    setFilteredOrders(orders);
-  } else {
-    const filtered = orders.filter((order) => {
-      const orderDate = new Date(order.createdAt); // or order.bookDate if you prefer
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
+  // Filter orders when dates change
+  useEffect(() => {
+    if (!startDate && !endDate) {
+      setFilteredOrders(orders);
+    } else {
+      const filtered = orders.filter((order) => {
+        const orderDate = new Date(order.createdAt); // or order.bookDate if you prefer
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
 
-      if (start && end) {
-        return orderDate >= start && orderDate <= end;
-      } else if (start) {
-        return orderDate >= start;
-      } else if (end) {
-        return orderDate <= end;
-      }
-      return true;
-    });
-    setFilteredOrders(filtered);
-  }
-}, [startDate, endDate, orders]);
-
+        if (start && end) {
+          return orderDate >= start && orderDate <= end;
+        } else if (start) {
+          return orderDate >= start;
+        } else if (end) {
+          return orderDate <= end;
+        }
+        return true;
+      });
+      setFilteredOrders(filtered);
+    }
+  }, [startDate, endDate, orders]);
 
   const dispatch = useDispatch();
 
@@ -93,7 +92,7 @@ useEffect(() => {
           displayName: `${order.User.first_name} ${order.User.last_name}`,
           displayDate:
             new Date(order.scheduled_date).toLocaleDateString() || "N/A",
-            report : order.report || null,
+          report: order.report || null,
           bookDate: new Date(order.createdAt).toLocaleString() || "N/A",
           totalPrice: order.Cart.totalPrice || "N/A",
           testNamesText: testNames.join(", ") || "N/A",
@@ -246,103 +245,103 @@ useEffect(() => {
       });
       fetchOrders();
 
-        if (updatePaymentResponse.status === 200) {
-          const cartResponse = await axios.post(
-            "https://api.swasthyapro.com/api/cart/get-cart-tests",
-            {
-              test_ids: mergeIdsArray.map((test) => test),
-            }
-          );
-          const mergeCartItems = [
-            ...cartResponse.data.corporate_package,
-            ...cartResponse.data.corporate_test,
-          ];
+      if (updatePaymentResponse.status === 200) {
+        const cartResponse = await axios.post(
+          "https://api.swasthyapro.com/api/cart/get-cart-tests",
+          {
+            test_ids: mergeIdsArray.map((test) => test),
+          }
+        );
+        const mergeCartItems = [
+          ...cartResponse.data.corporate_package,
+          ...cartResponse.data.corporate_test,
+        ];
 
-          // Prepare test data
-          const testData = mergeCartItems.map((data) => ({
-            price: Number(data.market_price_range || data.market_price),
-            test_name: data.test_name || data.package_name,
-            quantity: 1,
-            discount: Number(data.discount_percentage),
-            net_price: Number(
-              data.after_discount_price || data.swasthyapro_price
-            ), // already discounted price
-          }));
+        // Prepare test data
+        const testData = mergeCartItems.map((data) => ({
+          price: Number(data.market_price_range || data.market_price),
+          test_name: data.test_name || data.package_name,
+          quantity: 1,
+          discount: Number(data.discount_percentage),
+          net_price: Number(
+            data.after_discount_price || data.swasthyapro_price
+          ), // already discounted price
+        }));
 
-          // Calculate subtotal (before discount)
-          const subtotal = testData
-            .reduce((sum, test) => sum + (test.price || 0), 0)
-            .toFixed(2);
+        // Calculate subtotal (before discount)
+        const subtotal = testData
+          .reduce((sum, test) => sum + (test.price || 0), 0)
+          .toFixed(2);
 
-          // Total discount = subtotal - sum of net prices
-          const totalNetPrice = testData
-            .reduce((sum, test) => sum + (test.net_price || 0), 0)
-            .toFixed(2);
+        // Total discount = subtotal - sum of net prices
+        const totalNetPrice = testData
+          .reduce((sum, test) => sum + (test.net_price || 0), 0)
+          .toFixed(2);
 
-          const total_discount = (subtotal - totalNetPrice).toFixed(2);
+        const total_discount = (subtotal - totalNetPrice).toFixed(2);
 
-          // Grand total should be sum of net prices
-          const grand_total = totalNetPrice;
+        // Grand total should be sum of net prices
+        const grand_total = totalNetPrice;
 
-          // Create invoice
-          const createInvoiceResponse = await axios.post(
-            "https://api.swasthyapro.com/api/invoice/create-invoice",
-            {
-              payment_id: selectedOrder.Payment.payment_id,
-              user_id: selectedOrder.User.User_id,
-              booking_id: selectedOrder.booking_id,
-              dmlCharges: selectedOrder.dml_charges || 0,
-            }
-          );
+        // Create invoice
+        const createInvoiceResponse = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/create-invoice",
+          {
+            payment_id: selectedOrder.Payment.payment_id,
+            user_id: selectedOrder.User.User_id,
+            booking_id: selectedOrder.booking_id,
+            dmlCharges: selectedOrder.dml_charges || 0,
+          }
+        );
 
-          await axios.post(
-            "https://api.swasthyapro.com/api/invoice/gen-invoice",
-            {
-              invoice_no: createInvoiceResponse.data.invoice.id,
-              date: new Date().toISOString().split("T")[0],
-              customer_name: selectedOrder.User.first_name,
-              customer_id: selectedOrder.User.User_id,
-              customer_gstn: "NA",
-              billing_details: testData,
-              subtotal,
-              total_discount,
-              gst_percentage: "NA",
-              gst: "NA",
-              grand_total:
-                Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
-              payment_made:
-                Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
-              payment_status: "Paid",
-              account_no: "NA",
-              ifsc: "NA",
-              bank_name: "NA",
-              visit_type: "NA",
-              dmlCharges: selectedOrder.dml_charges || 0,
-            }
-          );
+        await axios.post(
+          "https://api.swasthyapro.com/api/invoice/gen-invoice",
+          {
+            invoice_no: createInvoiceResponse.data.invoice.id,
+            date: new Date().toISOString().split("T")[0],
+            customer_name: selectedOrder.User.first_name,
+            customer_id: selectedOrder.User.User_id,
+            customer_gstn: "NA",
+            billing_details: testData,
+            subtotal,
+            total_discount,
+            gst_percentage: "NA",
+            gst: "NA",
+            grand_total:
+              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            payment_made:
+              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+            payment_status: "Paid",
+            account_no: "NA",
+            ifsc: "NA",
+            bank_name: "NA",
+            visit_type: "NA",
+            dmlCharges: selectedOrder.dml_charges || 0,
+          }
+        );
 
-      //  await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
-      // "to": "91"+selectedOrder.User.contact,
-      // "invoice_no": createInvoiceResponse.data.invoice.id,
-      // "customer_name": selectedOrder.User.first_name,
-      // "email": selectedOrder.User.email,
-      //     })
+        //  await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
+        // "to": "91"+selectedOrder.User.contact,
+        // "invoice_no": createInvoiceResponse.data.invoice.id,
+        // "customer_name": selectedOrder.User.first_name,
+        // "email": selectedOrder.User.email,
+        //     })
 
-          const sendInvoice = await axios.post(
-            "https://api.swasthyapro.com/api/invoice/send-invoice",
-            {
-              email: selectedOrder.User.email,
-              invoice_no: createInvoiceResponse.data.invoice.id,
-              customer_name: selectedOrder.User.first_name,
-            }
-          );
-          Swal.fire({
-            text: "Status updated",
-            icon: "success",
-            timer: 1000,
-          });
-          fetchOrders();
-        }
+        const sendInvoice = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/send-invoice",
+          {
+            email: selectedOrder.User.email,
+            invoice_no: createInvoiceResponse.data.invoice.id,
+            customer_name: selectedOrder.User.first_name,
+          }
+        );
+        Swal.fire({
+          text: "Status updated",
+          icon: "success",
+          timer: 1000,
+        });
+        fetchOrders();
+      }
     } catch (err) {
       console.log(err);
       Swal.fire({
@@ -357,57 +356,57 @@ useEffect(() => {
 
   return (
     <>
-    <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    marginBottom: "16px",
-    flexWrap: "wrap",
-  }}
->
-  <div>
-    <label style={{ marginRight: "8px", fontWeight: 500 }}>From:</label>
-    <input
-      type="date"
-      value={startDate}
-      onChange={(e) => setStartDate(e.target.value)}
-      style={{
-        padding: "6px 8px",
-        borderRadius: "6px",
-        border: "1px solid #ccc",
-      }}
-    />
-  </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+          marginBottom: "16px",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <label style={{ marginRight: "8px", fontWeight: 500 }}>From:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            style={{
+              padding: "6px 8px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
 
-  <div>
-    <label style={{ marginRight: "8px", fontWeight: 500 }}>To:</label>
-    <input
-      type="date"
-      value={endDate}
-      onChange={(e) => setEndDate(e.target.value)}
-      style={{
-        padding: "6px 8px",
-        borderRadius: "6px",
-        border: "1px solid #ccc",
-      }}
-    />
-  </div>
+        <div>
+          <label style={{ marginRight: "8px", fontWeight: 500 }}>To:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            style={{
+              padding: "6px 8px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
 
-  {(startDate || endDate) && (
-    <Button
-      variant="outlined"
-      color="secondary"
-      onClick={() => {
-        setStartDate("");
-        setEndDate("");
-        setFilteredOrders(orders);
-      }}
-    >
-      Clear
-    </Button>
-  )}
-</div>
+        {(startDate || endDate) && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => {
+              setStartDate("");
+              setEndDate("");
+              setFilteredOrders(orders);
+            }}
+          >
+            Clear
+          </Button>
+        )}
+      </div>
 
       {isMdDown ? (
         <OrderCardMObile
@@ -419,12 +418,11 @@ useEffect(() => {
         />
       ) : (
         <TableComponent
-  columns={columns}
-  data={filteredOrders} // ✅ use filteredOrders instead of orders
-  flattenRow={userOrderFlattenRow}
-  filename={"user-order-file"}
-/>
-
+          columns={columns}
+          data={filteredOrders} // ✅ use filteredOrders instead of orders
+          flattenRow={userOrderFlattenRow}
+          filename={"user-order-file"}
+        />
       )}
 
       {selectedOrder && (

@@ -12,6 +12,7 @@ function LoginAdmin() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [secretKey , setSecretKey] = useState("")
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,13 +29,13 @@ function LoginAdmin() {
 
     try {
     const response = await axios.post(
-  "https://api.swasthyapro.com/api/auth/login-cookie",
-  { email, password },
+  "https://api.swasthyapro.com/api/auth/xau6std8asdusyau",
+  { email, password , secretKey },
   {
     headers: {
       "Content-Type": "application/json",
     },
-    withCredentials: true, // ✅ allows sending/receiving cookies
+    withCredentials: true, 
   }
 );
 
@@ -118,27 +119,31 @@ function LoginAdmin() {
                 </button>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
+            <div>
               <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Remember me
+                Secretkey
               </label>
+              <div className="relative">
+                <input
+                  id="secretKey"
+                  name="secretKey"
+                  type={ "text" }
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pr-10"
+                  placeholder="Enter Secret key"
+                  value={secretKey}
+                  onChange={(e) => setSecretKey(e.target.value)}
+                />
+              
+              </div>
             </div>
           </div>
 
+         
           <div>
             <button
               type="submit"

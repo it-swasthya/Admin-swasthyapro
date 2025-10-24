@@ -12,7 +12,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const UpdateHospitalRecordModal = ({ open, handleClose, record,getHospitalAppointment }) => {
-  console.log(record)
   const [formData, setFormData] = useState({
     appointment_id: record?.appointment_id || "",
     status: record?.status || "discharge",

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { changeNavValue } from "../../Redux/reducer";
 import InputField from "../../components/registrationForm/InputField";
 import MPinInput from "../../components/registrationForm/MPinInput";
@@ -12,13 +12,9 @@ import ServingSelect from "../../components/registrationForm/ServingSelect";
 const RegistrationFormForCGHS = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    dispatch(changeNavValue("Create CGHS User"));
-    window.scrollTo(0, 0);
-  }, [dispatch]);
-
-  const [formData, setFormData] = useState({
+  const location = useLocation();
+  const editData = location.state?.user || null;
+    const [formData, setFormData] = useState({
     first_name: "",
     employee_id: "",
     role: "cghs",
@@ -38,6 +34,34 @@ const RegistrationFormForCGHS = () => {
     age: "",
     gender: "",
   });
+ useEffect(() => {
+    dispatch(changeNavValue(editData ? "Update CGHS User " : "Create CGHS User"));
+    if (editData) {
+      setFormData((prev) => ({
+        ...prev,
+        first_name: editData.firstName || "",
+        last_name: editData.lastName || "",
+        employee_id:editData.employee_id || "",
+         serving:editData.serving || "",
+        organisation_name:editData.organisation_name || "",
+        ministry:editData.ministry || "",
+        contact: editData.contact || "",
+        date_of_birth: editData.dob || "",
+        address: editData.address || "",
+        pincode: editData.pincode || "",
+        state: editData.state || "",
+        alternate_contact: editData.alternate_contact || "",
+        email: editData.email || "",
+        gstNO: editData.gstNO || "",
+        age: editData.age || "",
+        gender: editData.gender || "",
+      }));
+    }
+
+    window.scrollTo(0, 0);
+  }, [dispatch]);
+
+
 
   const [errors, setErrors] = useState({});
   const [passwordArray, setPasswordArray] = useState(["", "", "", ""]);
@@ -57,35 +81,54 @@ const RegistrationFormForCGHS = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formErrors = validateForm();
-    if (Object.keys(formErrors).length) {
+    if (Object.keys(formErrors).length  && !editData) {
       setErrors(formErrors);
       return;
     }
 
     try {
-      const response = await axios.post(
-        "https://api.swasthyapro.com/api/auth/register",
-        {
+      // const response = await axios.post(
+      //   "https://api.swasthyapro.com/api/auth/register",
+      //   {
+      //     ...formData,
+      //     age: Number(formData.age) || null,
+      //   }
+      // );
+        const url = editData
+        ? `https://api.swasthyapro.com/api/auth/update/${editData.id}`
+        : "https://api.swasthyapro.com/api/auth/register";
+      const method = editData ? "PUT" : "POST";
+      const result = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           ...formData,
           age: Number(formData.age) || null,
-        }
-      );
+        }),
+      });
 
-      if (response.data.message === "User registered") {
+      const response = await result.json();
+
+       if (
+        response.message === "User registered" ||
+        response.message == "User profile updated successfully"
+      )  {
         Swal.fire({
-          title: "User Created Successfully!",
+          title: `User ${editData ? "Updated" : "Created"} Successfully!`,
           icon: "success",
         });
         setFormData({
           first_name: "",
           last_name: "",
-            employee_id: "",
- ministry: "",
-    serving: "",
-    organisation_name: "",
+          employee_id: "",
+          ministry: "",
+          serving: "",
+          organisation_name: "",
           date_of_birth: "",
+              role: "cghs",
           contact: "",
           address: "",
           pincode: "",
@@ -125,6 +168,7 @@ const RegistrationFormForCGHS = () => {
               name="employee_id"
               value={formData.employee_id}
               onChange={handleChange}
+              required={false}
             />
             <InputField
               label="First Name"
@@ -174,14 +218,14 @@ const RegistrationFormForCGHS = () => {
               onChange={handleChange}
               required={true}
             />
-             <InputField
+            <InputField
               label="Organisation Name"
               name="organisation_name"
               value={formData.organisation_name}
               onChange={handleChange}
               required={true}
             />
- <ServingSelect
+            <ServingSelect
               name="serving"
               value={formData.serving}
               onChange={handleChange}
@@ -231,19 +275,26 @@ const RegistrationFormForCGHS = () => {
             />
           </div>
 
-          <MPinInput
+         { !editData &&<MPinInput
             passwordArray={passwordArray}
             setPasswordArray={setPasswordArray}
             setFormData={setFormData}
-          />
+          />}
 
           <div className="pt-2">
-            <button
+           {
+            editData ? <button
+              type="submit"
+              className="w-full bg-black text-white py-3 rounded-md hover:bg-white hover:text-black border border-black transition duration-200"
+            >
+              Update User
+            </button>: <button
               type="submit"
               className="w-full bg-black text-white py-3 rounded-md hover:bg-white hover:text-black border border-black transition duration-200"
             >
               Create User
             </button>
+           }
           </div>
         </form>
       </div>
