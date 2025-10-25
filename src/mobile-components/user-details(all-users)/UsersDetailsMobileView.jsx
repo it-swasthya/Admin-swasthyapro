@@ -3,7 +3,7 @@ import { Paper } from "@mui/material";
 
 const UserDetailsMobileView = ({
   userData,
-  handleOpenModal,
+  // handleOpenModal,
   handleBookTest,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");

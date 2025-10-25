@@ -13,6 +13,7 @@ const GenerateINV = () => {
   const [rows, setRows] = useState([
     {
       id: 1,
+      vendorId:"",
       employeeName: "",
       empCode: "",
       desc: "",
@@ -212,6 +213,7 @@ const GenerateINV = () => {
           },
 
           items: rows.map((row) => ({
+            vendorId:row.vendorId,
             employeeName: row.employeeName,
             empCode: row.empCode,
             desc: row.desc,
@@ -520,8 +522,11 @@ const GenerateINV = () => {
                   <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                     Emp. Code
                   </th>
+                  
                 </>
-              )}
+              )} <th style={{ padding: "12px", border: "1px solid #ddd" }}>
+                  Vender ID
+                  </th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Desc
               </th>
@@ -575,6 +580,16 @@ const GenerateINV = () => {
                     </td>
                   </>
                 )}
+                <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                  <input
+                    type="text"
+                    value={row.vendorId}
+                    onChange={(e) =>
+                      handleChange(row.id, "vendorId", e.target.value)
+                    }
+                    style={inputStyle}
+                  />
+                </td>
 
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input

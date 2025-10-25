@@ -272,7 +272,7 @@ const AllUsers = () => {
         <UserDetailsMobileView
           userData={userData}
           filteredUsers={filteredUsers}
-          handleOpenModal={handleOpenUploadModal}
+          // handleOpenModal={handleOpenUploadModal}
           handleBookTest={handleBookTest}
         />
       ) : (

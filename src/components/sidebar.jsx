@@ -118,7 +118,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
       icon: <ListCheck size={20} />,
     },
     {
-      name: "Pathology",
+      name: "user-orders",
       label: "Pathology",
       icon: <HospitalIcon />,
       submenus: [
@@ -126,7 +126,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
       ],
     },
     {
-      name: "Radiology",
+      name: "radiology-orders",
       label: "Radiology",
       icon: <Stethoscope size={20} />,
       submenus: [
@@ -144,7 +144,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
     },
 
     {
-      name: "Hospital",
+      name: "hospital-appointment",
       label: "Hospital",
       icon: <SquarePlusIcon size={20} />,
       submenus: [
@@ -158,7 +158,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
     { name: "all-users", label: "Users", icon: <Users size={20} /> },
     { name: "user-Query", label: "Query", icon: <FileQuestion size={20} /> },
     { name: "user-invoices", label: "Invoices", icon: <FileScan size={20} /> },
-    // { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> },
+    // { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> }, 
   ];
 
   const lastFiveMenus = sidebarMenus.slice(-6);
