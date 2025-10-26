@@ -81,7 +81,6 @@ const AllUsers = () => {
         ministry: user.ministry || "N/A",
         organisation_name: user.organisation_name || "N/A",
         serving: user.serving || "N/A",
-
         contact: user?.contact || "N/A",
         email: user?.email || "N/A",
         age: user?.age || "N/A",
