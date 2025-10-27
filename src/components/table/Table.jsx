@@ -37,7 +37,6 @@ const TableComponent = ({ columns, data, flattenRow, filename }) => {
 
     muiTableBodyRowProps: ({ row }) => {
       const status = row.original.status?.toLowerCase();
-
       let backgroundColor = "white"; 
       if (status === "approved" ) backgroundColor = "#e8f5e9"; 
       else if (status === "cancelled") backgroundColor = "#ffebee";

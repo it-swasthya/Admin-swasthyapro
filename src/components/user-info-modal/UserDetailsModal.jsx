@@ -1,8 +1,8 @@
-import React from "react";
+import React, { use } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 const UserDetailModal = ({ isOpen, onClose, user }) => {
-  const userData = user?.User;
+  const userData = user?.User || user;
   if (!isOpen || !userData) return null;
 
   return (
@@ -22,17 +22,48 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
+           {
+            userData.employee_id && (
+              <div>
+            <strong>EMP ID:</strong> {userData.employee_id || "N/A"}
+          </div>
+            )
+          }
           <div>
-            <strong>First Name:</strong> {userData.first_name || "N/A"}{" "}
+            <strong>First Name:</strong> {userData.first_name || userData.firstName || "N/A"}{" "}
           </div>
           <div>
-            <strong>Last Name:</strong> {userData.last_name || "N/A"}
+            <strong>Last Name:</strong> {userData.last_name || userData.lastName || "N/A"}
           </div>
+          {
+            userData.organisation_name && (
+              <div>
+            <strong>Organisation Name:</strong> {userData.organisation_name || "N/A"}
+          </div>
+            )
+          }
+           {
+            userData.ministry && (
+              <div>
+            <strong>Ministry Name:</strong> {userData.ministry || "N/A"}
+          </div>
+            )
+          }
+           {
+            userData.serving && (
+              <div>
+            <strong>Serving :</strong> {userData.serving || "N/A"}
+          </div>
+            )
+          }
           <div>
-            <strong>DOB:</strong> {userData.date_of_birth || "N/A"}
+            <strong>DOB:</strong> {userData.date_of_birth || userData.dob || "N/A"}
           </div>
           <div>
             <strong>Age:</strong> {userData.age || "N/A"}
+          </div>
+           <div>
+            <strong>Gender:</strong> {userData.gender == "M" ? "Male" : userData.gender=="F" ? 'Female' :  "N/A"}
           </div>
           <div>
             <strong>Contact:</strong> {userData.contact || "N/A"}
