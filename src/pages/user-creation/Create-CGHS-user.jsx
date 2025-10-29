@@ -8,6 +8,7 @@ import InputField from "../../components/registrationForm/InputField";
 import MPinInput from "../../components/registrationForm/MPinInput";
 import GenderSelect from "../../components/registrationForm/GenderSelect";
 import ServingSelect from "../../components/registrationForm/ServingSelect";
+import { fetchProtectedData } from "../../utils/adminAuth";
 
 const RegistrationFormForCGHS = () => {
   const dispatch = useDispatch();
@@ -99,19 +100,11 @@ const RegistrationFormForCGHS = () => {
         ? `https://api.swasthyapro.com/api/user/user-role-update/${editData.id}`
         : "https://api.swasthyapro.com/api/auth/register";
       const method = editData ? "PUT" : "POST";
-      const result = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const result = await fetchProtectedData(url,method , {
           ...formData,
           age: Number(formData.age) || null,
-        }),
-      });
-
-      const response = await result.json();
-
+        });
+      const response =  result;
        if (
         response.message === "User registered" ||
         response.message == "User updated successfully"

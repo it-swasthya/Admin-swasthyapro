@@ -6,6 +6,7 @@ import { changeNavValue } from "../../Redux/reducer";
 import InputField from "../../components/registrationForm/InputField";
 import MPinInput from "../../components/registrationForm/MPinInput";
 import GenderSelect from "../../components/registrationForm/GenderSelect";
+import { fetchProtectedData } from "../../utils/adminAuth";
 
 const RegistrationForm = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const RegistrationForm = () => {
         first_name: editData.firstName || "",
         last_name: editData.lastName || "",
         contact: editData.contact || "",
-        date_of_birth: editData.dob || "",
+        date_of_birth: null,
         address: editData.address || "",
         pincode: editData.pincode || "",
         state: editData.state || "",
@@ -85,18 +86,11 @@ const RegistrationForm = () => {
         ? `https://api.swasthyapro.com/api/user/user-role-update/${editData.id}`
         : "https://api.swasthyapro.com/api/auth/register";
       const method = editData ? "PUT" : "POST";
-      const result = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          age: Number(formData.age) || null,
-        }),
-      });
-
-      const response = await result.json();
+       const result = await fetchProtectedData(url,method , {
+            ...formData,
+            age: Number(formData.age) || null,
+          });
+        const response =  result;
       if (
         response.message === "User registered" ||
         response.message == "User updated successfully"
