@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
-const UserDetailsModalForPrescription = ({ open, onClose, selectedDetails = {} }) => {
+const UserDetailsModalForPrescription = ({
+  open,
+  onClose,
+  selectedDetails = {},
+}) => {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && open) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
   if (!open) return null;
 
   return (
@@ -34,8 +47,8 @@ const UserDetailsModalForPrescription = ({ open, onClose, selectedDetails = {} }
             {selectedDetails.gender === "M"
               ? "Male"
               : selectedDetails.gender === "F"
-              ? "Female"
-              : selectedDetails.gender || "N/A"}
+                ? "Female"
+                : selectedDetails.gender || "N/A"}
           </div>
           <div>
             <strong>Age:</strong> {selectedDetails.age || "N/A"}
@@ -44,8 +57,6 @@ const UserDetailsModalForPrescription = ({ open, onClose, selectedDetails = {} }
             <strong>Address:</strong> {selectedDetails.address || "N/A"}
           </div>
         </div>
-
-        
       </div>
     </div>
   );
