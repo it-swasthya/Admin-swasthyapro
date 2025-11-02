@@ -72,28 +72,5 @@ export const getUserTableColumns = ({
       </Button>
     ),
   },
-  // {
-  //   header: 'Edit',
-  //   // id: 'edit',
-  //   Cell: ({ row }) => (
-  //     <IconButton
-  //       onClick={() => handleUpdateUser(row.original)}
-  //       color="success"
-  //     >
-  //     <Edit/>
-  //     </IconButton>
-  //   ),
-  // },
-  // {
-  //   header: 'Prescriptions',
-  //   id: 'prescriptions',
-  //   Cell: ({ row }) => (
-  //     <IconButton
-  //       onClick={() => onPrescriptionClick(row.original , )}
-  //       color="warning"
-  //     >
-  //       <NotebookTabsIcon />
-  //     </IconButton>
-  //   ),
-  // },
+
 ];
