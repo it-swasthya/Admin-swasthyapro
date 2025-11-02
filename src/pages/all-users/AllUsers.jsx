@@ -19,6 +19,7 @@ import {
 import { changeNavValue } from "../../Redux/reducer";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { UserDetailsMobileView } from "../../mobile-components/user-details(all-users)/UsersDetailsMobileView";
+import UserDetailModal from "../../components/user-info-modal/UserDetailsModal";
 
 const AllUsers = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,8 @@ const AllUsers = () => {
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+    const [infoModalOpen, setInfoModalOpen] = useState(false);
+  
   const [userReports, setUserReports] = useState([]);
   const [viewType, setViewType] = useState("reports");
   const [loading, setLoading] = useState(true);
@@ -86,6 +89,7 @@ const AllUsers = () => {
         age: user?.age || "N/A",
         address: user?.address || "N/A",
         pincode: user?.pincode || "N/A",
+        role:user?.role || "N/A",
         state: user?.state || "N/A",
         alternate_no: user?.alternate_contact || "N/A",
         reports: user?.Reports || "N/A",
@@ -139,7 +143,6 @@ const AllUsers = () => {
   };
 
   const handleUpdateUser = (user) => {
-    const { fullName, email, id, address, contact } = user;
     Swal.fire({
       title: "Choose an Option",
       text: "Where do you want to go?",
@@ -182,17 +185,10 @@ const AllUsers = () => {
       }
     });
   };
-
-  // const handleOpenUploadModal = async (user, type) => {
-  //   setSelectedUser(user);
-  //   setViewType(type);
-  //   if (type === "reports") {
-  //     setUserReports(user.reports);
-  //   } else {
-  //     setUserReports(user.Prescriptions);
-  //   }
-  //   setOpenModal(true);
-  // };
+  const handleInfo = (user) => {
+    setSelectedUser(user);
+    setInfoModalOpen(true);
+  };
   const handleCloseModal = () => {
     setSelectedUser(null);
     setOpenModal(false);
@@ -200,6 +196,8 @@ const AllUsers = () => {
 
   const column = getUserTableColumns({
     onBookTest: handleBookTest,
+        onInfoClick: handleInfo,
+
     // onReportClick: handleOpenUploadModal,
     // onPrescriptionClick: handleOpenUploadModal,
     handleUpdateUser,
@@ -427,6 +425,13 @@ const AllUsers = () => {
           </Button>
         </Box>
       </Modal>
+       {selectedUser && (
+              <UserDetailModal
+                isOpen={infoModalOpen}
+                onClose={() => setInfoModalOpen(false)}
+                user={selectedUser}
+              />
+            )}
     </>
   );
 };

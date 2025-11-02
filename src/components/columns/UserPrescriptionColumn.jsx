@@ -1,6 +1,3 @@
-
-
-
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/material";
@@ -67,5 +64,3 @@ export const getPrescriptionTableColumns = (onUpdateClick, onDetailsClick) => [
     ),
   },
 ];
-
-

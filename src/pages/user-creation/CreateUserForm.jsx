@@ -6,6 +6,7 @@ import { changeNavValue } from "../../Redux/reducer";
 import InputField from "../../components/registrationForm/InputField";
 import MPinInput from "../../components/registrationForm/MPinInput";
 import GenderSelect from "../../components/registrationForm/GenderSelect";
+import { fetchProtectedData } from "../../utils/adminAuth";
 
 const RegistrationForm = () => {
   const dispatch = useDispatch();
@@ -14,19 +15,23 @@ const RegistrationForm = () => {
   const editData = location.state?.user || null;
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    date_of_birth: "",
-    contact: "",
-    address: "",
-    pincode: "",
-    state: "",
-    alternate_contact: "",
-    email: "",
-    password: "",
-    gstNO: "",
-    age: "",
-    gender: "",
+   
+  "first_name": "",
+  "last_name": "",
+  "date_of_birth": "",
+  "age": "",
+  "contact": "",
+  "alternate_contact": "",
+  "email": "",
+  "address": "",
+  "gender": "",
+  "pincode": "",
+  "state": "",
+  "role": null,
+  "employee_id": "",
+  "ministry": "",
+  "organisation_name": "",
+  "serving": ""
   });
   useEffect(() => {
     dispatch(changeNavValue(editData ? "Update User " : "Create User"));
@@ -36,7 +41,7 @@ const RegistrationForm = () => {
         first_name: editData.firstName || "",
         last_name: editData.lastName || "",
         contact: editData.contact || "",
-        date_of_birth: editData.dob || "",
+        date_of_birth: null,
         address: editData.address || "",
         pincode: editData.pincode || "",
         state: editData.state || "",
@@ -78,24 +83,17 @@ const RegistrationForm = () => {
 
     try {
       const url = editData
-        ? `https://api.swasthyapro.com/api/auth/update/${editData.id}`
+        ? `https://api.swasthyapro.com/api/user/user-role-update/${editData.id}`
         : "https://api.swasthyapro.com/api/auth/register";
       const method = editData ? "PUT" : "POST";
-      const result = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          age: Number(formData.age) || null,
-        }),
-      });
-
-      const response = await result.json();
+       const result = await fetchProtectedData(url,method , {
+            ...formData,
+            age: Number(formData.age) || null,
+          });
+        const response =  result;
       if (
         response.message === "User registered" ||
-        response.message == "User profile updated successfully"
+        response.message == "User updated successfully"
       ) {
         Swal.fire({
           title: `User ${editData ? "Updated" : "Created"} Successfully!`,

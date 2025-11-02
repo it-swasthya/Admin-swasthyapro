@@ -8,6 +8,7 @@ import InputField from "../../components/registrationForm/InputField";
 import MPinInput from "../../components/registrationForm/MPinInput";
 import GenderSelect from "../../components/registrationForm/GenderSelect";
 import ServingSelect from "../../components/registrationForm/ServingSelect";
+import { fetchProtectedData } from "../../utils/adminAuth";
 
 const RegistrationFormForCGHS = () => {
   const dispatch = useDispatch();
@@ -15,24 +16,24 @@ const RegistrationFormForCGHS = () => {
   const location = useLocation();
   const editData = location.state?.user || null;
     const [formData, setFormData] = useState({
-    first_name: "",
-    employee_id: "",
-    role: "cghs",
-    ministry: "",
-    serving: "",
-    organisation_name: "",
-    last_name: "",
-    date_of_birth: "",
-    contact: "",
-    address: "",
-    pincode: "",
-    state: "",
-    alternate_contact: "",
-    email: "",
-    password: "",
-    gstNO: "",
-    age: "",
-    gender: "",
+   
+  "first_name": "",
+  "last_name": "",
+  "date_of_birth": "",
+  "age": "",
+  "contact": "",
+  "alternate_contact": "",
+  "email": "",
+  "address": "",
+  "gender": "",
+  "pincode": "",
+  "state": "",
+  "role": "cghs",
+  "employee_id": "",
+  "ministry": "",
+  "organisation_name": "",
+  "serving": ""
+
   });
  useEffect(() => {
     dispatch(changeNavValue(editData ? "Update CGHS User " : "Create CGHS User"));
@@ -96,25 +97,17 @@ const RegistrationFormForCGHS = () => {
       //   }
       // );
         const url = editData
-        ? `https://api.swasthyapro.com/api/auth/update/${editData.id}`
+        ? `https://api.swasthyapro.com/api/user/user-role-update/${editData.id}`
         : "https://api.swasthyapro.com/api/auth/register";
       const method = editData ? "PUT" : "POST";
-      const result = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const result = await fetchProtectedData(url,method , {
           ...formData,
           age: Number(formData.age) || null,
-        }),
-      });
-
-      const response = await result.json();
-
+        });
+      const response =  result;
        if (
         response.message === "User registered" ||
-        response.message == "User profile updated successfully"
+        response.message == "User updated successfully"
       )  {
         Swal.fire({
           title: `User ${editData ? "Updated" : "Created"} Successfully!`,
