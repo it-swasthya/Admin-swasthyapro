@@ -28,7 +28,6 @@ import UserDetailsModalForPrescription from "../../components/user-info-modal/Us
 
 const ViewPrescription = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   const [openQueryUpdateForm, setOpenQueryUpdateForm] = useState(false);
@@ -51,9 +50,7 @@ const ViewPrescription = () => {
       setUsers(response.data.prescriptions || []);
     } catch (error) {
       console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -90,25 +87,46 @@ const ViewPrescription = () => {
     }
   };
 
-  const column = getPrescriptionTableColumns(handleShowForm, handleDetailsClick);
+  const column = getPrescriptionTableColumns(
+    handleShowForm,
+    handleDetailsClick
+  );
 
   return (
     <>
       {isMobile ? (
-        <MobileViewPrescription users={users} handleShowForm={handleShowForm} handleSubmit={handleSubmit} />
+        <MobileViewPrescription
+          users={users}
+          handleShowForm={handleShowForm}
+          handleSubmit={handleSubmit}
+        />
       ) : (
-        <TableComponent columns={column} data={users} flattenRow={flattenPrescriptionRow} filename={"user-prescription-file"} />
+        <TableComponent
+          columns={column}
+          data={users}
+          flattenRow={flattenPrescriptionRow}
+          filename={"user-prescription-file"}
+        />
       )}
 
       {/* Update Status Modal */}
       {openQueryUpdateForm && (
-        <Modal open={openQueryUpdateForm} onClose={() => setOpenQueryUpdateForm(false)}>
+        <Modal
+          open={openQueryUpdateForm}
+          onClose={() => setOpenQueryUpdateForm(false)}
+        >
           <Box sx={{ ...modalStyle }}>
-            <Typography variant="h6" gutterBottom>Update Status</Typography>
+            <Typography variant="h6" gutterBottom>
+              Update Status
+            </Typography>
 
             <FormControl fullWidth margin="normal">
               <InputLabel>Status</InputLabel>
-              <Select value={status} label="Status" onChange={(e) => setStatus(e.target.value)}>
+              <Select
+                value={status}
+                label="Status"
+                onChange={(e) => setStatus(e.target.value)}
+              >
                 <MenuItem value={"open"}>Open</MenuItem>
                 <MenuItem value={"testbooked"}>Book Test</MenuItem>
                 <MenuItem value={"closed"}>Close</MenuItem>
@@ -125,12 +143,24 @@ const ViewPrescription = () => {
               label={seen ? "Seen" : "Not Seen"}
             />
 
-
-            <TextField label="Remarks" fullWidth margin="normal" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+            <TextField
+              label="Remarks"
+              fullWidth
+              margin="normal"
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+            />
 
             <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
-              <Button onClick={() => setOpenQueryUpdateForm(false)} color="secondary">Cancel</Button>
-              <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+              <Button
+                onClick={() => setOpenQueryUpdateForm(false)}
+                color="secondary"
+              >
+                Cancel
+              </Button>
+              <Button variant="contained" onClick={handleSubmit}>
+                Submit
+              </Button>
             </Box>
           </Box>
         </Modal>
@@ -153,11 +183,10 @@ const ViewPrescription = () => {
         </Box>
       </Modal> */}
       <UserDetailsModalForPrescription
-  open={openDetailsModal}
-  onClose={() => setOpenDetailsModal(false)}
-  selectedDetails={selectedDetails}
-/>
-
+        open={openDetailsModal}
+        onClose={() => setOpenDetailsModal(false)}
+        selectedDetails={selectedDetails}
+      />
     </>
   );
 };

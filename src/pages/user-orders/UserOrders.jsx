@@ -419,7 +419,7 @@ const OrderExportTable = () => {
       ) : (
         <TableComponent
           columns={columns}
-          data={filteredOrders} // ✅ use filteredOrders instead of orders
+          data={filteredOrders}
           flattenRow={userOrderFlattenRow}
           filename={"user-order-file"}
         />
