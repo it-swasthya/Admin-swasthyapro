@@ -35,6 +35,7 @@ const fetchTests = async (center, test, cb) => {
 
 const labs = [
   { name: "SRM", id: "Lab_51005236" },
+    { name: "Healthcare Ultrasound And Diagnostics", id: "Lab_42595080" },
   { name: "Capital Health & Diagnostic Clinic", id: "Lab_80577999" },
   { name: "Health quest imaging and diagnostics", id: "Lab_53885877" },
   { name: "Rayplus diagnostics", id: "Lab_51378981" },

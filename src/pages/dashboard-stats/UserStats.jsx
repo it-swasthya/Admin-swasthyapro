@@ -54,7 +54,7 @@ const UsersByMonthSection = () => {
         const res = await fetch("https://api.swasthyapro.com/api/user/month-wise");
         const json = await res.json();
         if (!json?.success || !Array.isArray(json.data)) return;
-
+       console.log(json)
         // Fill 12 months with zeros, then overlay API data
         const data = Array(12).fill(0);
         json.data.forEach((row) => {

@@ -20,6 +20,7 @@ import { decryptEncryptedData } from "../utils/DecodeFormatData";
 import UserStats from "./dashboard-stats/UserStats";
 import TestNameCountsChart from "./dashboard-stats/TestStats";
 import GenderAgePieCharts from "./dashboard-stats/GenderAndAgeStats";
+import OrderStatsByMonth from "./dashboard-stats/OrderStats";
 
 function Dashboard() {
   const [testCount, setTestCount] = useState(0);
@@ -97,6 +98,8 @@ function Dashboard() {
       </div>
       <div>
         <UserStats />
+                <OrderStatsByMonth />
+
         <GenderAgePieCharts/>
          <TestNameCountsChart />
 
