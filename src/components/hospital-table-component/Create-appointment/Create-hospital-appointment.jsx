@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 const submitIPDAppointment = async ({
@@ -11,6 +11,8 @@ const submitIPDAppointment = async ({
   pan_file,
   insurance_file,
 }) => {
+
+
   const formData = new FormData();
   formData.append("name", name);
   formData.append("disease", disease);
@@ -61,6 +63,17 @@ const sendIpdEmail = async (payload) => {
 };
 
 const HospitalAppointment = ({ isOpen, onClose, getAllAppointment }) => {
+
+  
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === "Escape" && isOpen) {
+          onClose();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isOpen, onClose]);
   const [formValues, setFormValues] = useState({
     name: "",
     disease: "",
