@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import DashboardCard from "../../components/dashboardCard";
-import { User as UserIcon, CalendarDays } from "lucide-react";
+import { BookCheckIcon, CalendarDays } from "lucide-react";
 
 const OrderStatsByMonth = () => {
   const monthLabels = [
@@ -160,7 +160,7 @@ const OrderStatsByMonth = () => {
             title="Total Orders"
             value={totalOrders}
             color="bg-gradient-to-r from-blue-500 to-blue-600"
-            icon={UserIcon}
+            icon={BookCheckIcon}
           />
           <DashboardCard
             title="Top Month Orders"
