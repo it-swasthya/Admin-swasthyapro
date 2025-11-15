@@ -49,7 +49,7 @@ const RegistrationFormForCGHS = () => {
         contact: editData.contact || "",
         date_of_birth: editData.dob || "",
         address: editData.address || "",
-        pincode: editData.pincode || "",
+        pincode:editData.pincode == "N/A" ? 0 : editData.pincode ,
         state: editData.state || "",
         alternate_contact: editData.alternate_contact || "",
         email: editData.email || "",

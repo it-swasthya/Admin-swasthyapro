@@ -56,7 +56,7 @@ const sendIpdEmail = async (payload) => {
       }
     );
 
-    return await response.json();
+    return await response.json(); 
   } catch (error) {
     console.error("Error sending IPD email:", error.message);
   }
