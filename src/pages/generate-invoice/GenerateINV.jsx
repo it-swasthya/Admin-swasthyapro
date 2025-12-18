@@ -13,7 +13,7 @@ const GenerateINV = () => {
   const [rows, setRows] = useState([
     {
       id: 1,
-      vendorId:"",
+      vendorId: "",
       employeeName: "",
       empCode: "",
       desc: "",
@@ -213,7 +213,7 @@ const GenerateINV = () => {
           },
 
           items: rows.map((row) => ({
-            vendorId:row.vendorId,
+            vendorId: row.vendorId,
             employeeName: row.employeeName,
             empCode: row.empCode,
             desc: row.desc,
@@ -522,11 +522,11 @@ const GenerateINV = () => {
                   <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                     Emp. Code
                   </th>
-                  
+
                 </>
               )} <th style={{ padding: "12px", border: "1px solid #ddd" }}>
-                  Vender ID
-                  </th>
+                Vender ID
+              </th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Desc
               </th>
