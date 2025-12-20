@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
 export default function flattenPrescriptionRow(row) {
   return {
     id: row.User_id,
@@ -19,9 +13,4 @@ export default function flattenPrescriptionRow(row) {
     remarks: row.remarks,
     createdAt: row.createdAt,
   };
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6

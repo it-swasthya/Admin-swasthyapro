@@ -91,14 +91,10 @@ const ViewPrescription = () => {
     }
   };
 
-<<<<<<< HEAD
-  const column = getPrescriptionTableColumns(handleShowForm, handleDetailsClick);
-=======
   const column = getPrescriptionTableColumns(
     handleShowForm,
     handleDetailsClick
   );
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
 
   return (
     <>
@@ -110,11 +106,6 @@ const ViewPrescription = () => {
 
       {/* Update Status Modal */}
       {openQueryUpdateForm && (
-<<<<<<< HEAD
-        <Modal open={openQueryUpdateForm} onClose={() => setOpenQueryUpdateForm(false)}>
-          <Box sx={{ ...modalStyle }}>
-            <Typography variant="h6" gutterBottom>Update Status</Typography>
-=======
         <Modal
           open={openQueryUpdateForm}
           onClose={() => setOpenQueryUpdateForm(false)}
@@ -123,7 +114,6 @@ const ViewPrescription = () => {
             <Typography variant="h6" gutterBottom>
               Update Status
             </Typography>
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
 
             <FormControl fullWidth margin="normal">
               <InputLabel>Status</InputLabel>
@@ -145,13 +135,6 @@ const ViewPrescription = () => {
             />
 
 
-<<<<<<< HEAD
-            <TextField label="Remarks" fullWidth margin="normal" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
-
-            <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
-              <Button onClick={() => setOpenQueryUpdateForm(false)} color="secondary">Cancel</Button>
-              <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-=======
             <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
               <Button
                 onClick={() => setOpenQueryUpdateForm(false)}
@@ -162,18 +145,13 @@ const ViewPrescription = () => {
               <Button variant="contained" onClick={handleSubmit}>
                 Submit
               </Button>
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
             </Box>
           </Box>
         </Modal>
       )}
 
       {/* Details Modal */}
-<<<<<<< HEAD
-      <Modal open={openDetailsModal} onClose={() => setOpenDetailsModal(false)}>
-=======
       {/* <Modal open={openDetailsModal} onClose={() => setOpenDetailsModal(false)}>
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
         <Box sx={{ ...modalStyle, width: 350 }}>
           <Typography variant="h6" mb={2}>User Details</Typography>
 
@@ -187,16 +165,12 @@ const ViewPrescription = () => {
             <Button variant="contained" onClick={() => setOpenDetailsModal(false)}>Close</Button>
           </Box>
         </Box>
-<<<<<<< HEAD
-      </Modal>
-=======
       </Modal> */}
       <UserDetailsModalForPrescription
         open={openDetailsModal}
         onClose={() => setOpenDetailsModal(false)}
         selectedDetails={selectedDetails}
       />
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
     </>
   );
 };

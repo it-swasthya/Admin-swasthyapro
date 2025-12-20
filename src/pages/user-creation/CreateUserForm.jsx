@@ -41,7 +41,7 @@ const RegistrationForm = () => {
         first_name: editData.firstName || "",
         last_name: editData.lastName || "",
         contact: editData.contact || "",
-        date_of_birth: null,
+        date_of_birth: editData.date_of_birth || null,
         address: editData.address || "",
         pincode: editData.pincode || "",
         state: editData.state || "",

@@ -203,15 +203,15 @@ const RadiologyCartSidebar = ({
             }
           );
 
-          // await axios.post(
-          //   "https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp",
-          //   {
-          //     to: "91" + user.contact,
-          //     invoice_no: createInvoiceResponse.data.invoice.id,
-          //     customer_name: user.fullName,
-          //     email: user.email,
-          //   }
-          // );
+          await axios.post(
+            "https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp",
+            {
+              to: "91" + user.contact,
+              invoice_no: createInvoiceResponse.data.invoice.id,
+              customer_name: user.fullName,
+              email: user.email,
+            }
+          );
         }
 
         await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {

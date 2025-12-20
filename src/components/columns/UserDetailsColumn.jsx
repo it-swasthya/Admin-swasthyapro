@@ -88,9 +88,6 @@ export const getUserTableColumns = ({
       </Button>
     ),
   },
-<<<<<<< HEAD
-
-=======
   {
     header: 'Edit',
     // id: 'edit',
@@ -115,5 +112,4 @@ export const getUserTableColumns = ({
   //     </IconButton>
   //   ),
   // },
->>>>>>> 6427af5bd6d98c8a0a528701d8ab763e93eb47f6
 ];
