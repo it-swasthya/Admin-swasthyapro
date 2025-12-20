@@ -123,15 +123,15 @@ const GenerateINV = () => {
     if (!invoiceDetails.gstin) missingFields.push("GSTIN");
 
     rows.forEach((row, index) => {
-      if (!row.employeeName)
-        missingFields.push(`Employee Name (Row ${index + 1})`);
-      if (!row.empCode) missingFields.push(`Emp. Code (Row ${index + 1})`);
+      // if (!row.employeeName)
+      //   missingFields.push(`Employee Name (Row ${index + 1})`);
+      // if (!row.empCode) missingFields.push(`Emp. Code (Row ${index + 1})`);
       if (!row.desc) missingFields.push(`Description (Row ${index + 1})`);
       if (!row.hsnSac) missingFields.push(`HSN/SAC (Row ${index + 1})`);
       if (!row.qty || row.qty <= 0)
         missingFields.push(`Qty (Row ${index + 1})`);
-      if (!row.rate || row.rate <= 0)
-        missingFields.push(`Rate (Row ${index + 1})`);
+      // if (!row.rate || row.rate <= 0)
+      //   missingFields.push(`Rate (Row ${index + 1})`);
     });
 
     if (missingFields.length > 0) {

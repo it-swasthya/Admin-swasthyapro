@@ -29,8 +29,8 @@ const AllUsers = () => {
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-    const [infoModalOpen, setInfoModalOpen] = useState(false);
-  
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+
   const [userReports, setUserReports] = useState([]);
   const [viewType, setViewType] = useState("reports");
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const AllUsers = () => {
         age: user?.age || "N/A",
         address: user?.address || "N/A",
         pincode: user?.pincode || "N/A",
-        role:user?.role || "N/A",
+        role: user?.role || "N/A",
         state: user?.state || "N/A",
         alternate_no: user?.alternate_contact || "N/A",
         reports: user?.Reports || "N/A",
@@ -145,11 +145,11 @@ const AllUsers = () => {
   const handleUpdateUser = (user) => {
     Swal.fire({
       title: "Choose an Option",
-      text: "Where do you want to go?",
+      text: "What Do You Want to Update",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Make User",
-      cancelButtonText: "Make CGHS",
+      confirmButtonText: "Update User",
+      cancelButtonText: "Update Role",
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
@@ -196,10 +196,7 @@ const AllUsers = () => {
 
   const column = getUserTableColumns({
     onBookTest: handleBookTest,
-        onInfoClick: handleInfo,
-
-    // onReportClick: handleOpenUploadModal,
-    // onPrescriptionClick: handleOpenUploadModal,
+    onInfoClick: handleInfo,
     handleUpdateUser,
   });
   if (error) {
@@ -425,13 +422,13 @@ const AllUsers = () => {
           </Button>
         </Box>
       </Modal>
-       {selectedUser && (
-              <UserDetailModal
-                isOpen={infoModalOpen}
-                onClose={() => setInfoModalOpen(false)}
-                user={selectedUser}
-              />
-            )}
+      {selectedUser && (
+        <UserDetailModal
+          isOpen={infoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          user={selectedUser}
+        />
+      )}
     </>
   );
 };

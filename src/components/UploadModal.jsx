@@ -8,6 +8,10 @@ import {
   Divider,
   Stack,
   Chip,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -22,15 +26,15 @@ const UploadModal = ({
   onCloseTable,
 }) => {
   const [filledPdfUrl, setFilledPdfUrl] = useState(null);
-  const [logoPdfUrl, setLogoPdfUrl] = useState(null); 
+  const [logoPdfUrl, setLogoPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [logoLoading, setLogoLoading] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);      
-  const [mergedPdfUrl, setMergedPdfUrl] = useState(null); 
-  const [seletedTab , setSeletedTab] = useState('')  
-  const [isSendEmailEnable, setisSendEmailEnable] = useState(false);
-  const [isCGHS , setIsCGHS] = useState(false)
+  const [logoFile, setLogoFile] = useState(null);
+  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
+  const [seletedTab, setSeletedTab] = useState("");
+  const [selectedLab, setSelectedLab] = useState("immuno");  
+  const [isCGHS, setIsCGHS] = useState(false);
 
   const handleApiCall = async (pdfUrl) => {
     setLoading(true);
@@ -55,58 +59,59 @@ const UploadModal = ({
   };
 
   const handleCapClick = () => {
-        setIsCGHS(false)
+    setIsCGHS(false);
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-with-cap.pdf"
     );
   };
   const handleCGHSWithCapClick = () => {
-    setIsCGHS(true)
+    setIsCGHS(true);
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_with_cap.pdf"
     );
   };
-   const handleCGHSWithOutCapClick = () => {
-    setIsCGHS(true)
+  const handleCGHSWithOutCapClick = () => {
+    setIsCGHS(true);
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_without_cap.pdf"
     );
   };
 
   const handleWithoutCapClick = () => {
-       setIsCGHS(false)
- 
+    setIsCGHS(false);
+
     handleApiCall(
       "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-without-cap.pdf"
     );
   };
 
   const handleUploadAndAddLogo = async () => {
-    if (!pdfFile ) {
+    if (!pdfFile) {
       alert("Please upload PDF");
       return;
     }
     setLoading(true);
     const formData = new FormData();
-    formData.append(isCGHS ? 'uploaded_cghs':"uploaded_pdf", pdfFile);
+    formData.append(isCGHS ? "uploaded_cghs" : "uploaded_pdf", pdfFile);
     formData.append("logo", logoFile || null);
+    formData.append("lab_name", selectedLab);
 
-
-if(!isCGHS){
- formData.append(
-      "letterheadUrl",
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-header.jpg"
-    );
-    formData.append(
-      "footerUrl",
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-footer.jpg"
-    );
-}
-  
+    if (!isCGHS) {
+      formData.append(
+        "letterheadUrl",
+        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-header.jpg"
+      );
+      formData.append(
+        "footerUrl",
+        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-footer.jpg"
+      );
+    }
 
     try {
       const response = await axios.post(
-      isCGHS ? 'https://api.swasthyapro.com/api/report/upload-only' :"https://api.swasthyapro.com/api/report/add-logo",
+        isCGHS
+          ? "https://api.swasthyapro.com/api/report/upload-only"
+          : "https://api.swasthyapro.com/api/report/add-logo",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -124,22 +129,21 @@ if(!isCGHS){
       setLoading(false);
     }
   };
-   
-   
 
   const handleMergePdfs = async () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        isCGHS ? "https://api.swasthyapro.com/api/report/merge-cghs" :"https://api.swasthyapro.com/api/report/merge",
+        isCGHS
+          ? "https://api.swasthyapro.com/api/report/merge-cghs"
+          : "https://api.swasthyapro.com/api/report/merge",
         {},
         { responseType: "blob" }
       );
- 
+
       const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
       setMergedPdfUrl(blobUrl);
-      setisSendEmailEnable(true);
     } catch (error) {
       console.error("Merge error:", error);
       alert("Failed to merge PDFs");
@@ -179,7 +183,10 @@ if(!isCGHS){
           <Button
             variant="outlined"
             color="primary"
-            onClick={()=>{handleCapClick(); setSeletedTab("CAP")}}
+            onClick={() => {
+              handleCapClick();
+              setSeletedTab("CAP");
+            }}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -188,7 +195,10 @@ if(!isCGHS){
           <Button
             variant="outlined"
             color="primary"
-            onClick={()=>{handleWithoutCapClick(); setSeletedTab("Without Cap")}}
+            onClick={() => {
+              handleWithoutCapClick();
+              setSeletedTab("Without Cap");
+            }}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -197,9 +207,9 @@ if(!isCGHS){
           <Button
             variant="outlined"
             color="primary"
-            onClick={()=>{
+            onClick={() => {
               handleCGHSWithCapClick();
-              setSeletedTab("CGHS with Cap")
+              setSeletedTab("CGHS with Cap");
             }}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
@@ -209,7 +219,10 @@ if(!isCGHS){
           <Button
             variant="outlined"
             color="primary"
-            onClick={()=>{handleCGHSWithOutCapClick() ; setSeletedTab("CGHS without Cap")}}
+            onClick={() => {
+              handleCGHSWithOutCapClick();
+              setSeletedTab("CGHS without Cap");
+            }}
             disabled={loading}
             sx={{ borderRadius: 2, textTransform: "none", px: 3 }}
           >
@@ -230,19 +243,19 @@ if(!isCGHS){
 
         {!loading && filledPdfUrl && (
           <>
-           <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-      <Typography variant="subtitle1" fontWeight="bold">
-        Filled PDF Preview
-      </Typography>
+            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+              <Typography variant="subtitle1" fontWeight="bold">
+                Filled PDF Preview
+              </Typography>
 
-      <Chip
-        label={seletedTab || "None"}
-        color="success"    
-        variant="filled"
-        size="small"
-        sx={{ fontWeight: 500 }}
-      />
-    </Stack>
+              <Chip
+                label={seletedTab || "None"}
+                color="success"
+                variant="filled"
+                size="small"
+                sx={{ fontWeight: 500 }}
+              />
+            </Stack>
             <Box
               component="iframe"
               src={filledPdfUrl}
@@ -289,36 +302,69 @@ if(!isCGHS){
               </Stack>
 
               {/* Logo Upload */}
-              {!isCGHS && 
-              <Stack spacing={1}>
-                <Typography fontWeight="medium">Upload Logo:</Typography>
-                <Button
-                  variant="outlined"
-                  component="label"
-                  startIcon={<FileUpIcon />}
-                  sx={{
-                    textTransform: "none",
-                    borderRadius: 2,
-                    width: "fit-content",
-                  }}
-                >
-                  Choose Logo Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={(e) => {
-                      if (e.target.files[0]) setLogoFile(e.target.files[0]);
-                    }}
-                  />
-                </Button>
-                {logoFile && (
-                  <Typography variant="body2" color="text.secondary" mt={0.5}>
-                    Selected: {logoFile.name}
-                  </Typography>
-                )}
-              </Stack>
-}
+              {!isCGHS && (
+                <Stack spacing={2}>
+                  {/* Select Lab Name */}
+                  <FormControl>
+                    <InputLabel id="lab-name-label">Select Lab</InputLabel>
+                    <Select
+                      labelId="lab-name-label"
+                      value={selectedLab}
+                      label="Select Lab"
+                      onChange={(e) => setSelectedLab(e.target.value)}
+                      sx={{ borderRadius: 2, width: "50%" }}
+                    >
+                      <MenuItem key={"immuno"} value={"immuno"}>
+                        immuno
+                      </MenuItem>
+                      <MenuItem key={"lifecell"} value={"lifecell"}>
+                        lifecell
+                      </MenuItem>{" "}
+                      <MenuItem key={"lifecell"} value={"lifecell"}>
+                        Mera
+                      </MenuItem>{" "}
+                      <MenuItem key={"lifecell"} value={"lifecell"}>
+                        Diagno Care
+                      </MenuItem>{" "}
+                    </Select>
+                  </FormControl>
+
+                  {/* Upload Logo */}
+                  <Stack spacing={1}>
+                    <Typography fontWeight="medium">Upload Logo:</Typography>
+                    <Button
+                      variant="outlined"
+                      component="label"
+                      startIcon={<FileUpIcon />}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        width: "fit-content",
+                      }}
+                    >
+                      Choose Logo Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => {
+                          if (e.target.files[0]) setLogoFile(e.target.files[0]);
+                        }}
+                      />
+                    </Button>
+
+                    {logoFile && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        mt={0.5}
+                      >
+                        Selected: {logoFile.name}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Stack>
+              )}
               {/* Upload Button */}
               <Button
                 variant="contained"
@@ -333,7 +379,9 @@ if(!isCGHS){
               >
                 {logoLoading
                   ? "Processing..."
-                  : isCGHS ? "Upload Report":"Upload & Add Logo + Header/Footer"} 
+                  : isCGHS
+                    ? "Upload Report"
+                    : "Upload & Add Logo + Header/Footer"}
               </Button>
             </Stack>
             {logoLoading && !isCGHS && (

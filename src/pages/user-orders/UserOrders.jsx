@@ -91,7 +91,7 @@ const OrderExportTable = () => {
           ...order,
           displayName: `${order.User.first_name} ${order.User.last_name}`,
           displayDate:
-            new Date(order.scheduled_date).toLocaleDateString() || "N/A",
+          new Date(order.scheduled_date).toLocaleDateString() || "N/A",
           report: order.report || null,
           bookDate: new Date(order.createdAt).toLocaleString() || "N/A",
           totalPrice: order.Cart.totalPrice || "N/A",
