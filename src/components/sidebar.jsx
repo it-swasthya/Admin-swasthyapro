@@ -19,9 +19,11 @@ import {
   NotebookPenIcon,
   HospitalIcon,
   SquarePlusIcon,
+  GoalIcon,
 } from "lucide-react";
 
 import BiotechIcon from "@mui/icons-material/Biotech";
+import { ArrowBackIosNew } from "@mui/icons-material";
 function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
   const [expandedMenus, setExpandedMenus] = useState({
     facilities: false,
@@ -158,6 +160,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
     { name: "all-users", label: "Users", icon: <Users size={20} /> },
     { name: "user-Query", label: "Query", icon: <FileQuestion size={20} /> },
     { name: "user-invoices", label: "Invoices", icon: <FileScan size={20} /> },
+    { name: "lead-crm", label: "Lead Manager", icon: <GoalIcon size={20} /> },
+
     // { name: "generate-invoices", label: "Generate INV", icon: <FileScan size={20} /> }, 
   ];
 

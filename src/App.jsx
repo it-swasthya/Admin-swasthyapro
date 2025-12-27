@@ -41,6 +41,7 @@ import { fetchProtectedData } from './utils/adminAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { isLoggedIn, isuserLogin } from './Redux/reducer';
 import RegistrationFormForCGHS from './pages/user-creation/Create-CGHS-user';
+import LeadTable from './pages/crm/Lead';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){
@@ -550,6 +551,23 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 <GenerateINV/>
+                
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/lead-crm"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <LeadTable/>
                 
               </Layout>
             </ProtectedRoute>

@@ -83,19 +83,19 @@ const HospitalRecordsModal = ({
 
                     {/* ✅ Make report clickable if it looks like a URL */}
                     <TableCell>
-                     {record.report && record.report !== "NA" ? (
-  <Link
-    href={record.report}
-    target="_blank"
-    rel="noopener noreferrer"
-    underline="hover"
-    sx={{ color: "primary.main", fontWeight: 500 }}
-  >
-    View Report
-  </Link>
-) : (
-  "N/A"
-)}
+                      {record.report && record.report !== "NA" ? (
+                        <Link
+                          href={record.report}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          underline="hover"
+                          sx={{ color: "primary.main", fontWeight: 500 }}
+                        >
+                          View Report
+                        </Link>
+                      ) : (
+                        "N/A"
+                      )}
                     </TableCell>
 
                     <TableCell>
@@ -116,8 +116,8 @@ const HospitalRecordsModal = ({
                           record.status === "admitted"
                             ? "green"
                             : record.status === "discharged"
-                            ? "blue"
-                            : "gray",
+                              ? "blue"
+                              : "gray",
                       }}
                     >
                       {record.status || "N/A"}
