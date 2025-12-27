@@ -283,6 +283,9 @@ const OrderExportTable = () => {
         // Grand total should be sum of net prices
         const grand_total = totalNetPrice;
 
+        console.log(subtotal,total_discount,grand_total);
+        
+
         // Create invoice
         const createInvoiceResponse = await axios.post(
           "https://api.swasthyapro.com/api/invoice/create-invoice",
@@ -310,7 +313,7 @@ const OrderExportTable = () => {
             grand_total:
               Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
             payment_made:
-              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+              Number(createInvoiceResponse.data.invoice.total_amount) + Number(selectedOrder.dml_charges) || 0,
             payment_status: "Paid",
             account_no: "NA",
             ifsc: "NA",
