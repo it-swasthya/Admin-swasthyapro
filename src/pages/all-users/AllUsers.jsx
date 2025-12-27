@@ -194,10 +194,13 @@ const AllUsers = () => {
     setOpenModal(false);
   };
 
+ 
+
   const column = getUserTableColumns({
     onBookTest: handleBookTest,
     onInfoClick: handleInfo,
     handleUpdateUser,
+   
   });
   if (error) {
     return (
