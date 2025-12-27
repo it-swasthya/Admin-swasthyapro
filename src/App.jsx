@@ -42,8 +42,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isLoggedIn, isuserLogin } from './Redux/reducer';
 import RegistrationFormForCGHS from './pages/user-creation/Create-CGHS-user';
 import LeadTable from './pages/crm/LeadTable';
-import LeadForm from './pages/crm/LeadForm';
+// import LeadForm from './pages/crm/';
 import AllLeads from './pages/crm/AllLeads';
+import LeadForm from './pages/CRM/leadform';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){

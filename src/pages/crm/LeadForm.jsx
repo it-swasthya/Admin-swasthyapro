@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Paper,
@@ -12,12 +12,13 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import axios from "axios";
+import debounce from "lodash/debounce";
 
-const labelStyle = {
-  color: "#070d14ff",
-  fontWeight: 300,
-  "&.Mui-focused": { color: "#0d47a1" }
-};
+const ASSIGNED_TO_OPTIONS = [
+  "Sunil Gupta",
+  "Vivek Gupta",
+  "Amrit Kaur"
+];
 
 const LeadForm = () => {
   const navigate = useNavigate();
@@ -26,75 +27,90 @@ const LeadForm = () => {
      STATE
   ========================= */
   const [users, setUsers] = useState([]);
-  const [searchText, setSearchText] = useState("");
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   const [form, setForm] = useState({
     user: null,
     department: "",
     cases: "",
+    priority: "",
     assignedTo: []
   });
 
+  const [remarks, setRemarks] = useState({});
   const [remarkText, setRemarkText] = useState("");
   const [remarkDate, setRemarkDate] = useState("");
-  const [remarks, setRemarks] = useState({});
 
   /* =========================
-     SEARCH USERS (API)
+     API CALL
   ========================= */
-  const searchUsers = async (value) => {
-    setSearchText(value);
-
-    if (!value || value.length < 2) {
+  const fetchUsers = async (query) => {
+    if (!query || query.length < 2) {
       setUsers([]);
       return;
     }
 
     try {
+      setLoadingUsers(true);
+
       const res = await axios.get(
-        `https://api.swasthyapro.com/api/user/search/details?name=${value}`
+        "https://api.swasthyapro.com/api/user/search/details",
+        { params: { name: query } }
       );
 
-      if (res.data?.users) {
-        const mapped = res.data.users.map((u) => ({
-          id: u.User_id,
-          name:
-            u.Full_name ||
-            u.full_name ||
-            `${u.first_name || ""} ${u.last_name || ""}`.trim(),
-          email: u.email || "",
-          contact: u.contact || "",
-          gender: u.gender || ""
-        }));
+      const mapped = (res.data?.users || []).map((u) => ({
+        id: u.User_id,
+        name:
+          u.Full_name ||
+          u.full_name ||
+          `${u.first_name || ""} ${u.last_name || ""}`.trim(),
+        email: u.email || "",
+        contact: u.contact || "",
+        gender: u.gender || ""
+      }));
 
-        setUsers(mapped);
-      }
+      setUsers(mapped);
     } catch (err) {
       console.error("User search failed", err);
+      setUsers([]);
+    } finally {
+      setLoadingUsers(false);
     }
   };
 
   /* =========================
-     ADD REMARK WITH CUSTOM DATE
+     DEBOUNCED FUNCTION
+  ========================= */
+  const debouncedSearch = useMemo(
+    () => debounce(fetchUsers, 500),
+    []
+  );
+
+  /* =========================
+     CLEANUP (VERY IMPORTANT)
+  ========================= */
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  /* =========================
+     ADD REMARK
   ========================= */
   const addRemark = () => {
-    if (!remarkText.trim()) return;
-    if (!remarkDate) {
-      Swal.fire("Missing Date", "Please select a date for the remark", "warning");
+    if (!remarkText || !remarkDate) {
+      Swal.fire("Missing Data", "Remark & date required", "warning");
       return;
     }
 
-    const formattedDate = new Date(remarkDate).toLocaleDateString("en-GB", {
+    const key = new Date(remarkDate).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
       year: "numeric"
     });
 
-    setRemarks((prev) => ({
-      ...prev,
-      [formattedDate]: remarkText
-    }));
-
+    setRemarks((prev) => ({ ...prev, [key]: remarkText }));
     setRemarkText("");
     setRemarkDate("");
   };
@@ -106,7 +122,7 @@ const LeadForm = () => {
     e.preventDefault();
 
     if (!form.user) {
-      Swal.fire("Missing User", "Please select a user", "warning");
+      Swal.fire("Error", "Please select a user", "warning");
       return;
     }
 
@@ -114,8 +130,8 @@ const LeadForm = () => {
       user_id: form.user.id,
       department: form.department,
       cases: form.cases,
-      assignedTo: form.assignedTo,
       priority: form.priority,
+      assignedTo: form.assignedTo,
       remarks
     };
 
@@ -129,16 +145,12 @@ const LeadForm = () => {
       Swal.fire("Success", "Lead created successfully", "success");
       navigate("/lead-crm");
     } catch (err) {
-      Swal.fire(
-        "Error",
-        err?.response?.data?.message || "Something went wrong",
-        "error"
-      );
+      Swal.fire("Error", "Failed to create lead", "error");
     }
   };
 
   return (
-    <Paper sx={{ p: 4, maxWidth: 750, mx: "auto" }}>
+    <Paper sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
       <Typography variant="h5" mb={3}>
         Create Lead
       </Typography>
@@ -148,18 +160,20 @@ const LeadForm = () => {
         <Box mb={3}>
           <Autocomplete
             options={users}
+            loading={loadingUsers}
             value={form.user}
-            onInputChange={(e, value) => searchUsers(value)}
+            onInputChange={(e, value) => debouncedSearch(value)}
+            onChange={(e, value) =>
+              setForm({ ...form, user: value })
+            }
             isOptionEqualToValue={(opt, val) => opt.id === val.id}
-            getOptionLabel={(option) => `${option.name}`}
-            onChange={(e, value) => setForm({ ...form, user: value })}
+            getOptionLabel={(option) => option?.name || ""}
+            noOptionsText="Type at least 2 characters"
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="Search User"
-                placeholder="Type name..."
-                required
-                InputLabelProps={{ sx: labelStyle }}
+                placeholder="Start typing name..."
               />
             )}
           />
@@ -168,15 +182,15 @@ const LeadForm = () => {
         {/* USER DETAILS */}
         {form.user && (
           <Box
+            mb={3}
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: 2,
-              mb: 3
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 2
             }}
           >
             <TextField label="Email" value={form.user.email} disabled />
-            <TextField label="Contact No" value={form.user.contact} disabled />
+            <TextField label="Contact" value={form.user.contact} disabled />
             <TextField label="Gender" value={form.user.gender} disabled />
           </Box>
         )}
@@ -185,12 +199,12 @@ const LeadForm = () => {
         <Box mb={3}>
           <TextField
             select
-            label="Department"
             fullWidth
-            required
+            label="Department"
             value={form.department}
-            onChange={(e) => setForm({ ...form, department: e.target.value })}
-            InputLabelProps={{ sx: labelStyle }}
+            onChange={(e) =>
+              setForm({ ...form, department: e.target.value })
+            }
           >
             <MenuItem value="pathology">Pathology</MenuItem>
             <MenuItem value="radiology">Radiology</MenuItem>
@@ -198,15 +212,17 @@ const LeadForm = () => {
             <MenuItem value="cghs">CGHS</MenuItem>
           </TextField>
         </Box>
+
+        {/* PRIORITY */}
         <Box mb={3}>
           <TextField
             select
-            label="Priority"
             fullWidth
-            required
+            label="Priority"
             value={form.priority}
-            onChange={(e) => setForm({ ...form, priority: e.target.value })}
-            InputLabelProps={{ sx: labelStyle }}
+            onChange={(e) =>
+              setForm({ ...form, priority: e.target.value })
+            }
           >
             <MenuItem value="high">High</MenuItem>
             <MenuItem value="medium">Medium</MenuItem>
@@ -215,15 +231,15 @@ const LeadForm = () => {
           </TextField>
         </Box>
 
-        {/* CASE TYPE */}
+        {/* CASE */}
         <Box mb={3}>
           <TextField
-            label="Case Type"
             fullWidth
-            required
+            label="Case Type"
             value={form.cases}
-            onChange={(e) => setForm({ ...form, cases: e.target.value })}
-            InputLabelProps={{ sx: labelStyle }}
+            onChange={(e) =>
+              setForm({ ...form, cases: e.target.value })
+            }
           />
         </Box>
 
@@ -231,64 +247,49 @@ const LeadForm = () => {
         <Box mb={3}>
           <Autocomplete
             multiple
-            options={["Sunil Gupta", "Vivek Gupta", "Amrit Kaur"]} 
+            options={ASSIGNED_TO_OPTIONS}
             value={form.assignedTo}
-            onChange={(event, newValue) =>
-              setForm({ ...form, assignedTo: newValue }) 
+            onChange={(e, value) =>
+              setForm({ ...form, assignedTo: value })
             }
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
-                <Chip
-                  key={option}
-                  variant="outlined"
-                  label={option}
-                  {...getTagProps({ index })}
-                />
+                <Chip label={option} {...getTagProps({ index })} />
               ))
             }
             renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Assigned To"
-                placeholder="Select users"
-                InputLabelProps={{ sx: labelStyle }}
-              />
+              <TextField {...params} label="Assigned To" />
             )}
           />
         </Box>
 
-
         {/* REMARKS */}
-        <Box mb={2} display="flex" gap={2} alignItems="center">
+        <Box display="flex" gap={2} mb={2}>
           <TextField
             type="date"
             value={remarkDate}
             onChange={(e) => setRemarkDate(e.target.value)}
-            InputLabelProps={{ sx: labelStyle }}
           />
           <TextField
-            label="Add Remark"
             fullWidth
+            label="Remark"
             value={remarkText}
             onChange={(e) => setRemarkText(e.target.value)}
           />
-
-          <Button size="large" variant="outlined" onClick={addRemark}>
-            +Add
+          <Button variant="outlined" onClick={addRemark}>
+            Add
           </Button>
         </Box>
 
-        <Box mt={2} mb={3}>
-          {Object.entries(remarks).map(([date, text]) => (
-            <Chip key={date} label={`${date}: ${text}`} sx={{ mr: 1, mb: 1 }} />
+        <Box mb={3}>
+          {Object.entries(remarks).map(([d, r]) => (
+            <Chip key={d} label={`${d}: ${r}`} sx={{ mr: 1, mb: 1 }} />
           ))}
         </Box>
 
         {/* ACTIONS */}
         <Box display="flex" justifyContent="flex-end" gap={2}>
-          <Button variant="outlined" onClick={() => navigate("/lead-crm")}>
-            Cancel
-          </Button>
+          <Button onClick={() => navigate("/lead-crm")}>Cancel</Button>
           <Button type="submit" variant="contained">
             Submit Lead
           </Button>
