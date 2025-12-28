@@ -44,7 +44,7 @@ import RegistrationFormForCGHS from './pages/user-creation/Create-CGHS-user';
 import LeadTable from './pages/crm/LeadTable';
 // import LeadForm from './pages/crm/';
 import AllLeads from './pages/crm/AllLeads';
-import LeadForm from './pages/CRM/leadform';
+import LeadForm from './pages/crm/LeadForm';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){
