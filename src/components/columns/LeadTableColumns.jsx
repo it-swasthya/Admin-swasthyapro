@@ -169,36 +169,25 @@ export const getLeadTableColumns = (onUpdate, onDelete) => [
 
   /* ================= EMPLOYEE NAME ================= */
   {
-    accessorKey: "employee",
+    accessorKey: "user_name",
     header: "Name",
-    Cell: ({ row }) => {
-      const emp = row.original.employee;
-      const name = emp
-        ? `${emp.first_name || ""} ${emp.last_name || ""}`.trim()
-        : "";
-
-      return (
-        <span style={{ fontWeight: 500 }}>
-          {name || "N/A"}
-        </span>
-      );
-    },
-    size: 160,
+    Cell: ({ cell }) => (
+      <span style={{ fontWeight: 600 }}>
+        {cell.getValue() || "N/A"}
+      </span>
+    ),
+    size: 180,
   },
 
-  /* ================= CONTACT NO ================= */
   {
-    accessorKey: "employee_contact",
-    header: "Contact No",
-    Cell: ({ row }) => {
-      const contact = row.original.employee?.contact;
-      return (
-        <span style={{ fontWeight: 500 }}>
-          {contact || "N/A"}
-        </span>
-      );
-    },
-    size: 140,
+    accessorKey: "user_phone",
+    header: "Phone",
+    Cell: ({ cell }) => (
+      <span style={{ fontFamily: "monospace" }}>
+        {cell.getValue() || "N/A"}
+      </span>
+    ),
+    size: 150,
   },
 
   /* ================= DEPARTMENT ================= */
@@ -291,16 +280,27 @@ export const getLeadTableColumns = (onUpdate, onDelete) => [
   },
 
   /* ================= SEEN ================= */
-  {
-    accessorKey: "markedAs",
-    header: "Seen",
-    Cell: ({ cell }) => (
-      <span style={{ fontWeight: 600, color: "#f57c00" }}>
-        {cell.getValue() || "N/A"}
+{
+  accessorKey: "markedAs",
+  header: "Seen",
+  Cell: ({ cell }) => {
+    const value = cell.getValue();
+
+    const color =
+      value === "Seen"
+        ? "#2e7d32"   // green
+        : value === "Unseen"
+        ? "#c62828"   // red
+        : "#9e9e9e";  // gray for N/A
+
+    return (
+      <span style={{ fontWeight: 600, color }}>
+        {value || "N/A"}
       </span>
-    ),
-    size: 100,
+    );
   },
+  size: 100,
+},
 
   /* ================= REMARKS ================= */
  {
