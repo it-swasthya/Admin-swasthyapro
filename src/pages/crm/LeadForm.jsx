@@ -213,6 +213,19 @@ const LeadForm = () => {
           </TextField>
         </Box>
 
+
+        {/* CASE */}
+        <Box mb={3}>
+          <TextField
+            fullWidth
+            label="Case Type"
+            value={form.cases}
+            onChange={(e) =>
+              setForm({ ...form, cases: e.target.value })
+            }
+          />
+        </Box>
+
         {/* PRIORITY */}
         <Box mb={3}>
           <TextField
@@ -231,19 +244,7 @@ const LeadForm = () => {
           </TextField>
         </Box>
 
-        {/* CASE */}
-        <Box mb={3}>
-          <TextField
-            fullWidth
-            label="Case Type"
-            value={form.cases}
-            onChange={(e) =>
-              setForm({ ...form, cases: e.target.value })
-            }
-          />
-        </Box>
-
-        {/* ASSIGNED TO */}
+       {/* ASSIGNED TO */}
         <Box mb={3}>
           <Autocomplete
             multiple

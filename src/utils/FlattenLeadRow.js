@@ -41,6 +41,7 @@ const flattenLeadRow = (lead) => {
     Department: lead.department || "N/A",
     Case_Type: lead.cases || "N/A",
     Status: lead.status || "N/A",
+    Deal: lead.deal_done || "N/A",
 
     Assigned_To: Array.isArray(lead.assignedTo)
       ? lead.assignedTo.join(", ")

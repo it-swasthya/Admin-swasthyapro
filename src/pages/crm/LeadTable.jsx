@@ -88,7 +88,7 @@ const LeadTable = () => {
   // UPDATE LEAD WITH DROPDOWN
   // =========================
  const handleUpdate = async (lead) => {
-  const { lead_id, status, priority, markedAs } = lead;
+  const { lead_id, status, deal_done, priority, markedAs } = lead;
 
   const { value: formValues } = await Swal.fire({
     title: "Update Lead",
@@ -130,6 +130,21 @@ const LeadTable = () => {
           </select>
         </div>
 
+         <div>
+          <label style="font-size:13px;font-weight:600;"> Deal Done</label>
+          <select id="swal-deal_done" style="
+            width:100%;
+            padding:10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            margin-top:4px;
+          ">
+          <option value="No" ${deal_done === "no" ? "selected" : ""}>No</option>
+          <option value="Yes" ${deal_done === "yes" ? "selected" : ""}>Yes</option>
+            
+          </select>
+        </div>
+
         <div>
           <label style="font-size:13px;font-weight:600;">Seen Status</label>
           <select id="swal-markedAs" style="
@@ -155,6 +170,7 @@ const LeadTable = () => {
       status: document.getElementById("swal-status").value,
       priority: document.getElementById("swal-priority").value,
       markedAs: document.getElementById("swal-markedAs").value,
+      deal_done:document.getElementById("swal-deal_done").value,
     }),
   });
 

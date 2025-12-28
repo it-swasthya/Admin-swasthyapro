@@ -233,6 +233,20 @@
       },
       size: 120,
     },
+     {
+      accessorKey: "deal_done",
+      header: "Deal Done",
+      Cell: ({ cell }) => {
+        const val = cell.getValue();
+        const color =
+          val === "Yes" ? "#388e3c" :
+          val === "No" ? "#d32f2f" :
+          "#1976d2";
+
+        return <span style={{ color, fontWeight: 600 }}>{val || "N/A"}</span>;
+      },
+      size: 120,
+    },
 
     /* ================= PRIORITY ================= */
     {
