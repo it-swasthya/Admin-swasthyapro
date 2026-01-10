@@ -313,7 +313,7 @@ const OrderExportTable = () => {
             grand_total:
               Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
             payment_made:
-              Number(createInvoiceResponse.data.invoice.total_amount) + Number(selectedOrder.dml_charges) || 0,
+              Number(createInvoiceResponse.data.invoice.total_amount) || 0,
             payment_status: "Paid",
             account_no: "NA",
             ifsc: "NA",
