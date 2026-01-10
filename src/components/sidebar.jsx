@@ -144,8 +144,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
         },
       ],
     },
-
-    {
+      {
       name: "hospital-appointment",
       label: "Hospital",
       icon: <SquarePlusIcon size={20} />,
@@ -157,6 +156,19 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
         },
       ],
     },
+     {
+      name: "all-consult-appointments",
+      label: "Consultation",
+      icon: <SquarePlusIcon size={20} />,
+      submenus: [
+        {
+          name: "all-consult-appointments",
+          label: "Appointments",
+          icon: <NotebookPenIcon size={20} />,
+        },
+      ],
+    },
+    ,
     { name: "all-users", label: "Users", icon: <Users size={20} /> },
     { name: "user-Query", label: "Query", icon: <FileQuestion size={20} /> },
     { name: "user-invoices", label: "Invoices", icon: <FileScan size={20} /> },
