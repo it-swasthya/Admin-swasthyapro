@@ -17,12 +17,18 @@ import axios from "axios";
 // import UploadModal from "./UploadModal";
 
 import UploadModal from "./UploadModal";
-import useSendSampleMailAPI from "../api/order/order-status";
+// import useSendSampleMailAPI from "../api/order/order-status";
+import {
+  useSendSampleMailAPI,
+  useSendsendSampleReceivedByLabMailAPI,
+} from "../api/order/order-status";
 
 // const { sendSampleMail } = useSendSampleMailAPI();
 
 const OrderStatusCell = ({ order, getOrders }) => {
   const { sendSampleMail } = useSendSampleMailAPI();
+  const { sendSampleReceivedByLabMail } =
+    useSendsendSampleReceivedByLabMailAPI();
 
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -40,7 +46,13 @@ const OrderStatusCell = ({ order, getOrders }) => {
     sample_collected: false,
     sample_received_by_lab: false,
   });
-  const disableDMLFields = status.dml_assigned && status.sample_collected;
+
+  console.log(status, "status data");
+
+  const disableDMLFields =
+    status.dml_assigned &&
+    status.sample_collected &&
+    status.sample_received_by_lab;
   const hideDMLInputs = status.dml_assigned && status.sample_collected;
 
   useEffect(() => {
@@ -98,7 +110,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
     try {
       const response = await axios.patch(
         "https://api.swasthyapro.com/api/report/update-status",
-        data
+        data,
       );
 
       if (response.status === 200) {
@@ -106,7 +118,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
           "https://api.swasthyapro.com/api/report/mark-completed",
           {
             booking_id: order.booking_id,
-          }
+          },
         );
         if (markResponse.status === 200) {
           Swal.fire("Success", "Status Updated", "success");
@@ -122,7 +134,92 @@ const OrderStatusCell = ({ order, getOrders }) => {
       Swal.fire("Error", "Something went wrong", "error");
     }
   };
+
+  // const sendEmailForStatus = async (key) => {
+  //   if (
+  //     !dmlData.date ||
+  //     !dmlData.dmlContact ||
+  //     !dmlData.dmlName ||
+  //     !dmlData.time ||
+  //     !dmlEmail
+  //   ) {
+  //     Swal.fire({
+  //       icon: "warning",
+  //       title: "Please Fill All Feilds",
+  //     });
+  //     return;
+  //   }
+  //   const url =
+  //     key == "dml_assigned"
+  //       ? "https://api.swasthyapro.com/api/mail/send-dml-mail"
+  //       : "https://api.swasthyapro.com/api/mail/send-sample-confirm-mail";
+  //   dmlData = {
+  //     userName: user?.first_name + user?.last_name,
+  //     userEmail: user.email,
+  //     ...dmlData,
+  //   };
+  //   const dataForDML_mail = {
+  //     dmlName: dmlData.dmlName,
+  //     dmlEmail: dmlEmail,
+  //     orderId: order.booking_id,
+  //     userAddress: user.address || "",
+  //     amount: order.Cart.totalPrice,
+  //   };
+  //   Swal.fire({
+  //     title: "Assigning DML...",
+  //     allowOutsideClick: false,
+  //     didOpen: () => {
+  //       Swal.showLoading();
+  //     },
+  //   });
+
+  //   try {
+  //     const sendMailTO_DML = await axios.post(
+  //       "https://api.swasthyapro.com/api/mail/send-cod-dml-mail",
+  //       dataForDML_mail
+  //     );
+  //     if (!sendMailTO_DML.status === 200) {
+  //       Swal.close();
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Failed to Send Email To DML.",
+  //       });
+  //       return;
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Cart Error",
+  //       text: "Something went wrong while Sending Mail To DML.",
+  //     });
+  //   }
+
+  //   try {
+  //     const response = await axios.post(url, dmlData);
+  //     Swal.close();
+  //     if (response.status === 200) {
+  //       await Swal.fire({
+  //         icon: "success",
+  //         title: "Email Sent Successfully!",
+  //         timer: 2000,
+  //         showConfirmButton: false,
+  //       });
+  //     }
+  //     setDmlData({ date: "", dmlName: "", dmlContact: "", time: "" });
+  //   } catch (err) {
+  //     console.log(err);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Oops...",
+  //       text: "Something went wrong!",
+  //     });
+  //   }
+  //   updateStatus();
+  // };
+
   const sendEmailForStatus = async (key) => {
+    // Validation for DML fields
     if (
       !dmlData.date ||
       !dmlData.dmlContact ||
@@ -132,19 +229,35 @@ const OrderStatusCell = ({ order, getOrders }) => {
     ) {
       Swal.fire({
         icon: "warning",
-        title: "Please Fill All Feilds",
+        title: "Please Fill All Fields",
       });
       return;
     }
-    const url =
-      key == "dml_assigned"
-        ? "https://api.swasthyapro.com/api/mail/send-dml-mail"
-        : "https://api.swasthyapro.com/api/mail/send-sample-confirm-mail";
+
+    // Determine API URL based on key
+    let url;
+    if (key === "dml_assigned") {
+      url = "https://api.swasthyapro.com/api/mail/send-dml-mail";
+    } else if (key === "sample_collected") {
+      url = "https://api.swasthyapro.com/api/mail/send-sample-confirm-mail";
+    } else if (key === "sample_received_by_lab") {
+      url =
+        "https://api.swasthyapro.com/api/mail/send-sample-received-by-lab-mail";
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid status key",
+      });
+      return;
+    }
+
     dmlData = {
-      userName: user?.first_name + user?.last_name,
+      userName: user?.first_name + " " + user?.last_name,
       userEmail: user.email,
       ...dmlData,
     };
+
+    // Data for DML email (only for dml_assigned)
     const dataForDML_mail = {
       dmlName: dmlData.dmlName,
       dmlEmail: dmlEmail,
@@ -152,36 +265,40 @@ const OrderStatusCell = ({ order, getOrders }) => {
       userAddress: user.address || "",
       amount: order.Cart.totalPrice,
     };
-    Swal.fire({
-      title: "Assigning DML...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
 
-    try {
-      const sendMailTO_DML = await axios.post(
-        "https://api.swasthyapro.com/api/mail/send-cod-dml-mail",
-        dataForDML_mail
-      );
-      if (!sendMailTO_DML.status === 200) {
-        Swal.close();
+    // Send DML email if applicable
+    if (key === "dml_assigned") {
+      Swal.fire({
+        title: "Assigning DML...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      try {
+        const sendMailTO_DML = await axios.post(
+          "https://api.swasthyapro.com/api/mail/send-cod-dml-mail",
+          dataForDML_mail,
+        );
+        if (!sendMailTO_DML.status === 200) {
+          Swal.close();
+          Swal.fire({
+            icon: "error",
+            title: "Failed to Send Email To DML.",
+          });
+          return;
+        }
+      } catch (err) {
+        console.log(err);
         Swal.fire({
           icon: "error",
-          title: "Failed to Send Email To DML.",
+          title: "Cart Error",
+          text: "Something went wrong while Sending Mail To DML.",
         });
         return;
       }
-    } catch (err) {
-      console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: "Cart Error",
-        text: "Something went wrong while Sending Mail To DML.",
-      });
     }
 
+    // Send the email based on key
     try {
       const response = await axios.post(url, dmlData);
       Swal.close();
@@ -193,7 +310,13 @@ const OrderStatusCell = ({ order, getOrders }) => {
           showConfirmButton: false,
         });
       }
-      setDmlData({ date: "", dmlName: "", dmlContact: "", time: "" });
+
+      // Reset DML data only for DML assigned
+
+      if (key === "dml_assigned") {
+        setDmlData({ date: "", dmlName: "", dmlContact: "", time: "" });
+        setDMLemail("");
+      }
     } catch (err) {
       console.log(err);
       Swal.fire({
@@ -202,6 +325,8 @@ const OrderStatusCell = ({ order, getOrders }) => {
         text: "Something went wrong!",
       });
     }
+
+    // Update status after sending email
     updateStatus();
   };
 
@@ -240,7 +365,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
       const res = await axios.post(
         "https://api.swasthyapro.com/api/prescription/upload-prescription",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       if (res.status === 200) {
@@ -254,7 +379,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
             sample_collected: status.sample_collected,
             sample_received_by_lab: status.sample_received_by_lab,
             booking_id: order.booking_id,
-          }
+          },
         );
         if (response.status === 201) {
           Swal.close();
@@ -320,6 +445,44 @@ const OrderStatusCell = ({ order, getOrders }) => {
     }
   };
 
+  const handleSendSampleReceivedByLabMail = async () => {
+    Swal.fire({
+      title: "Sending Email...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+      const res = await sendSampleReceivedByLabMail({
+        user: order.User,
+        dmlData: {
+          date: order.scheduled_date?.split("T")[0],
+          time: order.timeslot,
+          dmlName: order.dml_person,
+        },
+        orderId: order.booking_id,
+      });
+
+      Swal.close();
+
+      if (res.status === 200) {
+        await Swal.fire({
+          icon: "success",
+          title: "Email Sent Successfully!",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (err) {
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Send Email",
+        text: err?.response?.data?.message || err.message,
+      });
+    }
+  };
+
   const handleRowData = () => {
     const formattedDate = new Date(order.scheduled_date)
       .toISOString()
@@ -341,10 +504,13 @@ const OrderStatusCell = ({ order, getOrders }) => {
     setReportData(payload);
   };
 
+  const isCheckboxDisabled = (key) => {
+    return originalStatus?.[key] === true;
+  };
+
   return (
     <>
       {/* Status Cell */}
-
       <div className="flex whitespace-nowrap gap-1">
         {order.status !== "cancelled" ? (
           statusFields.map(({ label, key }) => {
@@ -392,6 +558,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
           </Box>
         )}
       </div>
+
       {order.status !== "cancelled" &&
         Object.values(status).includes(false) && (
           <div className="flex justify-center">
@@ -472,12 +639,28 @@ const OrderStatusCell = ({ order, getOrders }) => {
                   <li key={key} className="px-3 py-2 bg-white dark:bg-gray-700">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-start gap-2">
-                        <input
+                        {/* <input
                           id={`${key}-checkbox`}
                           type="checkbox"
                           checked={status[key]}
                           onChange={() => handleCheckboxChange(key)}
                           className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500"
+                        /> */}
+
+                        <input
+                          id={`${key}-checkbox`}
+                          type="checkbox"
+                          checked={status[key]}
+                          disabled={isCheckboxDisabled(key)}
+                          onChange={() => handleCheckboxChange(key)}
+                          className={`mt-1 w-4 h-4 border-gray-300 rounded
+    ${
+      isCheckboxDisabled(key)
+        ? "cursor-not-allowed opacity-60"
+        : "text-blue-600 focus:ring-blue-500"
+    }
+    dark:bg-gray-600 dark:border-gray-500
+  `}
                         />
                         <label
                           htmlFor={`${key}-checkbox`}
@@ -487,22 +670,22 @@ const OrderStatusCell = ({ order, getOrders }) => {
                         </label>
                       </div>
 
-                      {status[key] &&
-                        label !== "Sample received by lab" &&
-                        label !== "Sample collected" && (
+                      {(status[key] && label !== "Sample received by lab") ||
+                        (label !== "Sample collected" && (
                           <button
-                            disabled={disableDMLFields}
+                            disabled={isCheckboxDisabled(key)}
                             onClick={() => sendEmailForStatus(key)}
-                            className={`bg-white text-blue-600 small hover:text-blue-800 transition ${
-                              disableDMLFields
+                            className={`bg-white text-blue-600 small transition ${
+                              isCheckboxDisabled(key)
                                 ? "opacity-50 cursor-not-allowed"
-                                : ""
+                                : "hover:text-blue-800"
                             }`}
                           >
                             Send Email
                           </button>
-                        )}
+                        ))}
                     </div>
+
                     {/* || key==='sample_collected' */}
                     {key === "dml_assigned" &&
                       status[key] &&
@@ -577,15 +760,29 @@ const OrderStatusCell = ({ order, getOrders }) => {
                     {key === "sample_collected" && status[key] && (
                       <div className="mt-3 grid grid-cols-1 gap-2 px-2">
                         <button
-                          disabled={disableDMLFields}
-                          className={`bg-white text-blue-600 hover:text-blue-800 transition ${
-                            disableDMLFields
+                          disabled={isCheckboxDisabled(key)}
+                          className={`bg-white text-blue-600 transition ${
+                            isCheckboxDisabled(key)
                               ? "opacity-50 cursor-not-allowed"
-                              : ""
+                              : "hover:text-blue-800"
                           }`}
-                          onClick={() => {
-                            handleSendSampleMail(key);
-                          }}
+                          onClick={() => handleSendSampleMail(key)}
+                        >
+                          Send Mail
+                        </button>
+                      </div>
+                    )}
+
+                    {key === "sample_received_by_lab" && status[key] && (
+                      <div className="mt-3 grid grid-cols-1 gap-2 px-2">
+                        <button
+                          disabled={isCheckboxDisabled(key)}
+                          className={`bg-white text-blue-600 transition ${
+                            isCheckboxDisabled(key)
+                              ? "opacity-50 cursor-not-allowed"
+                              : "hover:text-blue-800"
+                          }`}
+                          onClick={() => handleSendSampleReceivedByLabMail(key)}
                         >
                           Send Mail
                         </button>
@@ -617,7 +814,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
               </div>
             </div>
           </div>,
-          document.body
+          document.body,
         )}
 
       {/* Upload Report Modal */}

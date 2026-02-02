@@ -4,7 +4,10 @@ const flattenConsultationAppointmentRow = (item) => ({
 
   user_id: item.user_id ?? "Guest",
 
-  user_name: item.User.first_name + " "   + item.User.last_name || "N/A",
+   
+
+  user_name: `${item.User?.first_name ?? ""} ${item.User?.last_name ?? ""}`.trim() || "N/A",
+
 
   doctor_allotted: item.doctor_allotted ?? "N/A",
   speciality: item.speciality ?? "N/A",
