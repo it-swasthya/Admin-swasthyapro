@@ -14,7 +14,7 @@ const ConsultationAllAppointmentTable = () => {
     
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
  
 
 const fetchAppointments = async () => {
@@ -68,7 +68,7 @@ const fetchAppointments = async () => {
   );
 
   return (
-   <TableComponent
+  <TableComponent
   columns={columns}
   data={appointments}
   filename="all-consult-appointments"

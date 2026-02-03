@@ -670,7 +670,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
                         </label>
                       </div>
 
-                      {(status[key] && label !== "Sample received by lab") ||
+                      {(status[key] && label !== "Sample received by lab") &&
                         (label !== "Sample collected" && (
                           <button
                             disabled={isCheckboxDisabled(key)}
@@ -739,7 +739,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
                               setDmlData({ ...dmlData, time: e.target.value })
                             }
                           />
-                          <button
+                          {/* <button
                             onClick={() => sendEmailForStatus(key)}
                             className={`bg-white text-blue-600 hover:text-blue-800 transition ${
                               disableDMLFields
@@ -747,8 +747,8 @@ const OrderStatusCell = ({ order, getOrders }) => {
                                 : ""
                             }`}
                           >
-                            Send Email
-                          </button>
+                            Send Email 
+                          </button> */}
                         </div>
                       )}
                     {key === "dml_assigned" && status[key] && hideDMLInputs && (
