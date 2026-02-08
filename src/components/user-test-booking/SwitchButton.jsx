@@ -36,6 +36,7 @@ const SwitchTabs = ({ userData }) => {
   const cart = useSelector(cartValue);
   const [customPrice, setCustomPrice] = useState("");
   const [dmlCharge, setDMLcharge] = useState("");
+  const [additionalCharge, setAdditionalCharge] = useState(0);
 
   useEffect(() => {
     fetch("https://api.swasthyapro.com/api/coupons/all-coupon")
@@ -68,7 +69,7 @@ const SwitchTabs = ({ userData }) => {
           testIds: idsArr,
           testNames: nameArr,
           testPrices: priceArr,
-        }
+        },
       );
       if (!bookTest.data.cart) {
         Swal.fire({
@@ -96,11 +97,12 @@ const SwitchTabs = ({ userData }) => {
         {
           user_id: userData.id,
           cart_id: cartId,
-          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge),
           scheduled_date: selectedDate,
           timeslot: selectedTimeSlot,
           dmlCharges: Number(dmlCharge || 0),
-        }
+          additional_charges:Number(additionalCharge)
+        },
       );
 
       if (bookTestCOD.status !== 201) {
@@ -162,9 +164,9 @@ const SwitchTabs = ({ userData }) => {
             userEmail: userData.email,
             orderId: bookingId,
             amount:
-              cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+              cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
             paymentMethod: "UPI",
-          }
+          },
         );
         await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
           mobile: "91" + userData.contact,
@@ -172,7 +174,7 @@ const SwitchTabs = ({ userData }) => {
           template_values: {
             1: userData.fullName,
             2: bookingId,
-            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0)+ Number(additionalCharge || 0),
           },
         });
         Swal.close();
@@ -234,7 +236,7 @@ const SwitchTabs = ({ userData }) => {
           userName: userData.fullName,
           userEmail: userData.email,
           orderId: bookingId,
-          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
         });
         await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
           mobile: "91" + userData.contact,
@@ -242,7 +244,7 @@ const SwitchTabs = ({ userData }) => {
           template_values: {
             1: userData.fullName,
             2: bookingId,
-            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0),
+            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
           },
         });
         Swal.close();
@@ -397,7 +399,7 @@ const SwitchTabs = ({ userData }) => {
 
       const response = await axios.post(
         "https://api.swasthyapro.com/api/book/admin/send-payment-link",
-        data
+        data,
       );
 
       if (response.data.message === "Payment link created and email sent") {
@@ -473,6 +475,8 @@ const SwitchTabs = ({ userData }) => {
         setCustomPrice={setCustomPrice}
         dmlCharge={dmlCharge}
         setDMLcharge={setDMLcharge}
+        additionalCharge={additionalCharge}
+        setAdditionalCharge={setAdditionalCharge}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         selectedTimeSlot={selectedTimeSlot}

@@ -11,6 +11,8 @@ const CartSidebar = ({
   setCustomPrice,
   dmlCharge,
   setDMLcharge,
+  additionalCharge,
+  setAdditionalCharge,
   selectedDate,
   setSelectedDate,
   selectedTimeSlot,
@@ -113,6 +115,23 @@ const CartSidebar = ({
                 placeholder="Enter your price"
               />
             </div>
+            {/* Additional Charge */}
+            <div className="text-left text-black">
+              <label
+                htmlFor="additionalCharge"
+                className="block mb-1 font-medium"
+              >
+                Additional Charges :
+              </label>
+              <input
+                type="number"
+                id="additionalCharge"
+                value={additionalCharge}
+                onChange={(e) => setAdditionalCharge(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="Enter Additional Charges"
+              />
+            </div>
 
             {/* DML Charge */}
             <div className="text-left text-black">
@@ -179,7 +198,7 @@ const CartSidebar = ({
                     value={selectedCoupon?.id || ""}
                     onChange={(e) => {
                       const selected = coupons.find(
-                        (c) => c.id === e.target.value
+                        (c) => c.id === e.target.value,
                       );
                       setSelectedCoupon(selected || null);
                     }}
@@ -202,7 +221,12 @@ const CartSidebar = ({
             <div className="flex justify-between items-center pt-4">
               <span className="font-semibold text-lg">Total Price:</span>
               <span className="font-bold text-xl text-green-600">
-                ₹{cartData.total - (customPrice || 0) + Number(dmlCharge || 0)}
+                {/* ₹{cartData.total - (customPrice || 0) + Number(dmlCharge || 0)} */}
+                ₹
+                {cartData.total -
+                  Number(customPrice || 0) +
+                  Number(dmlCharge || 0) +
+                  Number(additionalCharge || 0)}
               </span>
             </div>
             {selectedCoupon && (

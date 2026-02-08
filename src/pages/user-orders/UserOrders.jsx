@@ -25,6 +25,7 @@ import UserReportUplaod from "../../components/user-report-upload-modal/UserRepo
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import OrderCardMObile from "../../mobile-components/user-orders/MobileViewUsersOrders.jsx";
+
 const OrderExportTable = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
@@ -311,7 +312,7 @@ const OrderExportTable = () => {
             gst_percentage: "NA",
             gst: "NA",
             grand_total:
-              Number(grand_total) + Number(selectedOrder.dml_charges) || 0,
+              Number(grand_total) + Number(selectedOrder.dml_charges)  + selectedOrder.additional_charges || 0,
             payment_made:
               Number(createInvoiceResponse.data.invoice.total_amount) || 0,
             payment_status: "Paid",
@@ -320,6 +321,7 @@ const OrderExportTable = () => {
             bank_name: "NA",
             visit_type: "NA",
             dmlCharges: selectedOrder.dml_charges || 0,
+            additional_charges:selectedOrder.additional_charges || 0,
           }
         );
 
