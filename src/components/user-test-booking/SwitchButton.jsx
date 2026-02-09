@@ -97,11 +97,15 @@ const SwitchTabs = ({ userData }) => {
         {
           user_id: userData.id,
           cart_id: cartId,
-          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge),
+          amount:
+            cartData.total -
+            (customPrice || 0) +
+            Number(dmlCharge || 0) +
+            Number(additionalCharge),
           scheduled_date: selectedDate,
           timeslot: selectedTimeSlot,
           dmlCharges: Number(dmlCharge || 0),
-          additional_charges:Number(additionalCharge)
+          additional_charges: Number(additionalCharge),
         },
       );
 
@@ -164,7 +168,10 @@ const SwitchTabs = ({ userData }) => {
             userEmail: userData.email,
             orderId: bookingId,
             amount:
-              cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
+              cartData.total -
+              (customPrice || 0) +
+              Number(dmlCharge || 0) +
+              Number(additionalCharge || 0),
             paymentMethod: "UPI",
           },
         );
@@ -174,7 +181,11 @@ const SwitchTabs = ({ userData }) => {
           template_values: {
             1: userData.fullName,
             2: bookingId,
-            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0)+ Number(additionalCharge || 0),
+            3:
+              cartData.total -
+              (customPrice || 0) +
+              Number(dmlCharge || 0) +
+              Number(additionalCharge || 0),
           },
         });
         Swal.close();
@@ -236,7 +247,11 @@ const SwitchTabs = ({ userData }) => {
           userName: userData.fullName,
           userEmail: userData.email,
           orderId: bookingId,
-          amount: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
+          amount:
+            cartData.total -
+            (customPrice || 0) +
+            Number(dmlCharge || 0) +
+            Number(additionalCharge || 0),
         });
         await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
           mobile: "91" + userData.contact,
@@ -244,7 +259,11 @@ const SwitchTabs = ({ userData }) => {
           template_values: {
             1: userData.fullName,
             2: bookingId,
-            3: cartData.total - (customPrice || 0) + Number(dmlCharge || 0) + Number(additionalCharge || 0),
+            3:
+              cartData.total -
+              (customPrice || 0) +
+              Number(dmlCharge || 0) +
+              Number(additionalCharge || 0),
           },
         });
         Swal.close();
@@ -362,6 +381,12 @@ const SwitchTabs = ({ userData }) => {
 
   const OrderPlaced = async () => {
     if (!selectedDate || !selectedTimeSlot) {
+      console.log(
+        cartData.total,
+        customPrice,
+        Number(dmlCharge),
+        Number(additionalCharge),
+      );
       Swal.fire({
         icon: "warning",
         title: "Missing Details",
@@ -369,6 +394,12 @@ const SwitchTabs = ({ userData }) => {
       });
       return;
     }
+    // console.log(
+    //   cartData.total,
+    //   customPrice,
+    //   Number(dmlCharge),
+    //   Number(additionalCharge),
+    // );
 
     const dateTime = new Date(selectedDate);
     dateTime.setHours(10, 30, 0, 0);
@@ -377,7 +408,13 @@ const SwitchTabs = ({ userData }) => {
       userid: userData.id,
       name: userData.fullName,
       email: userData.email,
-      amount: cartData.total - (customPrice || 0),
+      // amount: cartData.total - (customPrice || 0) + (additionalCharge || 0),
+      amount:
+        cartData.total -
+        customPrice +
+        Number(dmlCharge) +
+        Number(additionalCharge),
+
       scheduled_date: formattedDate,
       timeSlot: selectedTimeSlot,
       tests,
@@ -385,6 +422,7 @@ const SwitchTabs = ({ userData }) => {
       couponName: selectedCoupon?.coupon_name || null,
       couponDiscount: selectedCoupon?.discount_percentage || 0,
     };
+    console.log("Data..........", data);
 
     try {
       Swal.fire({

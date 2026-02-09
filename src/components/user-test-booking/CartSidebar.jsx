@@ -242,7 +242,7 @@ const CartSidebar = ({
           {/* Bottom Buttons */}
           <div className="p-4 border-t bg-white sticky bottom-0 z-10">
             <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-              {["Book Test", "COD"].map((label) => (
+              {["Send Payment Link", "COD"].map((label) => (
                 <button
                   key={label}
                   onClick={() => handleClick(label)}
