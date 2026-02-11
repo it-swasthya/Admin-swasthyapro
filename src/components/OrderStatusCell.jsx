@@ -47,7 +47,7 @@ const OrderStatusCell = ({ order, getOrders }) => {
     sample_received_by_lab: false,
   });
 
-  console.log(status, "status data");
+  // console.log(status, "status data");
 
   const disableDMLFields =
     status.dml_assigned &&

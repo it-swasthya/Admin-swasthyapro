@@ -23,13 +23,15 @@ const fetchAppointments = async () => {
     const res = await axios.get(
       "https://api.swasthyapro.com/api/appointment/admin/consult/list"
     );
-    console.log(res);
+    // console.log(res , "res list");
     
 
     const flatData = (res?.data?.allAppointments || []).map(
       flattenConsultationAppointmentRow
     );
-    console.log(flatData,"sdhsj");
+    
+    // console.log(flatData,"sdhsj");
+
     
 
     setAppointments(flatData);
@@ -51,7 +53,7 @@ const fetchAppointments = async () => {
   }, []);
 
 
-  console.log(Array.isArray(appointments," appointmemt res")); 
+  // console.log(Array.isArray(appointments," appointmemt res")); 
   
 
   const handleUpdate = (row) => {

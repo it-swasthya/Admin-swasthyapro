@@ -3,6 +3,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
+import { SendIcon } from "lucide-react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Swal from "sweetalert2";
+import { buildConsultInvoicePayload, SendConsultInvoicePayload } from "../../utils/GenerateConsultInvoice";
+import axios from "axios";
+
 
 
 export const getConsultationTableColumns = () => [
@@ -130,6 +136,10 @@ export const getConsultationTableColumns = () => [
     size: 120,
   },
 
+
+
+
+
  {
   accessorKey: "doctor_advice",
   header: "Doctor Advice",
@@ -220,4 +230,80 @@ export const getConsultationTableColumns = () => [
       cell.getValue() ? new Date(cell.getValue()).toLocaleString() : "N/A",
     size: 180,
   },
+
+
+
+
+{
+  accessorKey: "send_invoice",
+  header: "Send Invoice",
+  size: 140,
+
+  Cell: ({ row }) => {
+    const [loading, setLoading] = useState(false);
+
+    const handleGenerateInvoice = async () => {
+      try {
+        setLoading(true);
+
+        const payload = buildConsultInvoicePayload(row.original);
+
+        /* ---------- GENERATE ---------- */
+        const response = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/gen-invoice/consultation",
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (response.status !== 200 && response.status !== 201) {
+          throw new Error("Invoice generation failed");
+        }
+
+        /* ---------- SEND ---------- */
+        const invoicePayload = SendConsultInvoicePayload(row.original);
+
+        const sendRes = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/send-invoice",
+          invoicePayload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (sendRes.status === 200 || sendRes.status === 201) {
+          Swal.fire("Success", "Invoice Generated & Sent", "success");
+        } else {
+          Swal.fire("Warning", "Sending failed", "warning");
+        }
+
+      } catch (err) {
+        Swal.fire(
+          "Error",
+          err?.response?.data?.message || "Invoice process failed",
+          "error"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <Tooltip title="Generate & Send Invoice">
+        <span>
+          <IconButton
+            size="small"
+            onClick={handleGenerateInvoice}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={20} thickness={5} />
+            ) : (
+              <SendIcon fontSize="small" color="blue" />
+            )}
+          </IconButton>
+        </span>
+      </Tooltip>
+    );
+  },
+}
+
+
 ];
