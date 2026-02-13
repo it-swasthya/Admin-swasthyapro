@@ -156,6 +156,19 @@ function Sidebar({ sidebarOpen, setSidebarOpen, activeMenu, setActiveMenu }) {
         },
       ],
     },
+
+     {
+      name: "all-doctor-hospital",
+      label: "Clinic",
+      icon: <SquarePlusIcon size={20} />,
+      submenus: [
+        {
+          name: "all-doctor-hospital",
+          label: "Doctors and Hospitals",
+          icon: <NotebookPenIcon size={20} />,
+        },
+      ],
+    },
      {
       name: "all-consult-appointments",
       label: "Consultation",

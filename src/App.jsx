@@ -46,6 +46,7 @@ import LeadTable from './pages/crm/LeadTable';
 import AllLeads from './pages/crm/AllLeads';
 import LeadForm from './pages/crm/LeadForm';
 import ConsultationAllAppointmentTable from './pages/consultation/All-Appointments';
+import CreateAppointment from './components/columns/CreateAppointment';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){
@@ -589,6 +590,24 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 <ConsultationAllAppointmentTable/>
+                
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/all-doctor-hospital"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <CreateAppointment/>
                 
               </Layout>
             </ProtectedRoute>
