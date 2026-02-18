@@ -115,10 +115,6 @@ export const addDoctor = async (doctorData) => {
 }
 
 
-
-
-
-
 export const fetchDoctorById = async (doctorId) => {
   try {
     const response = await axios.get(
@@ -224,6 +220,33 @@ export const fetchHospitalById = async (hospitalId) => {
       "Fetch Hospital Details Error:",
       error.response?.data || error.message
     );
+    throw error;
+  }
+};
+
+
+
+
+// const BASE_URL = "https://api.swasthyapro.com/api";
+
+/* ================= Create Video Appointment ================= */
+export const createVideoAppointment = async (payload) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      `${BASE_URL}/appointment/consult/create-video`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

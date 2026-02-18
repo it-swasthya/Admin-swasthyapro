@@ -220,6 +220,7 @@ const ConsultationAllAppointmentTable = () => {
 
           <AppointmentForm
             onSubmit={handleCreateAppointment}
+            setOpen={setOpen}
             loading={formLoading}
           />
         </DialogContent>

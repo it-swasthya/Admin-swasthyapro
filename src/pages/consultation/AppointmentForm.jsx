@@ -18,7 +18,8 @@ const swalWithMuiFix = Swal.mixin({
 export default function AppointmentForm({
   onSubmit,
   loading,
-  open, // 👈 pass dialog open state from parent
+  open,
+  setOpen // 👈 pass dialog open state from parent
 }) {
   const [doctors, setDoctors] = useState([]);
   const [doctorDetails, setDoctorDetails] = useState(null);
@@ -37,6 +38,7 @@ export default function AppointmentForm({
       centerId: "",
       date: "",
       timeSlot: "",
+      
     },
   });
 
@@ -138,6 +140,7 @@ export default function AppointmentForm({
 
       reset();
       setDoctorDetails(null);
+      setOpen(false);
 
     } catch (error) {
       swalWithMuiFix.fire({

@@ -63,7 +63,7 @@ export default function CreateHospitalDialog({ open, handleClose }) {
   /* ================= Submit ================= */
 
   const onSubmit = async (data) => {
-    // ✅ Confirmation Alert
+    //  Confirmation Alert
     const result = await swalWithMuiFix.fire({
       title: "Are you sure?",
       text: "Do you want to register this hospital?",

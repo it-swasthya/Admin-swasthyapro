@@ -46,7 +46,7 @@ export default function CreateAppointment() {
             fontWeight: 600,
           }}
         >
-          {tab === 0 ? "Create Doctor" : "Create Hospital"}
+          {tab === 0 ? "Register Doctor" : "Register Hospital"}
         </Button>
       </Box>
 
