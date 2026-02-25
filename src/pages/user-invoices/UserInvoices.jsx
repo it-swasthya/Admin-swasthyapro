@@ -17,7 +17,7 @@ const InvoiceTable = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getInvoices = async () => {
+ const getInvoices = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
@@ -36,18 +36,20 @@ const InvoiceTable = () => {
     getInvoices();
   }, []);
 
-  const column = getInvoiceTableColumns();
+  const column = getInvoiceTableColumns(getInvoices);
+
 
   return (
-    <>
-      <TableComponent
-        columns={column}
-        data={invoices}
-        flattenRow={flattenInvoiceRow}
-        filename={"user-invoice-file"}
-      />
-    </>
-  );
+  <>
+    <TableComponent
+      columns={column}
+      data={invoices}
+      flattenRow={flattenInvoiceRow}
+      filename={"user-invoice-file"}
+    />
+  </>
+);
+
 };
 
 export default InvoiceTable;
