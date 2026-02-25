@@ -12,17 +12,7 @@ export const fetchDoctors = async () => {
     console.log(response.data, "doctor data response");
 
     if (response.data?.success && Array.isArray(response.data?.data)) {
-
-      //  Parse hospitals string into array
-      const formattedDoctors = response.data.data.map((doctor) => ({
-        ...doctor,
-        hospitals: doctor.hospitals
-          ? JSON.parse(doctor.hospitals)
-          : [],
-        
-      }));
-
-      return formattedDoctors;
+      return response.data.data; // directly return array
     }
 
     return [];
@@ -34,7 +24,6 @@ export const fetchDoctors = async () => {
     return [];
   }
 };
-
 
 
 
