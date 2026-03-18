@@ -13,7 +13,7 @@ export const fetchDoctors = async () => {
 
     if (response.data?.success && Array.isArray(response.data?.data)) {
       return response.data.data; // directly return array
-    }
+    } 
 
     return [];
   } catch (error) {
@@ -45,17 +45,14 @@ export const fetchHospitals = async () => {
   }
 };
 
-
-
-
 // add doctor data 
-
 
 const BASE_URL = "https://api.swasthyapro.com/api";
 
 /**
  * Add Doctor API
  */
+
 export const addDoctor = async (doctorData) => {
   try {
     const response = await axios.post(

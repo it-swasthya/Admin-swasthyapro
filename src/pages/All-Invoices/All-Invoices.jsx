@@ -33,6 +33,7 @@ const AllInvoices = () => {
         >
           <Tab label="Invoices" />
           <Tab label="Tax Invoices" />
+          <Tab label="Consult Invoices" />
         </Tabs>
 
         <button

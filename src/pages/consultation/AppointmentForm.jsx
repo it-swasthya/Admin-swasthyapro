@@ -35,7 +35,7 @@ export default function AppointmentForm({
       name: "",
       doctorId: "",
       hospitalId: "",
-      centerId: "",
+      // centerId: "",
       date: "",
       timeSlot: "",
       
@@ -90,7 +90,7 @@ export default function AppointmentForm({
         if (data) {
           setDoctorDetails(data);
           setValue("hospitalId", "");
-          setValue("centerId", "");
+          // setValue("centerId", "");
         }
       } catch (error) {
         swalWithMuiFix.fire({
@@ -105,7 +105,7 @@ export default function AppointmentForm({
   }, [selectedDoctorId, setValue]);
 
   const doctorHospitals = doctorDetails?.hospitals || [];
-  const doctorCenters = doctorDetails?.centers || [];
+  // const doctorCenters = doctorDetails?.centers || [];
 
   /* ================= Submit Handler ================= */
 
@@ -230,7 +230,7 @@ export default function AppointmentForm({
       />
 
       {/* Center */}
-      <Controller
+      {/* <Controller
         name="centerId"
         control={control}
         render={({ field }) => (
@@ -253,7 +253,7 @@ export default function AppointmentForm({
             )}
           </TextField>
         )}
-      />
+      /> */}
 
       {/* Date */}
       <Controller

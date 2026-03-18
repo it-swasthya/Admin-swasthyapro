@@ -61,4 +61,8 @@ button:focus-visible {
   display: none !important;
   
 } 
+
+.swal-high-zindex {
+  z-index: 2000 !important;
+}
  
