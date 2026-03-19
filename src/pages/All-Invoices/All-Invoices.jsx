@@ -3,6 +3,7 @@ import { Tabs, Tab, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import InvoiceTable from "../user-invoices/UserInvoices";
 import TaxInvoiceTable from "../tax-invoices/Tax-invoices-table";
+import ConsultInvoiceTable from "../Consult-Invoice/ConsultInvoice";
 
 const AllInvoices = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -37,6 +38,13 @@ const AllInvoices = () => {
         </Tabs>
 
         <button
+          onClick={() => navigate("/generate-consult-invoices")}
+          className="h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+        >
+          + Create Consult Invoice
+        </button>
+
+        <button
           onClick={() => navigate("/generate-invoices")}
           className="h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
         >
@@ -48,6 +56,7 @@ const AllInvoices = () => {
       <Box sx={{ mt: 2 }}>
         {tabIndex === 0 && <InvoiceTable />}
         {tabIndex === 1 && <TaxInvoiceTable />}
+        {tabIndex === 2 && <ConsultInvoiceTable/>}
       </Box>
     </Box>
   );

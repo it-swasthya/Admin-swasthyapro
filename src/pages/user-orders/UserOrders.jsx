@@ -284,10 +284,11 @@ const OrderExportTable = () => {
         // Grand total should be sum of net prices
         const grand_total = totalNetPrice;
 
-        console.log(subtotal,total_discount,grand_total);
+        console.log(subtotal,"subtotal",total_discount,"total discount",grand_total, "grand total" , total_discount , "total discount", total_amount,"total amount");
         
 
         // Create invoice
+        // -------------------------------------------------------------------------------------
         const createInvoiceResponse = await axios.post(
           "https://api.swasthyapro.com/api/invoice/create-invoice",
           {
@@ -324,6 +325,8 @@ const OrderExportTable = () => {
             additional_charges:selectedOrder.additional_charges || 0,
           }
         );
+
+        //-------------------------------------------------------------------------------------
 
         //  await  axios.post('https://api.swasthyapro.com/api/invoice/send-invoice-whatsapp',{
         // "to": "91"+selectedOrder.User.contact,

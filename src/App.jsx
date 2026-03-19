@@ -47,6 +47,7 @@ import AllLeads from './pages/crm/AllLeads';
 import LeadForm from './pages/crm/LeadForm';
 import ConsultationAllAppointmentTable from './pages/consultation/All-Appointments';
 import CreateAppointment from './components/columns/CreateAppointment';
+import ConsultInvoiceForm from './pages/Consult-Invoice/CreateConsultInvoice';
 const isAuthenticated = () => {
   const isUserLoggedIn = useSelector(isLoggedIn)
   if(isUserLoggedIn){
@@ -556,6 +557,23 @@ function App() {
                 toggleSidebar={toggleSidebar}
               >
                 <GenerateINV/>
+                
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/generate-consult-invoices"
+          element={
+            <ProtectedRoute>
+              <Layout
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                toggleSidebar={toggleSidebar}
+              >
+                <ConsultInvoiceForm/>
                 
               </Layout>
             </ProtectedRoute>

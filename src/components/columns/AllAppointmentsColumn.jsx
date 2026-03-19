@@ -298,342 +298,229 @@ export const getConsultationTableColumns = () => [
   //   },
   // }
 
-  {
-    accessorKey: "send_invoice",
-    header: "Send Invoice",
-    size: 160,
+ {
+  accessorKey: "send_invoice",
+  header: "Send Invoice",
+  size: 160,
 
-    Cell: ({ row }) => {
-      const [loading, setLoading] = useState(false);
-      const [open, setOpen] = useState(false);
+  Cell: ({ row }) => {
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
 
-      const [formData, setFormData] = useState({
-        user_name: row.original.user_name || "",
-        user_email: row.original.user_email || "",
-        user_contact: row.original.user_contact || "",
-        user_age: row.original.user_age || "",
-        user_gender: row.original.user_gender || "",
+    const [formData, setFormData] = useState({
+      user_name: row.original.user_name || "",
+      user_email: row.original.user_email || "",
+      user_contact: row.original.user_contact || "",
+      user_age: row.original.user_age || "",
+      user_gender: row.original.user_gender || "",
 
-        doctor_name: row.original.doctor_allotted || "",
-        doctor_speciality: row.original.speciality || "",
-        doctor_qualification: "",
-        doctor_registraton: "",
+      doctor_name: row.original.doctor_allotted || "",
+      doctor_speciality: row.original.speciality || "",
+      doctor_qualification: "",
+      doctor_registraton: "",
 
-        doctor_fee: "",
-        platform_fee: "",
-        gst: "",
-        total_amount: "",
+      doctor_fee: "",
+      platform_fee: "",
+      gst: "",
+      total_amount: "",
 
-        //  ADD-ONS
-        after_hours_fee: "",
-        home_visit_fee: "",
-        priority_fee: "",
-        record_fee: "",
-        extra_charges: "",
+      // ADD-ONS
+      after_hours_fee: "",
+      home_visit_fee: "",
+      priority_fee: "",
+      record_fee: "",
+      extra_charges: "",
 
-        payment_mode: "",
-        payment_status: "",
+      payment_mode: "",
+      payment_status: "",
+    });
+
+    const handleChange = (e) => {
+      const updated = { ...formData, [e.target.name]: e.target.value };
+
+      const doctorFee = parseFloat(updated.doctor_fee) || 0;
+      const platformFee = parseFloat(updated.platform_fee) || 0;
+
+      const addOnTotal =
+        (parseFloat(updated.after_hours_fee) || 0) +
+        (parseFloat(updated.home_visit_fee) || 0) +
+        (parseFloat(updated.priority_fee) || 0) +
+        (parseFloat(updated.record_fee) || 0) +
+        (parseFloat(updated.extra_charges) || 0);
+
+      const subtotal = doctorFee + platformFee + addOnTotal;
+
+      // GST as direct input
+      const gstAmount = parseFloat(updated.gst) || 0;
+
+      // FINAL TOTAL (safe)
+      const total = Math.max(0, subtotal + gstAmount);
+
+      updated.total_amount = total.toFixed(2);
+
+      setFormData(updated);
+    };
+
+    const handleSubmit = async () => {
+      const confirm = await Swal.fire({
+        title: "Send Invoice?",
+        text: "Are you sure you want to generate & send invoice?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Send",
+        customClass: { container: "swal-high-zindex" },
       });
 
-      const handleChange = (e) => {
-        const updated = { ...formData, [e.target.name]: e.target.value };
+      if (!confirm.isConfirmed) return;
 
-        const doctorFee = Number(updated.doctor_fee || 0);
-        const platformFee = Number(updated.platform_fee || 0);
+      try {
+        setLoading(true);
 
-        const addOnTotal =
-          Number(updated.after_hours_fee || 0) +
-          Number(updated.home_visit_fee || 0) +
-          Number(updated.priority_fee || 0) +
-          Number(updated.record_fee || 0) +
-          Number(updated.extra_charges || 0);
+        // ✅ VALIDATION
+        if (!formData.user_email || !formData.user_email.includes("@")) {
+          throw new Error("Valid email is required");
+        }
 
-        const subtotal = doctorFee + platformFee + addOnTotal;
-
-        // GST AS DIRECT INPUT (NO %)
-        const gstAmount = Number(updated.gst || 0);
-
-        // FINAL TOTAL
-        const total = subtotal + gstAmount;
-
-        updated.total_amount = total.toFixed(2);
-
-        setFormData(updated);
-      };
-
-      const generateInvoiceNumber = () => {
-        const date = new Date();
-        const y = date.getFullYear().toString().slice(-2);
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        const random = Math.floor(1000 + Math.random() * 9000);
-
-        return `SPDOC${y}${m}${d}${random}`;
-      };
-
-      const handleSubmit = async () => {
-        const confirm = await Swal.fire({
-          title: "Send Invoice?",
-          text: "Are you sure you want to generate & send invoice?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Yes, Send",
-          customClass: { container: "swal-high-zindex" },
+        // ✅ STEP 1: BUILD PAYLOAD (NO invoiceNumber)
+        const payload = buildConsultInvoicePayload({
+          ...row.original,
+          ...formData,
         });
 
-        if (!confirm.isConfirmed) return;
+        console.log("GENERATE PAYLOAD 👉", payload);
 
-        try {
-          setLoading(true);
+        // ✅ STEP 2: GENERATE INVOICE
+        const response = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/gen-invoice/consultation",
+          payload
+        );
 
-          // ✅ STEP 1: GENERATE UNIQUE INVOICE NUMBER
-          const invoiceNumber = generateInvoiceNumber();
+        console.log("INVOICE RESPONSE 👉", response?.data);
 
-          // ✅ STEP 2: BUILD PAYLOAD WITH SAME NUMBER
-          const payload = buildConsultInvoicePayload({
-            ...row.original,
-            ...formData,
-            invoiceNumber, // 🔥 important
-          });
+        const invoiceId = response?.data?.invoiceId;
 
-          console.log("GENERATE PAYLOAD 👉", payload);
+        if (!invoiceId) {
+          throw new Error("Invoice ID not received from backend");
+        }
 
-          // ✅ STEP 3: GENERATE INVOICE
-          const response = await axios.post(
-            "https://api.swasthyapro.com/api/invoice/gen-invoice/consultation",
-            payload,
-          );
+        // ✅ STEP 3: SEND EMAIL
+        const sendPayload = {
+          invoice_no: invoiceId,
+          email: formData.user_email,
+          customer_name: formData.user_name,
+        };
 
-          console.log("INVOICE RESPONSE 👉", response?.data);
+        console.log("SEND PAYLOAD 👉", sendPayload);
 
-          // ✅ FIX: correct path
-          const invoiceId =
-            response?.data?.invoiceNumber || payload.invoiceNumber;
+        const sendRes = await axios.post(
+          "https://api.swasthyapro.com/api/invoice/send-invoice",
+          sendPayload
+        );
 
-          if (!invoiceId) {
-            throw new Error("Invoice ID not received");
-          }
+        console.log("SEND RESPONSE 👉", sendRes.data);
 
-          if (!formData.user_email) {
-            throw new Error("Email is missing");
-          }
-
-          // ✅ STEP 4: SEND EMAIL (USE SAME NUMBER)
-          const sendPayload = {
-            invoice_no: invoiceId, // 🔥 FIXED
-            email: formData.user_email,
-            customer_name: formData.user_name,
-          };
-
-          console.log("SEND PAYLOAD 👉", sendPayload);
-
-          const sendRes = await axios.post(
-            "https://api.swasthyapro.com/api/invoice/send-invoice",
-            sendPayload,
-          );
-
-          console.log("SEND RESPONSE 👉", sendRes.data);
-
-          if ([200, 201].includes(sendRes.status)) {
-            Swal.fire({
-              title: "Success",
-              text: "Invoice Generated & Sent",
-              icon: "success",
-              customClass: { container: "swal-high-zindex" },
-            });
-            setOpen(false);
-          } else {
-            throw new Error("Send API failed");
-          }
-        } catch (err) {
-          console.error("ERROR 👉", err);
-
+        if ([200, 201].includes(sendRes.status)) {
           Swal.fire({
-            title: "Error",
-            text:
-              err?.response?.data?.error ||
-              err.message ||
-              "Invoice process failed",
-            icon: "error",
+            title: "Success",
+            text: "Invoice Generated & Sent",
+            icon: "success",
             customClass: { container: "swal-high-zindex" },
           });
-        } finally {
-          setLoading(false);
+          setOpen(false);
+        } else {
+          throw new Error("Send API failed");
         }
-      };
+      } catch (err) {
+        console.error("ERROR 👉", err);
 
-      return (
-        <>
-          <Tooltip title="Generate & Send Invoice">
-            <IconButton size="small" onClick={() => setOpen(true)}>
-              <SendIcon fontSize="small" color="blue" />
-            </IconButton>
-          </Tooltip>
+        Swal.fire({
+          title: "Error",
+          text:
+            err?.response?.data?.error ||
+            err.message ||
+            "Invoice process failed",
+          icon: "error",
+          customClass: { container: "swal-high-zindex" },
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          <Modal open={open} onClose={() => setOpen(false)}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: 500,
-                bgcolor: "#fff",
-                boxShadow: 24,
-                p: 3,
-                borderRadius: 2,
-                maxHeight: "80vh",
-                overflowY: "auto",
-              }}
-            >
-              <Typography variant="h6" mb={2}>
-                Fill Invoice Details
+    return (
+      <>
+        <Tooltip title="Generate & Send Invoice">
+          <IconButton size="small" onClick={() => setOpen(true)}>
+            <SendIcon fontSize="small" color="blue" />
+          </IconButton>
+        </Tooltip>
+
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 500,
+              bgcolor: "#fff",
+              boxShadow: 24,
+              p: 3,
+              borderRadius: 2,
+              maxHeight: "80vh",
+              overflowY: "auto",
+            }}
+          >
+            <Typography variant="h6" mb={2}>
+              Fill Invoice Details
+            </Typography>
+
+            <Box display="flex" flexDirection="column" gap={2}>
+              {/* BASIC */}
+              <TextField label="Patient Name" name="user_name" value={formData.user_name} onChange={handleChange} fullWidth />
+              <TextField label="Email" name="user_email" value={formData.user_email} onChange={handleChange} fullWidth />
+              <TextField label="Mobile Number" name="user_contact" value={formData.user_contact} onChange={handleChange} fullWidth />
+
+              {/* DOCTOR */}
+              <TextField label="Doctor Name" name="doctor_name" value={formData.doctor_name} onChange={handleChange} fullWidth />
+
+              {/* FEES */}
+              <TextField label="Doctor Fee" name="doctor_fee" type="number" value={formData.doctor_fee} onChange={handleChange} fullWidth />
+              <TextField label="Platform Fee" name="platform_fee" type="number" value={formData.platform_fee} onChange={handleChange} fullWidth />
+              <TextField label="GST Amount" name="gst" type="number" value={formData.gst} onChange={handleChange} fullWidth />
+
+              {/* ADD-ONS */}
+              <Typography variant="subtitle1" mt={2}>
+                Add-On Charges (Optional)
               </Typography>
 
-              <Box display="flex" flexDirection="column" gap={2}>
-                {/* BASIC */}
-                <TextField
-                  label="Patient Name"
-                  name="user_name"
-                  value={formData.user_name}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Email"
-                  name="user_email"
-                  value={formData.user_email}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Mobile Number"
-                  name="user_contact"
-                  value={formData.user_contact}
-                  onChange={handleChange}
-                  fullWidth
-                />
+              <TextField label="After Hours Consultation" name="after_hours_fee" type="number" value={formData.after_hours_fee} onChange={handleChange} fullWidth />
+              <TextField label="Home Visit Facilitation" name="home_visit_fee" type="number" value={formData.home_visit_fee} onChange={handleChange} fullWidth />
+              <TextField label="Priority Slot Booking" name="priority_fee" type="number" value={formData.priority_fee} onChange={handleChange} fullWidth />
+              <TextField label="Medical Record Handling" name="record_fee" type="number" value={formData.record_fee} onChange={handleChange} fullWidth />
+              <TextField label="Additional Charges" name="extra_charges" type="number" value={formData.extra_charges} onChange={handleChange} fullWidth />
 
-                {/* DOCTOR */}
-                <TextField
-                  label="Doctor Name"
-                  name="doctor_name"
-                  value={formData.doctor_name}
-                  onChange={handleChange}
-                  fullWidth
-                />
+              {/* TOTAL */}
+              <TextField label="Total Amount" name="total_amount" value={formData.total_amount} fullWidth disabled />
 
-                {/* FEES */}
-                <TextField
-                  label="Doctor Fee"
-                  name="doctor_fee"
-                  value={formData.doctor_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Platform Fee"
-                  name="platform_fee"
-                  value={formData.platform_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="GST Amount"
-                  name="gst"
-                  value={formData.gst}
-                  onChange={handleChange}
-                  fullWidth
-                />
-
-                {/* ✅ ADD-ONS SECTION */}
-                <Typography variant="subtitle1" mt={2}>
-                  Add-On Charges (Optional)
-                </Typography>
-
-                <TextField
-                  label="After Hours Consultation"
-                  name="after_hours_fee"
-                  value={formData.after_hours_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Home Visit Facilitation"
-                  name="home_visit_fee"
-                  value={formData.home_visit_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Priority Slot Booking"
-                  name="priority_fee"
-                  value={formData.priority_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Medical Record Handling"
-                  name="record_fee"
-                  value={formData.record_fee}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Additional Charges"
-                  name="extra_charges"
-                  value={formData.extra_charges}
-                  onChange={handleChange}
-                  fullWidth
-                />
-
-                {/* TOTAL */}
-                <TextField
-                  label="Total Amount"
-                  name="total_amount"
-                  value={formData.total_amount}
-                  fullWidth
-                  disabled
-                />
-
-                {/* PAYMENT */}
-                <TextField
-                  label="Payment Mode"
-                  name="payment_mode"
-                  value={formData.payment_mode}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Payment Status"
-                  name="payment_status"
-                  value={formData.payment_status}
-                  onChange={handleChange}
-                  fullWidth
-                />
-              </Box>
-
-              <Box mt={3} display="flex" justifyContent="space-between">
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpen(false)}
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={loading}
-                >
-                  {loading ? <CircularProgress size={20} /> : "Submit & Send"}
-                </Button>
-              </Box>
+              {/* PAYMENT */}
+              <TextField label="Payment Mode" name="payment_mode" value={formData.payment_mode} onChange={handleChange} fullWidth />
+              <TextField label="Payment Status" name="payment_status" value={formData.payment_status} onChange={handleChange} fullWidth />
             </Box>
-          </Modal>
-        </>
-      );
-    },
+
+            <Box mt={3} display="flex" justifyContent="space-between">
+              <Button variant="outlined" onClick={() => setOpen(false)} disabled={loading}>
+                Cancel
+              </Button>
+
+              <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+                {loading ? <CircularProgress size={20} /> : "Submit & Send"}
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      </>
+    );
   },
+}
 ];

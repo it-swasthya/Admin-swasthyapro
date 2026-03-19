@@ -1,6 +1,6 @@
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearCart, removeRadiologyItemFromCart } from "../../../Redux/reducer";
 import Swal from "sweetalert2";
@@ -31,6 +31,8 @@ const RadiologyCartSidebar = ({
 
   // Pay Now modal
   const [totalDiscount, setTotalDiscount] = useState(0);
+
+ 
   const handleDiscountChange = (id, value) => {
     setDiscountPrices((prev) => ({
       ...prev,
@@ -59,6 +61,9 @@ const RadiologyCartSidebar = ({
     const netPrice = (item.swasthyapro_max_rate || 0) - discount;
     return Number(acc) + Number(netPrice);
   }, 0);
+
+
+ 
 
   const orderCodPlaced = async (atCenter) => {
     if (!selectedDate || !selectedTimeSlot) {

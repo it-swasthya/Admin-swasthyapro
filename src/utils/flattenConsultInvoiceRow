@@ -1,0 +1,16 @@
+// utils/flattenConsultInvoiceRow.js
+
+const flattenConsultInvoiceRow = (invoice) => ({
+  id: invoice.id || "N/A", // ✅ important (used for filtering & columns)
+  billing_name: invoice.billing_name || "N/A",
+  billing_phone: invoice.billing_phone || "N/A",
+  total_amount:
+    invoice.total_amount !== undefined
+      ? `₹${invoice.total_amount}`
+      : "₹0",
+  created_at: invoice.createdAt
+    ? new Date(invoice.createdAt).toLocaleString()
+    : "",
+});
+
+export default flattenConsultInvoiceRow;
