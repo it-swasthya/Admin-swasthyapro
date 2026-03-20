@@ -105,7 +105,7 @@ export const buildConsultInvoicePayload = (data) => ({
 
   patient: {
     name: data.user_name ?? "N/A",
-    ageGender: `${data.user_age ?? "-"} / ${data.user_gender ?? "-"}`,
+    gender: `${data.user_gender ?? "-"}`,
     mobile: data.user_contact ?? "N/A",
     email: data.user_email ?? null,
     patientId: data.user_id ?? "N/A",
@@ -124,14 +124,14 @@ export const buildConsultInvoicePayload = (data) => ({
       name: "Doctor Consultation Fee",
       provider: "Consulting Doctor",
       qty: 1,
-      rate: data.doctor_fee ?? 249,   // ✅ fixed
-      amount: data.doctor_fee ?? 249, // ✅ fixed
+      rate: data.doctor_fee ?? 800,   
+      amount: data.doctor_fee ?? 249, 
     },
     {
       name: "Platform / Facility Fee",
       provider: "SwasthyaPro",
       qty: 1,
-      rate: data.platform_fee ?? 0,   // ✅ fixed
+      rate: data.platform_fee ?? 249,   
       amount: data.platform_fee ?? 0,
     },
   ],

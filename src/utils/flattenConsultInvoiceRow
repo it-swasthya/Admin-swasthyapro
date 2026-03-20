@@ -1,7 +1,7 @@
 // utils/flattenConsultInvoiceRow.js
 
 const flattenConsultInvoiceRow = (invoice) => ({
-  id: invoice.id || "N/A", // ✅ important (used for filtering & columns)
+  id: invoice.id || "N/A", 
   billing_name: invoice.billing_name || "N/A",
   billing_phone: invoice.billing_phone || "N/A",
   total_amount:

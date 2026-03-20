@@ -15,17 +15,18 @@ const AllInvoices = () => {
 
   return (
     <Box sx={{ width: "100%", mt: 2 }}>
-      {/* Tabs and Button in a single row */}
+      {/* Tabs + Buttons Row */}
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          alignItems: "center",
+          alignItems: { xs: "flex-start", sm: "center" },
           justifyContent: "space-between",
           mb: 3,
           gap: 2,
         }}
       >
+        {/* LEFT: Tabs */}
         <Tabs
           value={tabIndex}
           onChange={handleChange}
@@ -37,26 +38,37 @@ const AllInvoices = () => {
           <Tab label="Consult Invoices" />
         </Tabs>
 
-        <button
-          onClick={() => navigate("/generate-consult-invoices")}
-          className="h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+        {/* RIGHT: Buttons Group */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1.5,
+            justifyContent: "flex-end",
+            width: { xs: "100%", sm: "auto" },
+            flexWrap: "wrap",
+          }}
         >
-          + Create Consult Invoice
-        </button>
+          <button
+            onClick={() => navigate("/generate-consult-invoices")}
+            className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+          >
+            + Create Consult Invoice
+          </button>
 
-        <button
-          onClick={() => navigate("/generate-invoices")}
-          className="h-[40px] sm:h-auto bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
-        >
-          + Create Invoice
-        </button>
+          <button
+            onClick={() => navigate("/generate-invoices")}
+            className="h-[40px] bg-black text-white hover:bg-white hover:text-black border border-black px-4 py-2 rounded transition duration-200"
+          >
+            + Create Invoice
+          </button>
+        </Box>
       </Box>
 
       {/* Tab Panels */}
       <Box sx={{ mt: 2 }}>
         {tabIndex === 0 && <InvoiceTable />}
         {tabIndex === 1 && <TaxInvoiceTable />}
-        {tabIndex === 2 && <ConsultInvoiceTable/>}
+        {tabIndex === 2 && <ConsultInvoiceTable />}
       </Box>
     </Box>
   );

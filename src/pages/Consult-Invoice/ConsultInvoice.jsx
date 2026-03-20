@@ -9,41 +9,44 @@ import axios from "axios";
 import flattenConsultInvoiceRow from "../../utils/flattenConsultInvoiceRow";
 
 const ConsultInvoiceTable = () => {
-  const [invoices, setInvoices] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]); // NEW
+  const [invoices, setInvoices] = useState([]); 
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const getInvoices = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await axios.get(
-      "https://api.swasthyapro.com/api/invoice/get-invoices"
-    );
+      const response = await axios.get(
+        "https://api.swasthyapro.com/api/invoice/get-invoices"
+      );
 
-    const allInvoices = response.data?.invoices || [];
+      const allInvoices = response.data?.invoices || [];
 
-    // FILTER
-    const spdocInvoices = allInvoices.filter((inv) =>
-      inv.id?.toString().trim().toUpperCase().startsWith("SPDOC")
-    );
+     
 
-    console.log("FILTERED 👉", spdocInvoices);
+    
+      const spdocInvoices = allInvoices.filter((inv) => {
+        const id = inv?.id?.toString().trim().toUpperCase();
+        return id && id.startsWith("SPDOC");
+      });
 
-    setInvoices(spdocInvoices);
+    
 
-  } catch (error) {
-    console.error("Failed to fetch invoices:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+     
+      setInvoices(spdocInvoices);
+
+    } catch (error) {
+      console.error("Failed to fetch invoices:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    dispatch(changeNavValue("Consult Invoices")); // optional rename
+    dispatch(changeNavValue("Consult Invoices"));
     getInvoices();
   }, []);
 
@@ -52,7 +55,8 @@ const ConsultInvoiceTable = () => {
   return (
     <TableComponent
       columns={column}
-      data={filteredInvoices} // USE FILTERED DATA
+      data={invoices} 
+      loading={loading} 
       flattenRow={flattenConsultInvoiceRow}
       filename={"consult-invoice-file"}
     />
