@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { TextField, MenuItem, Button } from "@mui/material";
 import { useForm, Controller, useWatch } from "react-hook-form";
+import axios from "axios";
 import {
   fetchDoctorById,
   fetchDoctors,
 } from "../../components/doctorandHospital";
 import Swal from "sweetalert2";
 
-/* ================= SweetAlert MUI Fix ================= */
+/* ================= SweetAlert Fix ================= */
 const swalWithMuiFix = Swal.mixin({
   backdrop: true,
   didOpen: (popup) => {
@@ -16,10 +17,9 @@ const swalWithMuiFix = Swal.mixin({
 });
 
 export default function AppointmentForm({
-  onSubmit,
-  loading,
   open,
-  setOpen // 👈 pass dialog open state from parent
+  setOpen,
+  selectedUser,
 }) {
   const [doctors, setDoctors] = useState([]);
   const [doctorDetails, setDoctorDetails] = useState(null);
@@ -35,10 +35,12 @@ export default function AppointmentForm({
       name: "",
       doctorId: "",
       hospitalId: "",
-      // centerId: "",
       date: "",
       timeSlot: "",
-      
+      speciality: "",
+      symptoms: "",
+      description: "",
+      mode: "Online",
     },
   });
 
@@ -47,23 +49,33 @@ export default function AppointmentForm({
     name: "doctorId",
   });
 
-  /* ================= Reset Form When Dialog Closes ================= */
+  /* ================= Reset ================= */
+  const handleFullReset = () => {
+    reset({
+      name: "",
+      doctorId: "",
+      hospitalId: "",
+      date: "",
+      timeSlot: "",
+      speciality: "",
+      symptoms: "",
+      description: "",
+      mode: "Online",
+    });
+    setDoctorDetails(null);
+  };
 
   useEffect(() => {
-    if (!open) {
-      reset();
-      setDoctorDetails(null);
-    }
-  }, [open, reset]);
+    if (!open) handleFullReset();
+  }, [open]);
 
   /* ================= Load Doctors ================= */
-
   useEffect(() => {
     const loadDoctors = async () => {
       try {
         const data = await fetchDoctors();
         setDoctors(data || []);
-      } catch (error) {
+      } catch {
         swalWithMuiFix.fire({
           icon: "error",
           title: "Error",
@@ -71,12 +83,10 @@ export default function AppointmentForm({
         });
       }
     };
-
     loadDoctors();
   }, []);
 
   /* ================= Load Doctor Details ================= */
-
   useEffect(() => {
     const loadDoctorDetails = async () => {
       if (!selectedDoctorId) {
@@ -90,9 +100,9 @@ export default function AppointmentForm({
         if (data) {
           setDoctorDetails(data);
           setValue("hospitalId", "");
-          // setValue("centerId", "");
+          setValue("speciality", data?.speciality || "");
         }
-      } catch (error) {
+      } catch {
         swalWithMuiFix.fire({
           icon: "error",
           title: "Error",
@@ -105,29 +115,62 @@ export default function AppointmentForm({
   }, [selectedDoctorId, setValue]);
 
   const doctorHospitals = doctorDetails?.hospitals || [];
-  // const doctorCenters = doctorDetails?.centers || [];
 
-  /* ================= Submit Handler ================= */
-
+  /* ================= Submit ================= */
   const submitHandler = async (data) => {
     const confirm = await swalWithMuiFix.fire({
       title: "Confirm Appointment?",
       text: "Do you want to schedule this appointment?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "#1976d2",
-      cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Schedule",
       cancelButtonText: "Cancel",
-      allowOutsideClick: false,
     });
 
     if (!confirm.isConfirmed) return;
 
     try {
-      await onSubmit?.(data);
+      swalWithMuiFix.fire({
+        title: "Scheduling...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
 
-      // Non-blocking toast (better UX)
+      const userId = selectedUser?.user_id || "USER_3032601333";
+
+      // ✅ Get doctor name (IMPORTANT FIX)
+      const selectedDoctor = doctors.find(
+        (doc) => String(doc.doctor_id) === String(data.doctorId)
+      );
+
+      const payload = {
+        doctor_allotted: selectedDoctor?.name || "", // 🔥 FIXED
+        appointment_date: data.date,
+        time_slot: data.timeSlot,
+        speciality: data.speciality,
+        symptoms: data.symptoms,
+        description: data.description,
+        mode: data.mode, // Online / Physical
+      };
+
+      console.log("PAYLOAD:", payload);
+
+      const res = await axios.post(
+        `https://api.swasthyapro.com/api/appointment/admin/consult/create-appointment/${userId}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("RESPONSE:", res.data);
+
+      Swal.close();
+
       swalWithMuiFix.fire({
         toast: true,
         position: "top-end",
@@ -135,14 +178,16 @@ export default function AppointmentForm({
         title: "Appointment Scheduled Successfully",
         showConfirmButton: false,
         timer: 2500,
-        timerProgressBar: true,
       });
 
-      reset();
-      setDoctorDetails(null);
+      handleFullReset();
       setOpen(false);
 
     } catch (error) {
+      console.error("ERROR:", error);
+
+      Swal.close();
+
       swalWithMuiFix.fire({
         icon: "error",
         title: "Error",
@@ -229,32 +274,6 @@ export default function AppointmentForm({
         )}
       />
 
-      {/* Center */}
-      {/* <Controller
-        name="centerId"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            select
-            label="Select Center"
-            fullWidth
-            margin="normal"
-            disabled={!doctorDetails}
-          >
-            {doctorCenters.length === 0 ? (
-              <MenuItem disabled>No centers available</MenuItem>
-            ) : (
-              doctorCenters.map((center, index) => (
-                <MenuItem key={index} value={center.id || center.name}>
-                  {center.name}
-                </MenuItem>
-              ))
-            )}
-          </TextField>
-        )}
-      /> */}
-
       {/* Date */}
       <Controller
         name="date"
@@ -279,19 +298,51 @@ export default function AppointmentForm({
         control={control}
         rules={{ required: "Time slot is required" }}
         render={({ field }) => (
-          <TextField
-            {...field}
-            select
-            label="Time Slot"
-            fullWidth
-            margin="normal"
-            error={!!errors.timeSlot}
-            helperText={errors.timeSlot?.message}
-          >
+          <TextField {...field} select label="Time Slot" fullWidth margin="normal">
             <MenuItem value="09:00 AM">09:00 AM</MenuItem>
+            <MenuItem value="10:00 AM">10:00 AM</MenuItem>
             <MenuItem value="11:00 AM">11:00 AM</MenuItem>
             <MenuItem value="02:00 PM">02:00 PM</MenuItem>
             <MenuItem value="04:00 PM">04:00 PM</MenuItem>
+          </TextField>
+        )}
+      />
+
+      {/* Speciality */}
+      <Controller
+        name="speciality"
+        control={control}
+        render={({ field }) => (
+          <TextField {...field} label="Speciality" fullWidth margin="normal" />
+        )}
+      />
+
+      {/* Symptoms */}
+      <Controller
+        name="symptoms"
+        control={control}
+        render={({ field }) => (
+          <TextField {...field} label="Symptoms" fullWidth margin="normal" />
+        )}
+      />
+
+      {/* Description */}
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <TextField {...field} label="Description" fullWidth margin="normal" multiline rows={3} />
+        )}
+      />
+
+      {/* Mode */}
+      <Controller
+        name="mode"
+        control={control}
+        render={({ field }) => (
+          <TextField {...field} select label="Mode" fullWidth margin="normal">
+            <MenuItem value="Online">Online</MenuItem>
+            <MenuItem value="Physical">Physical</MenuItem> {/* ✅ UPDATED */}
           </TextField>
         )}
       />
@@ -301,11 +352,9 @@ export default function AppointmentForm({
         variant="contained"
         fullWidth
         sx={{ mt: 2 }}
-        disabled={isSubmitting || loading}
+        disabled={isSubmitting}
       >
-        {isSubmitting || loading
-          ? "Scheduling..."
-          : "Schedule Appointment"}
+        {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
       </Button>
     </form>
   );

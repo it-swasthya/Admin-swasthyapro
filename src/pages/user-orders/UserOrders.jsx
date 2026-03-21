@@ -284,9 +284,8 @@ const OrderExportTable = () => {
         // Grand total should be sum of net prices
         const grand_total = totalNetPrice;
 
-        console.log(subtotal,"subtotal",total_discount,"total discount",grand_total, "grand total" , total_discount , "total discount", total_amount,"total amount");
         
-
+        
         // Create invoice
         // -------------------------------------------------------------------------------------
         const createInvoiceResponse = await axios.post(

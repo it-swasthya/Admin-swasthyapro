@@ -376,12 +376,12 @@ export const getConsultationTableColumns = () => [
       try {
         setLoading(true);
 
-        // ✅ VALIDATION
+        // VALIDATION
         if (!formData.user_email || !formData.user_email.includes("@")) {
           throw new Error("Valid email is required");
         }
 
-        // ✅ STEP 1: BUILD PAYLOAD (NO invoiceNumber)
+        // STEP 1: BUILD PAYLOAD (NO invoiceNumber)
         const payload = buildConsultInvoicePayload({
           ...row.original,
           ...formData,
@@ -389,7 +389,7 @@ export const getConsultationTableColumns = () => [
 
         console.log("GENERATE PAYLOAD 👉", payload);
 
-        // ✅ STEP 2: GENERATE INVOICE
+        // STEP 2: GENERATE INVOICE
         const response = await axios.post(
           "https://api.swasthyapro.com/api/invoice/gen-invoice/consultation",
           payload
@@ -403,7 +403,7 @@ export const getConsultationTableColumns = () => [
           throw new Error("Invoice ID not received from backend");
         }
 
-        // ✅ STEP 3: SEND EMAIL
+        //  STEP 3: SEND EMAIL
         const sendPayload = {
           invoice_no: invoiceId,
           email: formData.user_email,
