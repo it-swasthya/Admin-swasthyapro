@@ -92,6 +92,8 @@ const GenerateINV = () => {
     (sum, row) => sum + row.qty * row.rate + (row.service_charge || 0),
     0
   );
+
+
   const totalServiceCharge = rows.reduce(
     (sum, row) => sum + (row.service_charge || 0),
     0
@@ -219,7 +221,7 @@ const GenerateINV = () => {
             desc: row.desc,
             hsnSac: row.hsnSac,
             qty: row.qty,
-            rate: Number(row.rate + row.service_charge),
+            rate: (Number(row.rate) || 0) + (Number(row.service_charge) || 0),
           })),
 
           taxes: {
