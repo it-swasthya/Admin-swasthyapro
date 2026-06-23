@@ -20,6 +20,7 @@ const GenerateINV = () => {
       hsnSac: "998312",
       qty: 1,
       rate: 0,
+      discount: 0,
       service_charge: 0,
     },
   ]);
@@ -39,8 +40,9 @@ const GenerateINV = () => {
   const [cgstRate, setCgstRate] = useState(9);
   const [sgstRate, setSgstRate] = useState(9);
   const [igstRate, setIgstRate] = useState(18);
-  const [showEmployeeCols, setShowEmployeeCols] = useState(true); // toggle state
+  const [showEmployeeCols, setShowEmployeeCols] = useState(true);
   const towards = new ToWords();
+
   useEffect(() => {
     dispatch(changeNavValue("Create-INV"));
   }, [dispatch]);
@@ -51,7 +53,7 @@ const GenerateINV = () => {
 
   const handleChange = (id, field, value) => {
     setRows((prevRows) =>
-      prevRows.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+      prevRows.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
     );
   };
 
@@ -60,26 +62,33 @@ const GenerateINV = () => {
       ...prevRows,
       {
         id: prevRows.length + 1,
+        vendorId: "",
         employeeName: "",
         empCode: "",
         desc: "",
         hsnSac: "998312",
         qty: 1,
         rate: 0,
+        discount: 0,
+        service_charge: 0,
       },
     ]);
   };
+
   const handleRemoveRow = (id) => {
     if (rows.length === 1) {
       setRows([
         {
           id: 1,
+          vendorId: "",
           employeeName: "",
           empCode: "",
           desc: "",
           hsnSac: "998312",
           qty: 1,
           rate: 0,
+          discount: 0,
+          service_charge: 0,
         },
       ]);
       return;
@@ -87,23 +96,34 @@ const GenerateINV = () => {
     setRows((prevRows) => prevRows.filter((row) => row.id !== id));
   };
 
-  // Totals
   const totalAmount = rows.reduce(
-    (sum, row) => sum + row.qty * row.rate + (row.service_charge || 0),
-    0
+    (sum, row) =>
+      sum +
+      row.qty * row.rate +
+      (row.service_charge || 0) -
+      (row.discount || 0),
+    0,
   );
 
+  const totalDiscount = rows.reduce(
+    (sum, row) => sum + (Number(row.discount) || 0),
+    0,
+  );
+
+  const Discount = totalDiscount;
 
   const totalServiceCharge = rows.reduce(
     (sum, row) => sum + (row.service_charge || 0),
-    0
+    0,
   );
+
   const cgstAmount = useIGST ? 0 : (totalServiceCharge * cgstRate) / 100;
   const sgstAmount = useIGST ? 0 : (totalServiceCharge * sgstRate) / 100;
   const igstAmount = useIGST ? (totalServiceCharge * igstRate) / 100 : 0;
 
   const totalGST = cgstAmount + sgstAmount + igstAmount;
   const grandTotal = totalAmount + totalGST;
+
   const inputStyle = {
     width: "100%",
     padding: "10px 12px",
@@ -121,19 +141,14 @@ const GenerateINV = () => {
     if (!invoiceDetails.dueDate) missingFields.push("Due Date");
     if (!invoiceDetails.placeOfSupply) missingFields.push("Place of Supply");
     if (!invoiceDetails.billTo) missingFields.push("Bill To");
-    if (!invoiceDetails.clientAddress) missingFields.push("Client’s Address");
+    if (!invoiceDetails.clientAddress) missingFields.push("Client's Address");
     if (!invoiceDetails.gstin) missingFields.push("GSTIN");
 
     rows.forEach((row, index) => {
-      // if (!row.employeeName)
-      //   missingFields.push(`Employee Name (Row ${index + 1})`);
-      // if (!row.empCode) missingFields.push(`Emp. Code (Row ${index + 1})`);
       if (!row.desc) missingFields.push(`Description (Row ${index + 1})`);
       if (!row.hsnSac) missingFields.push(`HSN/SAC (Row ${index + 1})`);
       if (!row.qty || row.qty <= 0)
         missingFields.push(`Qty (Row ${index + 1})`);
-      // if (!row.rate || row.rate <= 0)
-      //   missingFields.push(`Rate (Row ${index + 1})`);
     });
 
     if (missingFields.length > 0) {
@@ -177,6 +192,7 @@ const GenerateINV = () => {
           hsnSac: row.hsnSac,
           qty: row.qty,
           rate: row.rate,
+          discount: row.discount,
         })),
 
         taxes: {
@@ -187,6 +203,7 @@ const GenerateINV = () => {
           sgst_amount: !useIGST ? sgstAmount : null,
           igst_amount: useIGST ? igstAmount : null,
           subtotal: totalAmount,
+          discount: totalDiscount,
           total: grandTotal,
           totalGst: totalGST || 0,
         },
@@ -194,7 +211,7 @@ const GenerateINV = () => {
 
       const addToDB = await axios.post(
         "https://api.swasthyapro.com/api/invoice/tax-invoices/add",
-        payloadForAdd
+        payloadForAdd,
       );
 
       if (addToDB.status === 201) {
@@ -221,9 +238,9 @@ const GenerateINV = () => {
             desc: row.desc,
             hsnSac: row.hsnSac,
             qty: row.qty,
-            rate: (Number(row.rate) || 0) + (Number(row.service_charge) || 0),
+            discount: Number(row.discount) || 0,  
+            rate: (Number(row.rate) || 0) + (Number(row.service_charge) || 0) - (Number(row.discount) || 0),
           })),
-
           taxes: {
             cgst: !useIGST ? cgstRate : null,
             sgst: !useIGST ? sgstRate : null,
@@ -232,11 +249,14 @@ const GenerateINV = () => {
             sgst_amount: !useIGST ? sgstAmount : null,
             igst_amount: useIGST ? igstAmount : null,
             subtotal: totalAmount,
+            discount: totalDiscount,
             total: grandTotal,
             totalGst: totalGST || 0,
           },
+          discount: Discount,
           service_charges: totalServiceCharge,
         };
+
         const res = await fetch(
           "https://api.swasthyapro.com/api/invoice/tax-invoices/generate-pdf",
           {
@@ -246,12 +266,11 @@ const GenerateINV = () => {
               Accept: "application/pdf, application/json",
             },
             body: JSON.stringify(payloadForInvCreate),
-          }
+          },
         );
 
         const ct = res.headers.get("content-type") || "";
 
-        // Case 1: proper PDF stream
         if (ct.includes("application/pdf")) {
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
@@ -268,12 +287,14 @@ const GenerateINV = () => {
           setRows([
             {
               id: 1,
+              vendorId: "",
               employeeName: "",
               empCode: "",
               desc: "",
               hsnSac: "998312",
               qty: 1,
               rate: 0,
+              discount: 0,
               service_charge: 0,
             },
           ]);
@@ -287,7 +308,6 @@ const GenerateINV = () => {
           return;
         }
 
-        // Case 2: JSON with base64 or %PDF text
         const json = await res.json();
         let blob;
 
@@ -379,7 +399,7 @@ const GenerateINV = () => {
           />
         </div>
 
-        {/* Bill To + Vendor Code + Reverse Charge in one row */}
+        {/* Bill To + Vendor Code + Reverse Charge */}
         <div
           style={{
             gridColumn: "1 / -1",
@@ -432,10 +452,10 @@ const GenerateINV = () => {
           </FormControl>
         </div>
 
-        {/* Client’s Address */}
+        {/* Client's Address */}
         <div style={{ gridColumn: "1 / -1" }}>
           <label style={{ fontWeight: "600", color: "#555" }}>
-            Client’s Address
+            Client's Address
           </label>
           <textarea
             rows={3}
@@ -443,7 +463,7 @@ const GenerateINV = () => {
             onChange={(e) =>
               handleInvoiceChange("clientAddress", e.target.value)
             }
-            placeholder="Enter client’s address"
+            placeholder="Enter client's address"
             style={{ ...inputStyle, resize: "vertical" }}
           />
         </div>
@@ -479,12 +499,15 @@ const GenerateINV = () => {
               setRows([
                 {
                   id: 1,
+                  vendorId: "",
                   employeeName: "",
                   empCode: "",
                   desc: "",
                   hsnSac: "998312",
                   qty: 1,
                   rate: 0,
+                  discount: 0,
+                  service_charge: 0,
                 },
               ]);
             }}
@@ -524,9 +547,9 @@ const GenerateINV = () => {
                   <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                     Emp. Code
                   </th>
-
                 </>
-              )} <th style={{ padding: "12px", border: "1px solid #ddd" }}>
+              )}
+              <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Vender ID
               </th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
@@ -538,6 +561,9 @@ const GenerateINV = () => {
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Price (₹)
               </th>
+              <th style={{ padding: "12px", border: "1px solid #ddd" }}>
+                Discount (₹)
+              </th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>Qty</th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Service Charge (₹)
@@ -545,7 +571,6 @@ const GenerateINV = () => {
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Amount (₹)
               </th>
-
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
                 Action
               </th>
@@ -582,6 +607,8 @@ const GenerateINV = () => {
                     </td>
                   </>
                 )}
+
+                {/* Vendor ID */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="text"
@@ -593,6 +620,7 @@ const GenerateINV = () => {
                   />
                 </td>
 
+                {/* Description */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="text"
@@ -603,6 +631,8 @@ const GenerateINV = () => {
                     style={inputStyle}
                   />
                 </td>
+
+                {/* HSN/SAC */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="text"
@@ -613,6 +643,8 @@ const GenerateINV = () => {
                     style={inputStyle}
                   />
                 </td>
+
+                {/* Price (Rate) */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="number"
@@ -623,6 +655,20 @@ const GenerateINV = () => {
                     style={{ ...inputStyle, width: "90px", textAlign: "right" }}
                   />
                 </td>
+
+                {/* ✅ FIX: Discount comes BEFORE Qty to match header order */}
+                <td style={{ padding: "10px", border: "1px solid #eee" }}>
+                  <input
+                    type="number"
+                    value={row.discount}
+                    onChange={(e) =>
+                      handleChange(row.id, "discount", Number(e.target.value))
+                    }
+                    style={{ ...inputStyle, width: "90px", textAlign: "right" }}
+                  />
+                </td>
+
+                {/* Qty */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="number"
@@ -633,6 +679,8 @@ const GenerateINV = () => {
                     style={{ ...inputStyle, width: "70px", textAlign: "right" }}
                   />
                 </td>
+
+                {/* Service Charge */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <input
                     type="number"
@@ -641,17 +689,23 @@ const GenerateINV = () => {
                       handleChange(
                         row.id,
                         "service_charge",
-                        Number(e.target.value)
+                        Number(e.target.value),
                       )
                     }
                     style={{ ...inputStyle, width: "90px", textAlign: "right" }}
                   />
                 </td>
+
+                {/* Amount */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <strong>
-                    {row.qty * row.rate + (row.service_charge || 0)}
+                    {row.qty * row.rate +
+                      (row.service_charge || 0) -
+                      (row.discount || 0)}
                   </strong>
                 </td>
+
+                {/* Delete */}
                 <td style={{ padding: "10px", border: "1px solid #eee" }}>
                   <button
                     onClick={() => handleRemoveRow(row.id)}
@@ -696,6 +750,7 @@ const GenerateINV = () => {
                   + Add Row
                 </button>
               </td>
+
               <td
                 colSpan={showEmployeeCols ? "3" : "1"}
                 style={{
@@ -707,6 +762,7 @@ const GenerateINV = () => {
               >
                 Total Service Charge
               </td>
+
               <td
                 style={{
                   padding: "12px",
@@ -716,8 +772,31 @@ const GenerateINV = () => {
               >
                 {Number(totalServiceCharge)}
               </td>
+
               <td
-                colSpan={showEmployeeCols ? "3" : "4"}
+                colSpan={showEmployeeCols ? "2" : "1"}
+                style={{
+                  textAlign: "right",
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  fontWeight: "600",
+                }}
+              >
+                Total Discount
+              </td>
+
+              <td
+                style={{
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  fontWeight: "600",
+                }}
+              >
+                ₹{totalDiscount}
+              </td>
+
+              <td
+                colSpan={showEmployeeCols ? "3" : "1"}
                 style={{
                   textAlign: "right",
                   padding: "12px",
@@ -743,6 +822,7 @@ const GenerateINV = () => {
         </table>
       </div>
 
+      {/* Tax Section */}
       <div
         style={{
           marginTop: "20px",
@@ -760,66 +840,6 @@ const GenerateINV = () => {
           />
           Use IGST (instead of CGST + SGST)
         </label>
-
-        {/* {!useIGST && (
-          <div style={{ marginTop: "12px", display: "flex", gap: "20px" }}>
-            <div>
-              <label>CGST %</label>
-              <input
-                type="number"
-                value={cgstRate}
-                onChange={(e) => setCgstRate(Number(e.target.value))}
-                style={{
-                  width: "80px",
-                  marginLeft: "8px",
-                  border: "1px solid #ccc", // darker grey
-                  padding: "4px 6px",
-                  borderRadius: "4px",
-                }}
-              />
-              <span> → ₹{cgstAmount.toFixed(2)}</span>
-            </div>
-            <div>
-              <label>SGST %</label>
-              <input
-                type="number"
-                value={sgstRate}
-                onChange={(e) => setSgstRate(Number(e.target.value))}
-                style={{
-                  width: "80px",
-                  marginLeft: "8px",
-                  border: "1px solid #ccc", // darker grey
-                  padding: "4px 6px",
-                  borderRadius: "4px",
-                }}
-              />
-              <span> → ₹{sgstAmount.toFixed(2)}</span>
-            </div>
-          </div>
-        )}
-
-        {useIGST && (
-          <div style={{ marginTop: "12px" }}>
-            <label>IGST %</label>
-            <input
-              type="number"
-              value={igstRate}
-              onChange={(e) => setIgstRate(Number(e.target.value))}
-              style={{
-                width: "80px",
-                marginLeft: "8px",
-                border: "1px solid #ccc", // darker grey
-                padding: "4px 6px",
-                borderRadius: "4px",
-              }}
-            />
-            <span> → ₹{igstAmount.toFixed(2)}</span>
-          </div>
-        )}
-
-        <div style={{ marginTop: "16px", fontWeight: "600" }}>
-          Total GST: ₹{totalGST.toFixed(2)}
-        </div> */}
 
         {!useIGST && (
           <table
@@ -1015,8 +1035,9 @@ const GenerateINV = () => {
         </div>
 
         <div style={{ marginTop: "6px", fontWeight: "700", fontSize: "16px" }}>
-          Grand Total(Including GST): ₹{grandTotal.toFixed(2)}
+          Grand Total (Including GST): ₹{grandTotal.toFixed(2)}
         </div>
+
         {grandTotal > 0 && (
           <div
             style={{ marginTop: "6px", fontWeight: "700", fontSize: "16px" }}

@@ -219,28 +219,28 @@ const RadiologyCartSidebar = ({
           // );
         }
 
-        await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
-          mobile: "91" + user.contact,
-          template_name: "radiology_book_confirm",
-          template_values: {
-            1: user.fullName,
-            2: response.data.data.id,
-            3: nameArr.map((item) => item).join(", "),
-            4: response.data.data.net_amount,
-            5: total_amount,
-            6:
-              Math.ceil(
-                100 - (response.data.data.net_amount / total_amount) * 100
-              ) + "%",
-            7: atCenter ? "pending" : "paid",
-            8: selectedTimeSlot,
-            9: selectedDate,
-            10: cartData[0]?.lab_details?.lab_name || "",
-            11: cartData[0]?.lab_details?.location || "",
-            12: cartData[0]?.lab_details?.phone,
-            13: cartData[0]?.lab_details?.map_location_link || "",
-          },
-        });
+        // await axios.post("https://api.swasthyapro.com/api/sms/send-whatsapp", {
+        //   mobile: "91" + user.contact,
+        //   template_name: "radiology_book_confirm",
+        //   template_values: {
+        //     1: user.fullName,
+        //     2: response.data.data.id,
+        //     3: nameArr.map((item) => item).join(", "),
+        //     4: response.data.data.net_amount,
+        //     5: total_amount,
+        //     6:
+        //       Math.ceil(
+        //         100 - (response.data.data.net_amount / total_amount) * 100
+        //       ) + "%",
+        //     7: atCenter ? "pending" : "paid",
+        //     8: selectedTimeSlot,
+        //     9: selectedDate,
+        //     10: cartData[0]?.lab_details?.lab_name || "",
+        //     11: cartData[0]?.lab_details?.location || "",
+        //     12: cartData[0]?.lab_details?.phone,
+        //     13: cartData[0]?.lab_details?.map_location_link || "",
+        //   },
+        // });
 
         await axios.post(
           "https://api.swasthyapro.com/api/mail/send-radiology-appointment",
