@@ -26,13 +26,12 @@ const RadiologyCartSidebar = ({
     cartData.reduce((acc, item) => {
       acc[item.id] = 0;
       return acc;
-    }, {})
+    }, {}),
   );
 
   // Pay Now modal
   const [totalDiscount, setTotalDiscount] = useState(0);
 
- 
   const handleDiscountChange = (id, value) => {
     setDiscountPrices((prev) => ({
       ...prev,
@@ -61,9 +60,6 @@ const RadiologyCartSidebar = ({
     const netPrice = (item.swasthyapro_max_rate || 0) - discount;
     return Number(acc) + Number(netPrice);
   }, 0);
-
-
- 
 
   const orderCodPlaced = async (atCenter) => {
     if (!selectedDate || !selectedTimeSlot) {
@@ -125,7 +121,7 @@ const RadiologyCartSidebar = ({
           testIds: idsArr,
           testNames: nameArr,
           testPrices: priceArr,
-        }
+        },
       );
       if (!bookTest.data.cart) {
         Swal.fire({
@@ -142,7 +138,7 @@ const RadiologyCartSidebar = ({
           cart_id: bookTest.data.cart.id,
           amount: totalPrice - Number(totalDiscount),
           base_amount: total_swasthyaproPrice,
-        }
+        },
       );
 
       // Step 3: Book radiology test
@@ -162,7 +158,7 @@ const RadiologyCartSidebar = ({
           report_shared: false,
           payment_method: "UPI",
           payment_id: paymentResponse.data.data.payment_id,
-        }
+        },
       );
       if (response.status === 201) {
         if (!atCenter) {
@@ -173,7 +169,7 @@ const RadiologyCartSidebar = ({
               user_id: user.id,
               booking_id: response.data.data.id,
               // dmlCharges: selectedOrder.dml_charges || 0,
-            }
+            },
           );
 
           await axios.post(
@@ -197,7 +193,7 @@ const RadiologyCartSidebar = ({
               bank_name: "NA",
               visit_type: "NA",
               // dmlCharges: selectedOrder.dml_charges || 0,
-            }
+            },
           );
           const sendInvoice = await axios.post(
             "https://api.swasthyapro.com/api/invoice/send-invoice",
@@ -205,7 +201,7 @@ const RadiologyCartSidebar = ({
               email: user.email,
               invoice_no: createInvoiceResponse.data.invoice.id,
               customer_name: user.fullName,
-            }
+            },
           );
 
           // await axios.post(
@@ -253,7 +249,7 @@ const RadiologyCartSidebar = ({
             price: response.data.data.net_amount,
             discount:
               Math.ceil(
-                100 - (response.data.data.net_amount / total_amount) * 100
+                100 - (response.data.data.net_amount / total_amount) * 100,
               ) + "%",
             paymentStatus: atCenter ? "pending" : "paid",
             time: selectedTimeSlot,
@@ -262,7 +258,7 @@ const RadiologyCartSidebar = ({
             centerAddress: cartData[0]?.lab_details?.location || "",
             centerPhone: cartData[0]?.lab_details?.phone,
             map_link: cartData[0]?.lab_details?.map_location_link || "",
-          }
+          },
         );
         localStorage.removeItem("radiology");
         dispatch(clearCart());
@@ -286,6 +282,9 @@ const RadiologyCartSidebar = ({
       });
     }
   };
+
+  const minDate = new Date();
+  minDate.setMonth(minDate.getMonth() - 6);
 
   return (
     isModalOpen && (
@@ -411,13 +410,22 @@ const RadiologyCartSidebar = ({
               <label className="block mb-1 text-gray-700 text-sm">
                 <span className="text-red-600">*</span> Select Date:
               </label>
-              <input
+              {/* <input
                 type="date"
                 value={selectedDate}
                 required
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="text-black w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-300"
+              /> */}
+
+              <input
+                type="date"
+                id="date"
+                value={selectedDate}
+                min={minDate.toISOString().split("T")[0]}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
 

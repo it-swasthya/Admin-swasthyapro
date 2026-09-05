@@ -25,6 +25,9 @@ const CartSidebar = ({
   handleClick,
   loading,
 }) => {
+  const minDate = new Date();
+  minDate.setMonth(minDate.getMonth() - 6);
+
   return (
     isModalOpen && (
       <div className="fixed inset-0 z-50 flex items-start justify-end bg-opacity-30 backdrop-blur-sm">
@@ -153,11 +156,20 @@ const CartSidebar = ({
               <label htmlFor="date" className="block mb-1 font-medium">
                 <span className="text-red-600 p-1">*</span>Select Date:
               </label>
-              <input
+              {/* <input
                 type="date"
                 id="date"
                 value={selectedDate}
                 min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              /> */}
+
+              <input
+                type="date"
+                id="date"
+                value={selectedDate}
+                min={minDate.toISOString().split("T")[0]}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />

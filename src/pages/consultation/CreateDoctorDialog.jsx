@@ -52,6 +52,7 @@ export default function CreateDoctorDialog({ open, handleClose }) {
   /* ================= Submit ================= */
 
   const onSubmit = async (data) => {
+     console.log("onSubmit called", data);
     const result = await swalWithMuiFix.fire({
       title: "Are you sure?",
       text: "Do you want to register this doctor?",
@@ -74,7 +75,11 @@ export default function CreateDoctorDialog({ open, handleClose }) {
         experience: Number(data.experience),
       };
 
+       console.log(payload);
+
       await addDoctor(payload);
+
+       console.log("API Success");
 
       handleClose();
       reset();

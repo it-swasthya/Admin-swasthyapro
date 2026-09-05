@@ -33,7 +33,7 @@ const UploadModal = ({
   const [logoFile, setLogoFile] = useState(null);
   const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
   const [seletedTab, setSeletedTab] = useState("");
-  const [selectedLab, setSelectedLab] = useState("immuno");  
+  const [selectedLab, setSelectedLab] = useState("immuno");
   const [isCGHS, setIsCGHS] = useState(false);
 
   const handleApiCall = async (pdfUrl) => {
@@ -44,7 +44,7 @@ const UploadModal = ({
       const response = await axios.post(
         "https://api.swasthyapro.com/api/report/fill",
         { ...reportData, pdfUrl },
-        { responseType: "blob" }
+        { responseType: "blob" },
       );
 
       const blob = new Blob([response.data], { type: "application/pdf" });
@@ -61,19 +61,19 @@ const UploadModal = ({
   const handleCapClick = () => {
     setIsCGHS(false);
     handleApiCall(
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-with-cap.pdf"
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-with-cap.pdf",
     );
   };
   const handleCGHSWithCapClick = () => {
     setIsCGHS(true);
     handleApiCall(
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_with_cap.pdf"
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_with_cap.pdf",
     );
   };
   const handleCGHSWithOutCapClick = () => {
     setIsCGHS(true);
     handleApiCall(
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_without_cap.pdf"
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/cghs_without_cap.pdf",
     );
   };
 
@@ -81,7 +81,7 @@ const UploadModal = ({
     setIsCGHS(false);
 
     handleApiCall(
-      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-without-cap.pdf"
+      "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/report-without-cap.pdf",
     );
   };
 
@@ -99,11 +99,11 @@ const UploadModal = ({
     if (!isCGHS) {
       formData.append(
         "letterheadUrl",
-        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-header.jpg"
+        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-header.jpg",
       );
       formData.append(
         "footerUrl",
-        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-footer.jpg"
+        "https://swasthya-prescription-bucket.s3.eu-north-1.amazonaws.com/Reports/letter-footer.jpg",
       );
     }
 
@@ -116,7 +116,7 @@ const UploadModal = ({
         {
           headers: { "Content-Type": "multipart/form-data" },
           responseType: "blob",
-        }
+        },
       );
 
       const blob = new Blob([response.data], { type: "application/pdf" });
@@ -138,7 +138,7 @@ const UploadModal = ({
           ? "https://api.swasthyapro.com/api/report/merge-cghs"
           : "https://api.swasthyapro.com/api/report/merge",
         {},
-        { responseType: "blob" }
+        { responseType: "blob" },
       );
 
       const blob = new Blob([response.data], { type: "application/pdf" });
@@ -445,7 +445,7 @@ const UploadModal = ({
         )}
 
         <Box mt={5} display="flex" justifyContent="flex-end" gap={2}>
-          {mergedPdfUrl && (
+          {/* {mergedPdfUrl && (
             <Button
               variant="contained"
               color="success"
@@ -494,6 +494,72 @@ const UploadModal = ({
               sx={{ borderRadius: 2, textTransform: "none", px: 4 }}
             >
               Send to Whatsapp
+            </Button>
+          )} */}
+
+          {mergedPdfUrl && (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={async () => {
+                onClose();
+                onCloseTable();
+
+                try {
+                  Swal.fire({
+                    title: "Sending Report...",
+                    text: "Please wait while the report is being sent via email.",
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                      Swal.showLoading();
+                    },
+                  });
+
+                  await axios.post(
+                    "https://api.swasthyapro.com/api/report/send-upload-report-mail",
+                    {
+                      member_id: userData.memberId,
+                      userName: userData.userName,
+                      booking_id: userData.orderID,
+                      test_type: userData.test_type,
+
+                      // Send email instead of mobile number
+                      email: userData.userEmail,
+
+                      date: userData.date,
+                    },
+                  );
+
+                  await Swal.fire({
+                    icon: "success",
+                    title: "Report Sent!",
+                    text: "The report has been successfully sent to the user's email.",
+                    timer: 1500,
+                    showConfirmButton: false,
+                  });
+
+                  getOrders();
+                } catch (err) {
+                  console.error("Email sending error:", err);
+
+                  await Swal.fire({
+                    icon: "error",
+                    title: "Email Failed",
+                    text:
+                      err?.response?.data?.details ||
+                      "Something went wrong while sending the report.",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                }
+              }}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                px: 4,
+              }}
+            >
+              Send to Email
             </Button>
           )}
 
